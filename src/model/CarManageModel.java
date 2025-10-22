@@ -7,15 +7,22 @@ public class CarManageModel {
     private double gia;
     private int soLuong;
     private String moTa;
+    private String maHang;
+    private int soLuotBan;
 
-    public CarManageModel(double gia, String loaiOto, String maOto, String moTa, int soLuong, String tenOto) {
+    // SỬA Ở ĐÂY: Đổi 'String tenOton' thành 'String tenOto'
+    public CarManageModel(double gia, String loaiOto, String maOto, String moTa, int soLuong, String tenOto, int soLuotBan, String maHang) {
         this.gia = gia;
         this.loaiOto = loaiOto;
         this.maOto = maOto;
         this.moTa = moTa;
         this.soLuong = soLuong;
-        this.tenOto = tenOto;
+        this.tenOto = tenOto; // Giờ phép gán này đã đúng
+        this.soLuotBan = soLuotBan;
+        this.maHang = maHang;
     }
+
+    // (Tất cả các hàm getters/setters còn lại giữ nguyên)
 
     public double getGia() {
         return gia;
@@ -63,5 +70,21 @@ public class CarManageModel {
 
     public void setTenOto(String tenOto) {
         this.tenOto = tenOto;
+    }
+
+    public String getMaHang() {
+        return maHang;
+    }
+
+    public void setMaHang(String maHang) {
+        this.maHang = maHang;
+    }
+
+    public int getSoLuotBan() {
+        return soLuotBan;
+    }
+
+    public void setSoLuotBan(int soLuotBan) {
+        this.soLuotBan = soLuotBan;
     }
 }
