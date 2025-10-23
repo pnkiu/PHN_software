@@ -31,20 +31,30 @@ public class CarManageView extends JFrame {
 
         
         CarManageController controller = new CarManageController(this);
-        Font font_title = new Font("Arial", Font.BOLD, 20);
+        Font font_title = new Font("Segoe UI", Font.BOLD, 26);
         JLabel jLabel_title = new JLabel("HỆ THỐNG QUẢN LÝ CỬA HÀNG BÁN XE Ô TÔ");
         jLabel_title.setHorizontalAlignment(SwingConstants.CENTER); // can giua
         jLabel_title.setFont(font_title);
+        jLabel_title.setHorizontalAlignment(SwingConstants.CENTER);
+        jLabel_title.setForeground(Color.RED);
+        jLabel_title.setBackground(Color.BLACK); 
+        jLabel_title.setOpaque(true);
+        jLabel_title.setBorder(new EmptyBorder(15, 0, 15, 0));
 
+        Font font_button = new Font("Segoe UI", Font.BOLD, 15);
         JButton jbutton_them = new JButton("Thêm");
         jbutton_them.setForeground(Color.RED);
         jbutton_them.setBackground(Color.BLACK);
+        jbutton_them.setFont(font_button);
         JButton jbutton_sua = new JButton("Sửa");
         jbutton_sua.setForeground(Color.RED);
         jbutton_sua.setBackground(Color.BLACK);
+        jbutton_sua.setFont(font_button);
         JButton jbutton_xoa = new JButton("Xóa");
+        jbutton_xoa.addActionListener(controller);
         jbutton_xoa.setForeground(Color.RED);
         jbutton_xoa.setBackground(Color.BLACK);
+        jbutton_xoa.setFont(font_button);
         
         JPanel jPanel_title = new JPanel();
         jPanel_title.setLayout(new BorderLayout());
@@ -57,7 +67,6 @@ public class CarManageView extends JFrame {
         jPanel_button.add(jbutton_them);
         jPanel_button.add(jbutton_sua);
         jPanel_button.add(jbutton_xoa);
-        jbutton_xoa.addActionListener(controller);
         jPanel_button.setBackground(new Color(192,192,192));
 
         table = new JTable();
