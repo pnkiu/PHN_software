@@ -1,30 +1,47 @@
-package until; // Bạn có thể đặt tên package là 'util' hoặc 'config'
+package until;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseConnect {
-    private static final String URL = "jdbc:mysql://localhost:3306/qlchoto";
-    private static final String USER = "root";
-    private static final String PASS = "123456";
-     //Lấy một kết nối đến CSDL
     public static Connection getConnection() {
+        Connection c = null;
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            return DriverManager.getConnection(URL, USER, PASS);
-        } catch (ClassNotFoundException | SQLException e) {
+
+            // Các thông số
+            String url = "jdbc:mySQL://localhost:3306/qlchoto" ;
+            String username = "root";
+            String password = "123456";
+
+            // Tạo kết nối
+            c = DriverManager.getConnection(url, username, password);
+        } catch (SQLException e) {
+            System.out.println("Lỗi: Không tìm thấy MySQL JDBC Driver!");
             e.printStackTrace();
-            throw new RuntimeException("Không thể kết nối CSDL!", e);
+        }
+
+        return c;
+    }
+    public static void closeConnection(Connection c) {
+        try {
+            if(c!=null) {
+                c.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
-
-    public static void main(String[] args) {
-        try (Connection conn = getConnection()) {
-            if (conn != null) {
+    public static void printInfo(Connection c) {
+        try {
+            if (c!=null) {
+                DatabaseMetaData mtdt = c.getMetaData();
+                System.out.println(mtdt.getDatabaseProductName());
+                System.out.println(mtdt.getDatabaseProductVersion());
             }
-        } catch (SQLException e) {
-            System.err.println("Kiểm tra thất bại: " + e.getMessage());
+        }catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }

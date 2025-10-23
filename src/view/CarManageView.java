@@ -1,27 +1,24 @@
 package view;
 
 import controller.CarManageController;
-import model.CarManageModel; // Thêm import này
+import model.CarManageModel;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel; // Thêm import này
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.util.List; // Thêm import này
+import java.util.List;
 import java.awt.event.ActionEvent;
 
 public class CarManageView extends JFrame {
-
-    // (Các biến cũ giữ nguyên)
     private JButton jButton_add;
     private JButton jButton_edit;
     private JButton jButton_delete;
-    private JTextField jTextField_search; // Bạn gõ nhầm tên biến, tôi sửa lại
+    private JTextField jTextField_search;
     private JButton jButton_search;
 
     private JDialog addDialog;
 
-    // === BIẾN MỚI CHO BẢNG ===
     private JTable carTable;
     private DefaultTableModel tableModel;
 
@@ -36,7 +33,7 @@ public class CarManageView extends JFrame {
         this.setLocationRelativeTo(null);
         this.setLayout(new BorderLayout());
 
-        // (Code menu bên trái giữ nguyên... )
+        //bên trái
         Font font = new Font("Arial", Font.BOLD, 40);
         Font fonts = new Font("Arial", Font.BOLD, 17);
 
@@ -109,8 +106,6 @@ public class CarManageView extends JFrame {
         //bên phải
         JPanel jPanel_right = new JPanel(new BorderLayout());
         jPanel_right.setBackground(Color.WHITE);
-
-        // (Code panel header và action giữ nguyên)
         JLabel jLabel_header = new JLabel("QUẢN LÝ SẢN PHẨM", SwingConstants.CENTER);
         jLabel_header.setForeground(new Color(65, 105, 225));
         jLabel_header.setFont(font);
@@ -145,16 +140,11 @@ public class CarManageView extends JFrame {
 
         jPanel_right.add(jPanel_north_wrapper, BorderLayout.NORTH);
 
-        // === BẮT ĐẦU THÊM JTABLE VÀO ĐÂY ===
-
-        // 1. Định nghĩa cột
         String[] columnNames = {"Mã Ô tô", "Tên Ô tô", "Loại", "Giá", "Số lượng", "Mã Hãng", "Số lượt bán"};
 
-        // 2. Tạo TableModel và JTable
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                // Không cho phép sửa trực tiếp trên bảng
                 return false;
             }
         };
@@ -162,35 +152,18 @@ public class CarManageView extends JFrame {
         carTable.setFont(new Font("Arial", Font.PLAIN, 14));
         carTable.setRowHeight(25);
         carTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
-
-        // 3. Tạo JScrollPane để chứa JTable
         JScrollPane scrollPane = new JScrollPane(carTable);
         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Thêm padding
-
-        // 4. Thêm JScrollPane (chứa bảng) vào giữa panel bên phải
         jPanel_right.add(scrollPane, BorderLayout.CENTER);
-
-        // === KẾT THÚC THÊM JTABLE ===
-
         this.add(jPanel_menu, BorderLayout.WEST);
         this.add(jPanel_right, BorderLayout.CENTER);
     }
-
-    // (Hàm addAddCarListener giữ nguyên)
     public void addAddCarListener(ActionListener listener) {
         jButton_add.addActionListener(listener);
     }
-
-    // === HÀM MỚI: ĐỂ CONTROLLER CẬP NHẬT BẢNG ===
-    /**
-     * Hiển thị danh sách xe lên JTable
-     * @param carList Danh sách xe lấy từ Controller
-     */
     public void displayCarList(List<CarManageModel> carList) {
-        // Xóa hết dữ liệu cũ trong bảng
         tableModel.setRowCount(0);
 
-        // Duyệt qua danh sách và thêm từng hàng vào tableModel
         for (CarManageModel car : carList) {
             Object[] rowData = {
                     car.getMaOto(),
@@ -205,56 +178,97 @@ public class CarManageView extends JFrame {
         }
     }
 
-    // (Các hàm showAddCarDialog, closeAddDialog, showSuccessMessage, showErrorMessage giữ nguyên)
+    // Hàm showAddCarDialog viết theo kiểu "newbie" (dùng null layout)
     public void showAddCarDialog(CarManageController controller) {
         addDialog = new JDialog(this, "Thêm sản phẩm Ô tô", true);
-        addDialog.setSize(400, 500);
+        addDialog.setSize(400, 550); // Set kích thước cứng
         addDialog.setLocationRelativeTo(this);
         addDialog.setLayout(new BorderLayout());
 
-        JPanel formPanel = new JPanel(new GridLayout(7, 2, 10, 10));
-        formPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        // Newbie hay dùng null layout (absolute positioning)
+        JPanel formPanel = new JPanel();
+        formPanel.setLayout(null); // Tắt layout manager
 
-        // Tạo các trường nhập liệu
+        // 1. Mã Ô tô
+        JLabel l1 = new JLabel("Mã Ô tô:");
+        l1.setBounds(20, 20, 100, 30); // Đặt vị trí (x, y, width, height)
+        formPanel.add(l1);
+
         JTextField txtMaOto = new JTextField();
-        JTextField txtTenOto = new JTextField();
-        JTextField txtLoaiOto = new JTextField();
-        JTextField txtGia = new JTextField();
-        JTextField txtSoLuong = new JTextField();
-        JTextField txtMaHang = new JTextField();
-        JTextField txtMoTa = new JTextField();
-
-        // Thêm vào form
-        formPanel.add(new JLabel("Mã Ô tô:"));
+        txtMaOto.setBounds(130, 20, 230, 30); // Đặt vị trí
         formPanel.add(txtMaOto);
-        formPanel.add(new JLabel("Tên Ô tô:"));
+
+        // 2. Tên Ô tô
+        JLabel l2 = new JLabel("Tên Ô tô:");
+        l2.setBounds(20, 60, 100, 30);
+        formPanel.add(l2);
+
+        JTextField txtTenOto = new JTextField();
+        txtTenOto.setBounds(130, 60, 230, 30);
         formPanel.add(txtTenOto);
-        formPanel.add(new JLabel("Loại Ô tô:"));
+
+        // 3. Loại Ô tô
+        JLabel l3 = new JLabel("Loại Ô tô:");
+        l3.setBounds(20, 100, 100, 30);
+        formPanel.add(l3);
+
+        JTextField txtLoaiOto = new JTextField();
+        txtLoaiOto.setBounds(130, 100, 230, 30);
         formPanel.add(txtLoaiOto);
-        formPanel.add(new JLabel("Giá:"));
+
+        // 4. Giá
+        JLabel l4 = new JLabel("Giá:");
+        l4.setBounds(20, 140, 100, 30);
+        formPanel.add(l4);
+
+        JTextField txtGia = new JTextField();
+        txtGia.setBounds(130, 140, 230, 30);
         formPanel.add(txtGia);
-        formPanel.add(new JLabel("Số lượng:"));
+
+        // 5. Số lượng
+        JLabel l5 = new JLabel("Số lượng:");
+        l5.setBounds(20, 180, 100, 30);
+        formPanel.add(l5);
+
+        JTextField txtSoLuong = new JTextField();
+        txtSoLuong.setBounds(130, 180, 230, 30);
         formPanel.add(txtSoLuong);
-        formPanel.add(new JLabel("Mã Hãng:"));
+
+        // 6. Mã Hãng
+        JLabel l6 = new JLabel("Mã Hãng:");
+        l6.setBounds(20, 220, 100, 30);
+        formPanel.add(l6);
+
+        JTextField txtMaHang = new JTextField();
+        txtMaHang.setBounds(130, 220, 230, 30);
         formPanel.add(txtMaHang);
-        formPanel.add(new JLabel("Mô tả:"));
+
+        // 7. Mô tả (Dùng JTextArea nhưng không có JScrollPane)
+        JLabel l7 = new JLabel("Mô tả:");
+        l7.setBounds(20, 260, 100, 30);
+        formPanel.add(l7);
+
+        JTextArea txtMoTa = new JTextArea(); // Không set hàng cột
+        txtMoTa.setBounds(130, 260, 230, 150); // Đặt kích thước cứng
+        txtMoTa.setLineWrap(true); // Vẫn set line wrap
+        txtMoTa.setWrapStyleWord(true);
+        // Không đặt trong JScrollPane, nếu gõ nhiều chữ sẽ bị mất
         formPanel.add(txtMoTa);
 
+        // Panel cho nút bấm (giữ nguyên vì FlowLayout cũng đơn giản)
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton btnSave = new JButton("Lưu");
         JButton btnCancel = new JButton("Hủy");
         buttonPanel.add(btnSave);
         buttonPanel.add(btnCancel);
 
-        // Nút Hủy (logic đơn giản, có thể giữ lại)
+        // Gắn sự kiện
         btnCancel.addActionListener(e -> addDialog.dispose());
 
-        // Nút Lưu
         btnSave.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Chỉ lấy dữ liệu và GỌI CONTROLLER
-                // Không tự xử lý
+                // Logic gọi Controller vẫn giữ nguyên
                 controller.saveNewCar(
                         txtMaOto.getText(),
                         txtTenOto.getText(),
@@ -267,8 +281,11 @@ public class CarManageView extends JFrame {
             }
         });
 
-        addDialog.add(formPanel, BorderLayout.CENTER);
+        // Thêm các panel vào dialog
+        addDialog.add(formPanel, BorderLayout.CENTER); // formPanel (dùng null layout) ở giữa
         addDialog.add(buttonPanel, BorderLayout.SOUTH);
+
+        // Hiển thị dialog
         addDialog.setVisible(true);
     }
 

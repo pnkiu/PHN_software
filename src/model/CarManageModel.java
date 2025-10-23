@@ -10,19 +10,17 @@ public class CarManageModel {
     private String maHang;
     private int soLuotBan;
 
-    // SỬA Ở ĐÂY: Đổi 'String tenOton' thành 'String tenOto'
     public CarManageModel(double gia, String loaiOto, String maOto, String moTa, int soLuong, String tenOto, int soLuotBan, String maHang) {
         this.gia = gia;
         this.loaiOto = loaiOto;
         this.maOto = maOto;
         this.moTa = moTa;
         this.soLuong = soLuong;
-        this.tenOto = tenOto; // Giờ phép gán này đã đúng
+        this.tenOto = tenOto;
         this.soLuotBan = soLuotBan;
         this.maHang = maHang;
     }
 
-    // (Tất cả các hàm getters/setters còn lại giữ nguyên)
 
     public double getGia() {
         return gia;
