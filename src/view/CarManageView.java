@@ -166,17 +166,16 @@ public class CarManageView extends JFrame {
         int selectedRow = table.getSelectedRow();
         if (selectedRow == -1) {
             return null; // chưa chọn hàng nào
-            }
-    String maOTO = table.getValueAt(selectedRow, 0).toString();
-    String tenOTO = table.getValueAt(selectedRow, 1).toString();
-    float gia = Float.parseFloat(table.getValueAt(selectedRow, 2).toString());
-    String loaiOTO = table.getValueAt(selectedRow, 3).toString();
-    int soLuong = Integer.parseInt(table.getValueAt(selectedRow, 4).toString());
-    String moTa = table.getValueAt(selectedRow, 5).toString();
-    String maHang = table.getValueAt(selectedRow, 6).toString();
-    
-    return new Oto(maOTO, tenOTO, gia, loaiOTO, soLuong, moTa, maHang);
-}
+        }
+        String maOTO = table.getValueAt(selectedRow, 0).toString();
+        String tenOTO = table.getValueAt(selectedRow, 1).toString();
+        float gia = Float.parseFloat(table.getValueAt(selectedRow, 2).toString());
+        String loaiOTO = table.getValueAt(selectedRow, 3).toString();
+        int soLuong = Integer.parseInt(table.getValueAt(selectedRow, 4).toString());
+        String moTa = table.getValueAt(selectedRow, 5).toString();
+        String maHang = table.getValueAt(selectedRow, 6).toString();
+        return new Oto(maOTO, tenOTO, gia, loaiOTO, soLuong, moTa, maHang);
+    }
 
 
 }

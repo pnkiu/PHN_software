@@ -32,15 +32,14 @@ public class CarManageController implements ActionListener {
          private void xoaOTO() {
             Oto selected = view.getSelectedOto();
             if (selected == null) {
-            JOptionPane.showMessageDialog(view, "Vui lòng chọn 1 xe để xóa!");
-            return;
-        }
-
-        int confirm = JOptionPane.showConfirmDialog(view, 
+                JOptionPane.showMessageDialog(view, "Vui lòng chọn 1 xe để xóa!");
+                return;
+            }
+            int confirm = JOptionPane.showConfirmDialog(view, 
             "Bạn có chắc muốn xóa xe " + selected.getTenOTO() + " không?", 
             "Xác nhận", JOptionPane.YES_NO_OPTION);
 
-        if (confirm == JOptionPane.YES_OPTION) {
+            if (confirm == JOptionPane.YES_OPTION) {
             int kq = OtoDAO.getInstance().delete(selected);
             if (kq > 0) {
                 JOptionPane.showMessageDialog(view, "Xóa thành công!");
