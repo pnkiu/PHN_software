@@ -1,6 +1,7 @@
 package view;
 
 import controller.CarManageController;
+import model.CarManageDAO;
 import model.CarManageModel;
 
 import javax.swing.*;
@@ -32,6 +33,7 @@ public class CarManageView extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.setLayout(new BorderLayout());
+
 
         //bên trái
         Font font = new Font("Arial", Font.BOLD, 40);
@@ -153,15 +155,22 @@ public class CarManageView extends JFrame {
         carTable.setRowHeight(25);
         carTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
         JScrollPane scrollPane = new JScrollPane(carTable);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Thêm padding
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         jPanel_right.add(scrollPane, BorderLayout.CENTER);
         this.add(jPanel_menu, BorderLayout.WEST);
         this.add(jPanel_right, BorderLayout.CENTER);
+
+        this.setVisible(true);
+        CarManageController controller = new CarManageController(this, new CarManageDAO());
+        controller.hienThiDB();
+
     }
+
+    //thêm sản phẩm
     public void addAddCarListener(ActionListener listener) {
         jButton_add.addActionListener(listener);
     }
-    public void displayCarList(List<CarManageModel> carList) {
+    public void hienthidulieu(List<CarManageModel> carList) {
         tableModel.setRowCount(0);
 
         for (CarManageModel car : carList) {
@@ -177,28 +186,23 @@ public class CarManageView extends JFrame {
             tableModel.addRow(rowData);
         }
     }
-
-    // Hàm showAddCarDialog viết theo kiểu "newbie" (dùng null layout)
-    public void showAddCarDialog(CarManageController controller) {
+    public void formThemsp(CarManageController controller) {
         addDialog = new JDialog(this, "Thêm sản phẩm Ô tô", true);
-        addDialog.setSize(400, 550); // Set kích thước cứng
+        addDialog.setSize(400, 550);
         addDialog.setLocationRelativeTo(this);
         addDialog.setLayout(new BorderLayout());
 
-        // Newbie hay dùng null layout (absolute positioning)
         JPanel formPanel = new JPanel();
-        formPanel.setLayout(null); // Tắt layout manager
+        formPanel.setLayout(null);
 
-        // 1. Mã Ô tô
         JLabel l1 = new JLabel("Mã Ô tô:");
-        l1.setBounds(20, 20, 100, 30); // Đặt vị trí (x, y, width, height)
+        l1.setBounds(20, 20, 100, 30);
         formPanel.add(l1);
 
         JTextField txtMaOto = new JTextField();
-        txtMaOto.setBounds(130, 20, 230, 30); // Đặt vị trí
+        txtMaOto.setBounds(130, 20, 230, 30);
         formPanel.add(txtMaOto);
 
-        // 2. Tên Ô tô
         JLabel l2 = new JLabel("Tên Ô tô:");
         l2.setBounds(20, 60, 100, 30);
         formPanel.add(l2);
@@ -207,7 +211,6 @@ public class CarManageView extends JFrame {
         txtTenOto.setBounds(130, 60, 230, 30);
         formPanel.add(txtTenOto);
 
-        // 3. Loại Ô tô
         JLabel l3 = new JLabel("Loại Ô tô:");
         l3.setBounds(20, 100, 100, 30);
         formPanel.add(l3);
@@ -216,7 +219,6 @@ public class CarManageView extends JFrame {
         txtLoaiOto.setBounds(130, 100, 230, 30);
         formPanel.add(txtLoaiOto);
 
-        // 4. Giá
         JLabel l4 = new JLabel("Giá:");
         l4.setBounds(20, 140, 100, 30);
         formPanel.add(l4);
@@ -225,7 +227,6 @@ public class CarManageView extends JFrame {
         txtGia.setBounds(130, 140, 230, 30);
         formPanel.add(txtGia);
 
-        // 5. Số lượng
         JLabel l5 = new JLabel("Số lượng:");
         l5.setBounds(20, 180, 100, 30);
         formPanel.add(l5);
@@ -234,7 +235,6 @@ public class CarManageView extends JFrame {
         txtSoLuong.setBounds(130, 180, 230, 30);
         formPanel.add(txtSoLuong);
 
-        // 6. Mã Hãng
         JLabel l6 = new JLabel("Mã Hãng:");
         l6.setBounds(20, 220, 100, 30);
         formPanel.add(l6);
@@ -243,33 +243,28 @@ public class CarManageView extends JFrame {
         txtMaHang.setBounds(130, 220, 230, 30);
         formPanel.add(txtMaHang);
 
-        // 7. Mô tả (Dùng JTextArea nhưng không có JScrollPane)
         JLabel l7 = new JLabel("Mô tả:");
         l7.setBounds(20, 260, 100, 30);
         formPanel.add(l7);
 
-        JTextArea txtMoTa = new JTextArea(); // Không set hàng cột
-        txtMoTa.setBounds(130, 260, 230, 150); // Đặt kích thước cứng
-        txtMoTa.setLineWrap(true); // Vẫn set line wrap
+        JTextArea txtMoTa = new JTextArea();
+        txtMoTa.setBounds(130, 260, 230, 150);
+        txtMoTa.setLineWrap(true);
         txtMoTa.setWrapStyleWord(true);
-        // Không đặt trong JScrollPane, nếu gõ nhiều chữ sẽ bị mất
         formPanel.add(txtMoTa);
 
-        // Panel cho nút bấm (giữ nguyên vì FlowLayout cũng đơn giản)
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton btnSave = new JButton("Lưu");
         JButton btnCancel = new JButton("Hủy");
         buttonPanel.add(btnSave);
         buttonPanel.add(btnCancel);
 
-        // Gắn sự kiện
         btnCancel.addActionListener(e -> addDialog.dispose());
 
         btnSave.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Logic gọi Controller vẫn giữ nguyên
-                controller.saveNewCar(
+                controller.them(
                         txtMaOto.getText(),
                         txtTenOto.getText(),
                         txtLoaiOto.getText(),
@@ -281,11 +276,8 @@ public class CarManageView extends JFrame {
             }
         });
 
-        // Thêm các panel vào dialog
-        addDialog.add(formPanel, BorderLayout.CENTER); // formPanel (dùng null layout) ở giữa
+        addDialog.add(formPanel, BorderLayout.CENTER);
         addDialog.add(buttonPanel, BorderLayout.SOUTH);
-
-        // Hiển thị dialog
         addDialog.setVisible(true);
     }
 
@@ -294,11 +286,9 @@ public class CarManageView extends JFrame {
             addDialog.dispose();
         }
     }
-
     public void showSuccessMessage(String message) {
         JOptionPane.showMessageDialog(this, message, "Thông báo", JOptionPane.INFORMATION_MESSAGE);
     }
-
     public void showErrorMessage(String message) {
         JOptionPane.showMessageDialog(this, message, "Lỗi", JOptionPane.ERROR_MESSAGE);
     }

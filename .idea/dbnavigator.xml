@@ -25,7 +25,7 @@
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="1bcab108-95f7-4d14-b0da-076cc5af1890">
       <console name="Connection" type="STANDARD" schema="mysql" session="Main" />
-      <console name="qlchoto" type="STANDARD" schema="qlchoto" session="Main"><![CDATA[select * from oto;]]></console>
+      <console name="qlchoto" type="STANDARD" schema="qlchoto" session="Main"><![CDATA[select * from hangoto;]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">

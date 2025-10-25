@@ -5,7 +5,6 @@ import model.CarManageModel;
 import view.CarManageView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList; // SỬA Ở ĐÂY (hoặc giữ List cũng được, nhưng ArrayList rõ ràng hơn)
 import java.util.List;
 
 public class CarManageController {
@@ -16,25 +15,24 @@ public class CarManageController {
         this.view = view;
         this.dao = dao;
         this.view.addAddCarListener(new AddCarListener());
-        refreshCarList();
+        hienThiDB();
     }
 
-    private void refreshCarList() {
-        // SỬA Ở ĐÂY: Gọi hàm selectAll() thay vì getAllCars()
-        // Ghi chú: View.displayCarList(List<T>) vẫn nhận ArrayList<T>
+
+    public void hienThiDB() {
         List<CarManageModel> carList = dao.selectAll();
-        view.displayCarList(carList);
+        view.hienthidulieu(carList);
     }
 
 
     class AddCarListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            view.showAddCarDialog(CarManageController.this);
+            view.formThemsp(CarManageController.this);
         }
     }
 
-    public void saveNewCar(String maOto, String tenOto, String loaiOto, String giaStr, String soLuongStr, String maHang, String moTa) {
+    public void them(String maOto, String tenOto, String loaiOto, String giaStr, String soLuongStr, String maHang, String moTa) {
         try {
             double gia = Double.parseDouble(giaStr);
             int soLuong = Integer.parseInt(soLuongStr);
@@ -47,11 +45,10 @@ public class CarManageController {
             if (rowsAffected > 0) {
                 view.showSuccessMessage("Thêm sản phẩm thành công!");
                 view.closeAddDialog();
-                refreshCarList();
+                hienThiDB();
             } else {
                 view.showErrorMessage("Thêm thất bại!");
             }
-
         } catch (NumberFormatException ex) {
             view.showErrorMessage("Giá và Số lượng phải là số!");
         }

@@ -16,7 +16,9 @@ public class CarManageDAO {
     public int insert(CarManageModel car) {
         int ketQua = 0;
         try {
+            //b1
             Connection connection = DatabaseConnect.getConnection();
+            //b2
             Statement st = connection.createStatement();
             String sql = "INSERT INTO oto (maOTO, tenOTO, gia, loaiOTO, soLuong, moTa, maHang, soLuotBan)"
                     + " VALUES ('" + car.getMaOto() + "'"
@@ -37,6 +39,7 @@ public class CarManageDAO {
         }
         return ketQua;
     }
+    //hiển thị dữ liệu sau khi thêm
     public ArrayList<CarManageModel> selectAll() {
         ArrayList<CarManageModel> ketQua = new ArrayList<>();
         try {
