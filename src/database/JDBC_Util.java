@@ -12,10 +12,10 @@ public class JDBC_Util {
 		try {
 			
 			// Các thông số
-			String url = "jdbc:mySQL://localhost:3306/qlchoto" ;
+			String url = "jdbc:mysql://localhost:3306/qlchoto";
 			String username = "root";
 			String password = "Ngocho";
-			
+						
 			// Tạo kết nối
 			c = DriverManager.getConnection(url, username, password);
 		} catch (SQLException e) {
