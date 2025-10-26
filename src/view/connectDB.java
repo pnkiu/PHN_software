@@ -10,7 +10,7 @@ public class connectDB {
  // Hàm tạo kết nối đến MySQL
     public static Connection getConnection() {
         Connection conn = null;
-        String url = "jdbc:mysql://localhost:3306/qlyoto"; // tên database
+        String url = "jdbc:mysql://localhost:3306/qlchoto"; // tên database
         String user = "root"; // user mặc định của XAMPP
         String password = ""; // nếu bạn không đặt mật khẩu trong XAMPP thì để trống
 

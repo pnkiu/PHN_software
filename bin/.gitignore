@@ -1,0 +1,12 @@
+/.classpath
+/.idea/
+/.project
+/.vscode/
+/PHN_software.iml
+/README.md
+/controller/
+/database/
+/lib/
+/model/
+/test/
+/view/
