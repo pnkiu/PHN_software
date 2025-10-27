@@ -1,6 +1,7 @@
 package view;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -18,83 +19,107 @@ public class CarManageView extends JFrame {
     }
 
     public void init() {
+        Font font = new Font("Arial", Font.BOLD, 40);
+        Font fonts = new Font("Arial", Font.BOLD, 17);
         this.setTitle("Car Manage Software");
-        this.setSize(1050, 620); // Kích thước giữ nguyên
+        this.setSize(1050, 620);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.setLayout(new BorderLayout());
 
-        Font font = new Font("Arial", Font.BOLD, 40);
-        Font fonts = new Font("Arial", Font.BOLD, 17);
+        JPanel root = new JPanel(new BorderLayout());
+        setContentPane(root);
 
-        //bên trái
-        JPanel jPanel_menu = new JPanel();
-        jPanel_menu.setLayout(new BoxLayout(jPanel_menu, BoxLayout.Y_AXIS));
-        jPanel_menu.setPreferredSize(new Dimension(240, 0));
-        jPanel_menu.setBackground(new Color(190, 190, 190, 190));
-        jPanel_menu.setBorder(BorderFactory.createEmptyBorder(35, 10, 15, 10));
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 220, 220)));
+        headerPanel.setBackground(Color.WHITE);
+        headerPanel.setPreferredSize(new Dimension(0, 64));
 
-        // Tiêu đề
+        JLabel appTitle = new JLabel("Car Manage Software");
+        appTitle.setBorder(new EmptyBorder(0, 16, 0, 0));
+        appTitle.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        headerPanel.add(appTitle, BorderLayout.WEST);
+
+        JPanel userPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 12));
+        userPanel.setOpaque(false);
+        JLabel userLabel = new JLabel("Quản trị viên");
+        userLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        userPanel.add(userLabel);
+        headerPanel.add(userPanel, BorderLayout.EAST);
+
+        JButton btnDangXuat = new JButton("Đăng xuất");
+        btnDangXuat.setFocusPainted(false);
+        btnDangXuat.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        btnDangXuat.setBackground(new Color(220, 53, 69)); // đỏ nhạt
+        btnDangXuat.setForeground(Color.WHITE);
+        btnDangXuat.setBorder(BorderFactory.createEmptyBorder(4, 10, 4, 10));
+        btnDangXuat.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        userPanel.add(btnDangXuat);
+
+        root.add(headerPanel, BorderLayout.NORTH);
+
+        // ============================ SIDEBAR SECTION ============================
+        JPanel sidebar = new JPanel();
+        sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
+        sidebar.setBorder(new EmptyBorder(12, 12, 12, 12));
+        sidebar.setBackground(new Color(250, 250, 250));
+        sidebar.setPreferredSize(new Dimension(220, 0));
+
+        ButtonGroup menuGroup = new ButtonGroup();
+
         JLabel jLabel_title = new JLabel("ADMIN", SwingConstants.CENTER);
         jLabel_title.setAlignmentX(Component.CENTER_ALIGNMENT);
-        jLabel_title.setForeground(Color.BLACK);
-        jLabel_title.setFont(font);
-        jPanel_menu.add(jLabel_title);
-        jPanel_menu.add(Box.createRigidArea(new Dimension(0, 50))); //k/cách tiêu đề
+        jLabel_title.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        jLabel_title.setForeground(new Color(50, 50, 50));
+        sidebar.add(jLabel_title);
+        sidebar.add(Box.createRigidArea(new Dimension(0, 40))); // khoảng cách dưới tiêu đề
 
-        //các list role
-        JButton jButton_TK = new JButton("Thống kê");
-        jButton_TK.setFont(fonts);
-        jButton_TK.setBackground(new Color(70, 130, 180));
-        jButton_TK.setForeground(Color.white);
-        jButton_TK.setAlignmentX(Component.CENTER_ALIGNMENT);
-        jButton_TK.setMaximumSize(new Dimension(200, 45));
-        jPanel_menu.add(jButton_TK);
-        jPanel_menu.add(Box.createRigidArea(new Dimension(0, 25)));
+        Dimension buttonSize = new Dimension(180, 40);
+        Font buttonFont = new Font("Segoe UI", Font.PLAIN, 14);
 
-        JButton jButton_QLSP = new JButton("QUẢN LÝ SẢN PHẨM");
-        jButton_QLSP.setFont(fonts);
-        jButton_QLSP.setBackground(new Color(70, 130, 180));
-        jButton_QLSP.setForeground(Color.white);
-        jButton_QLSP.setAlignmentX(Component.CENTER_ALIGNMENT);
-        jButton_QLSP.setMaximumSize(new Dimension(200, 45));
-        jPanel_menu.add(jButton_QLSP);
-        jPanel_menu.add(Box.createRigidArea(new Dimension(0, 25)));
+        JButton btnThongKe = new JButton("Thống kê");
+        btnThongKe.setMaximumSize(buttonSize);
+        btnThongKe.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btnThongKe.setFocusPainted(false);
+        btnThongKe.setFont(buttonFont);
+        menuGroup.add(btnThongKe);
+        sidebar.add(btnThongKe);
+        sidebar.add(Box.createRigidArea(new Dimension(0, 10)));
 
-        JButton jButton_QLGD = new JButton("QUẢN LÝ GIAO DỊCH");
-        jButton_QLGD.setFont(fonts);
-        jButton_QLGD.setBackground(new Color(70, 130, 180));
-        jButton_QLGD.setForeground(Color.white);
-        jButton_QLGD.setAlignmentX(Component.CENTER_ALIGNMENT);
-        jButton_QLGD.setMaximumSize(new Dimension(200, 45));
-        jPanel_menu.add(jButton_QLGD);
-        jPanel_menu.add(Box.createRigidArea(new Dimension(0, 25)));
+        JButton btnSanPham = new JButton("Sản phẩm");
+        btnSanPham.setMaximumSize(buttonSize);
+        btnSanPham.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btnSanPham.setFocusPainted(false);
+        btnSanPham.setFont(buttonFont);
+        menuGroup.add(btnSanPham);
+        sidebar.add(btnSanPham);
+        sidebar.add(Box.createRigidArea(new Dimension(0, 10)));
 
-        JButton jButton_QLKH = new JButton("QUẢN LÝ KHÁCH HÀNG");
-        jButton_QLKH.setFont(fonts);
-        jButton_QLKH.setBackground(new Color(70, 130, 180));
-        jButton_QLKH.setForeground(Color.white);
-        jButton_QLKH.setAlignmentX(Component.CENTER_ALIGNMENT);
-        jButton_QLKH.setMaximumSize(new Dimension(200, 45));
-        jPanel_menu.add(jButton_QLKH);
-        jPanel_menu.add(Box.createRigidArea(new Dimension(0, 25)));
+        JButton btnKhachHang = new JButton("Khách hàng");
+        btnKhachHang.setMaximumSize(buttonSize);
+        btnKhachHang.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btnKhachHang.setFocusPainted(false);
+        btnKhachHang.setFont(buttonFont);
+        menuGroup.add(btnKhachHang);
+        sidebar.add(btnKhachHang);
+        sidebar.add(Box.createRigidArea(new Dimension(0, 10)));
 
-        JButton jButton_QLNV = new JButton("QUẢN LÝ NHÂN VIÊN");
-        jButton_QLNV.setFont(fonts);
-        jButton_QLNV.setBackground(new Color(70, 130, 180));
-        jButton_QLNV.setForeground(Color.white);
-        jButton_QLNV.setAlignmentX(Component.CENTER_ALIGNMENT);
-        jButton_QLNV.setMaximumSize(new Dimension(200, 45));
-        jPanel_menu.add(jButton_QLNV);
-        jPanel_menu.add(Box.createRigidArea(new Dimension(0, 25)));
+        JButton btnNhanVien = new JButton("Nhân viên");
+        btnNhanVien.setMaximumSize(buttonSize);
+        btnNhanVien.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btnNhanVien.setFocusPainted(false);
+        btnNhanVien.setFont(buttonFont);
+        menuGroup.add(btnNhanVien);
+        sidebar.add(btnNhanVien);
+        sidebar.add(Box.createRigidArea(new Dimension(0, 10)));
 
-        JButton jButton_out = new JButton("Đăng xuất");
-        jButton_out.setFont(fonts);
-        jButton_out.setBackground(new Color(70, 130, 180));
-        jButton_out.setForeground(Color.white);
-        jButton_out.setAlignmentX(Component.CENTER_ALIGNMENT);
-        jButton_out.setMaximumSize(new Dimension(200, 45));
-        jPanel_menu.add(jButton_out);
+        JButton btnGiaoDich = new JButton("Giao dịch");
+        btnGiaoDich.setMaximumSize(buttonSize);
+        btnGiaoDich.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btnGiaoDich.setFocusPainted(false);
+        btnGiaoDich.setFont(buttonFont);
+        menuGroup.add(btnGiaoDich);
+        sidebar.add(btnGiaoDich);
 
 
         //bên phải
@@ -177,7 +202,7 @@ public class CarManageView extends JFrame {
         panel_bottom.add(panel_doanhThu);
 
         jPanel_right.add(panel_bottom, BorderLayout.SOUTH);
-        this.add(jPanel_menu, BorderLayout.WEST);
+        this.add(sidebar, BorderLayout.WEST);
         this.add(jPanel_right, BorderLayout.CENTER);
 
         this.setVisible(true);

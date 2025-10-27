@@ -28,6 +28,7 @@ public class ProductController {
     class AddCarListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
+
             view.formThemsp(ProductController.this);
         }
     }

@@ -34,7 +34,6 @@ public class ProductView extends JFrame {
         this.setLocationRelativeTo(null);
         this.setLayout(new BorderLayout());
 
-
         //bên trái
         Font font = new Font("Arial", Font.BOLD, 40);
         Font fonts = new Font("Arial", Font.BOLD, 17);
