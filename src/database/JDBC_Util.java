@@ -8,15 +8,15 @@ import java.sql.SQLException;
 
 public class JDBC_Util {
 	public static Connection getConnection() {
+		// Class.forName("com.mysql.cj.jdbc.Driver");
 		Connection c = null;
 		try {
 			
-			
 			// Các thông số
-			String url = "jdbc:mySQL://localhost:3306/qlchoto";
+			String url = "jdbc:mysql://localhost:3306/qlchoto";
 			String username = "root";
 			String password = "Ngocho";
-						
+
 			// Tạo kết nối
 			c = DriverManager.getConnection(url, username, password);
 		} catch (SQLException e) {
@@ -46,5 +46,12 @@ public class JDBC_Util {
 				e.printStackTrace();
 			}
 		}
-
 }
+
+//    public static void main(String[] args) {
+//
+//        Connection connection = JDBC_Util.getConnection();
+//        JDBC_Util.printInfo(connection);
+//        JDBC_Util.closeConnection(connection);
+//    }
+//}

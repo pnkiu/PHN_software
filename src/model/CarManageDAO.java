@@ -1,6 +1,6 @@
 package model;
 
-import until.DatabaseConnect;
+import database.JDBC_Util;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -28,7 +28,7 @@ public class CarManageDAO {
         Connection connection = null;
         Statement st = null;
         try {
-            connection = DatabaseConnect.getConnection();
+            connection = JDBC_Util.getConnection();
             st = connection.createStatement();
             String sql = "INSERT INTO oto (maOTO, tenOTO, gia, loaiOTO, soLuong, moTa, maHang, soLuotBan)"
                     + " VALUES ('" + car.getMaOto() + "'"
@@ -48,7 +48,7 @@ public class CarManageDAO {
         } finally {
             try {
                 if (st != null) st.close();
-                if (connection != null) DatabaseConnect.closeConnection(connection);
+                if (connection != null) JDBC_Util.closeConnection(connection);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -61,7 +61,7 @@ public class CarManageDAO {
         Connection connection = null;
         Statement st = null;
         try {
-            connection = DatabaseConnect.getConnection();
+            connection = JDBC_Util.getConnection();
             st = connection.createStatement();
             String sql = "UPDATE oto SET "
                     + " tenOTO = '" + car.getTenOto() + "'"
@@ -72,7 +72,7 @@ public class CarManageDAO {
                     + ", maHang = '" + car.getMaHang() + "'"
                     + ", soLuotBan = " + car.getSoLuotBan()
                     + " WHERE maOTO = '" + car.getMaOto() + "'";
-            
+
             ketQua = st.executeUpdate(sql);
             System.out.println("Bạn đã thực thi " + sql);
             System.out.println("Có " + ketQua + " dòng bị thay đổi");
@@ -82,7 +82,7 @@ public class CarManageDAO {
         } finally {
             try {
                 if (st != null) st.close();
-                if (connection != null) DatabaseConnect.closeConnection(connection);
+                if (connection != null) JDBC_Util.closeConnection(connection);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -95,10 +95,10 @@ public class CarManageDAO {
         Connection connection = null;
         Statement st = null;
         try {
-            connection = DatabaseConnect.getConnection();
+            connection = JDBC_Util.getConnection();
             st = connection.createStatement();
             String sql = "DELETE FROM oto WHERE maOTO = '" + maOto + "'";
-            
+
             ketQua = st.executeUpdate(sql);
             System.out.println("Bạn đã thực thi " + sql);
             System.out.println("Có " + ketQua + " dòng bị thay đổi");
@@ -108,7 +108,7 @@ public class CarManageDAO {
         } finally {
             try {
                 if (st != null) st.close();
-                if (connection != null) DatabaseConnect.closeConnection(connection);
+                if (connection != null) JDBC_Util.closeConnection(connection);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -122,7 +122,7 @@ public class CarManageDAO {
         Statement st = null;
         ResultSet rs = null;
         try {
-            connection = DatabaseConnect.getConnection();
+            connection = JDBC_Util.getConnection();
             st = connection.createStatement();
             String sql = "SELECT * FROM oto WHERE maOTO = '" + maOto + "'";
             rs = st.executeQuery(sql);
@@ -144,7 +144,7 @@ public class CarManageDAO {
             try {
                 if (rs != null) rs.close();
                 if (st != null) st.close();
-                if (connection != null) DatabaseConnect.closeConnection(connection);
+                if (connection != null) JDBC_Util.closeConnection(connection);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -158,7 +158,7 @@ public class CarManageDAO {
         Statement st = null;
         ResultSet rs = null;
         try {
-            connection = DatabaseConnect.getConnection();
+            connection = JDBC_Util.getConnection();
             st = connection.createStatement();
             String sql = "SELECT * FROM oto";
             rs = st.executeQuery(sql);
@@ -182,7 +182,7 @@ public class CarManageDAO {
             try {
                 if (rs != null) rs.close();
                 if (st != null) st.close();
-                if (connection != null) DatabaseConnect.closeConnection(connection);
+                if (connection != null) JDBC_Util.closeConnection(connection);
             } catch (SQLException e) {
                 e.printStackTrace();
             }

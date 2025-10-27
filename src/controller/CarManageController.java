@@ -11,17 +11,17 @@ public class CarManageController {
         this.carDAO = CarManageDAO.getInstance();
     }
 
-    public int addCar(String maOto, String tenOto, double gia, String loaiOto, 
-                     int soLuong, String moTa, String maHang) {
-        CarManageModel car = new CarManageModel(gia, loaiOto, maOto, moTa, 
-                                               soLuong, tenOto, 0, maHang);
+    public int addCar(String maOto, String tenOto, double gia, String loaiOto,
+                      int soLuong, String moTa, String maHang) {
+        CarManageModel car = new CarManageModel(gia, loaiOto, maOto, moTa,
+                soLuong, tenOto, 0, maHang);
         return carDAO.insert(car);
     }
 
-    public int updateCar(String maOto, String tenOto, double gia, String loaiOto, 
-                        int soLuong, String moTa, String maHang, int soLuotBan) {
-        CarManageModel car = new CarManageModel(gia, loaiOto, maOto, moTa, 
-                                               soLuong, tenOto, soLuotBan, maHang);
+    public int updateCar(String maOto, String tenOto, double gia, String loaiOto,
+                         int soLuong, String moTa, String maHang, int soLuotBan) {
+        CarManageModel car = new CarManageModel(gia, loaiOto, maOto, moTa,
+                soLuong, tenOto, soLuotBan, maHang);
         return carDAO.update(car);
     }
 
@@ -37,8 +37,8 @@ public class CarManageController {
         return carDAO.selectAll();
     }
 
-    public boolean validateCarData(String maOto, String tenOto, String giaStr, 
-                                  String soLuongStr, String loaiOto, String maHang) {
+    public boolean validateCarData(String maOto, String tenOto, String giaStr,
+                                   String soLuongStr, String loaiOto, String maHang) {
         if (maOto == null || maOto.trim().isEmpty()) {
             return false;
         }

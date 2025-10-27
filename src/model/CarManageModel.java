@@ -3,46 +3,24 @@ package model;
 public class CarManageModel {
     private String maOto;
     private String tenOto;
-    private double gia;
     private String loaiOto;
+    private double gia;
     private int soLuong;
     private String moTa;
     private String maHang;
     private int soLuotBan;
 
-    // Constructor đầy đủ tham số
-    public CarManageModel(double gia, String loaiOto, String maOto, String moTa, 
-                         int soLuong, String tenOto, int soLuotBan, String maHang) {
-        this.maOto = maOto;
-        this.tenOto = tenOto;
+    public CarManageModel(double gia, String loaiOto, String maOto, String moTa, int soLuong, String tenOto, int soLuotBan, String maHang) {
         this.gia = gia;
         this.loaiOto = loaiOto;
-        this.soLuong = soLuong;
-        this.moTa = moTa;
-        this.maHang = maHang;
-        this.soLuotBan = soLuotBan;
-    }
-
-    // Constructor mặc định
-    public CarManageModel() {
-    }
-
-    // Getter và Setter
-    public String getMaOto() {
-        return maOto;
-    }
-
-    public void setMaOto(String maOto) {
         this.maOto = maOto;
-    }
-
-    public String getTenOto() {
-        return tenOto;
-    }
-
-    public void setTenOto(String tenOto) {
+        this.moTa = moTa;
+        this.soLuong = soLuong;
         this.tenOto = tenOto;
+        this.soLuotBan = soLuotBan;
+        this.maHang = maHang;
     }
+
 
     public double getGia() {
         return gia;
@@ -60,12 +38,12 @@ public class CarManageModel {
         this.loaiOto = loaiOto;
     }
 
-    public int getSoLuong() {
-        return soLuong;
+    public String getMaOto() {
+        return maOto;
     }
 
-    public void setSoLuong(int soLuong) {
-        this.soLuong = soLuong;
+    public void setMaOto(String maOto) {
+        this.maOto = maOto;
     }
 
     public String getMoTa() {
@@ -74,6 +52,22 @@ public class CarManageModel {
 
     public void setMoTa(String moTa) {
         this.moTa = moTa;
+    }
+
+    public int getSoLuong() {
+        return soLuong;
+    }
+
+    public void setSoLuong(int soLuong) {
+        this.soLuong = soLuong;
+    }
+
+    public String getTenOto() {
+        return tenOto;
+    }
+
+    public void setTenOto(String tenOto) {
+        this.tenOto = tenOto;
     }
 
     public String getMaHang() {
@@ -90,19 +84,5 @@ public class CarManageModel {
 
     public void setSoLuotBan(int soLuotBan) {
         this.soLuotBan = soLuotBan;
-    }
-
-    @Override
-    public String toString() {
-        return "CarManageModel{" +
-                "maOto='" + maOto + '\'' +
-                ", tenOto='" + tenOto + '\'' +
-                ", gia=" + gia +
-                ", loaiOto='" + loaiOto + '\'' +
-                ", soLuong=" + soLuong +
-                ", moTa='" + moTa + '\'' +
-                ", maHang='" + maHang + '\'' +
-                ", soLuotBan=" + soLuotBan +
-                '}';
     }
 }

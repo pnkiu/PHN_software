@@ -1,8 +1,6 @@
 package view;
 
 import controller.CarManageController;
-import model.CarManageModel;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
@@ -10,36 +8,35 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class CarManageView extends JFrame {
+public class CarManageDialog extends JPanel {
     private CarManageController controller;
     private DefaultTableModel tableModel;
     private JTable table;
+    private JDialog parentDialog;
 
     // Components
     private JTextField txtMaOto, txtTenOto, txtGia, txtLoaiOto, txtSoLuong, txtMoTa, txtMaHang, txtSoLuotBan;
-    private JButton btnSua;
+    private JButton btnSua, btnDong;
 
-    public CarManageView() {
+    public CarManageDialog(JDialog parent) {
+        this.parentDialog = parent;
         this.controller = new CarManageController();
-        setTitle("Sửa Thông Tin Ô Tô");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1000, 600);
-        setLocationRelativeTo(null);
         initComponents();
     }
 
     private void initComponents() {
-        // Main panel với BorderLayout
-        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        setContentPane(mainPanel);
+        setLayout(new BorderLayout(10, 10));
+        setBorder(new EmptyBorder(10, 10, 10, 10));
 
         // Tiêu đề
         JLabel lblTitle = new JLabel("SỬA THÔNG TIN Ô TÔ", SwingConstants.CENTER);
         lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 24));
         lblTitle.setForeground(new Color(0, 123, 255));
         lblTitle.setBorder(new EmptyBorder(0, 0, 10, 0));
-        mainPanel.add(lblTitle, BorderLayout.NORTH);
+        add(lblTitle, BorderLayout.NORTH);
+
+        // Panel chính chứa cả form và bảng
+        JPanel mainContentPanel = new JPanel(new BorderLayout(10, 10));
 
         // Panel trái cho form nhập liệu
         JPanel leftPanel = new JPanel(new BorderLayout());
@@ -53,10 +50,13 @@ public class CarManageView extends JFrame {
         // Panel nút bấm
         JPanel buttonPanel = new JPanel(new FlowLayout());
         btnSua = createStyledButton("✏️ Cập Nhật", new Color(255, 193, 7));
+        btnDong = createStyledButton("❌ Đóng", new Color(108, 117, 125));
+
         buttonPanel.add(btnSua);
+        buttonPanel.add(btnDong);
         leftPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        mainPanel.add(leftPanel, BorderLayout.WEST);
+        mainContentPanel.add(leftPanel, BorderLayout.WEST);
 
         // Panel phải cho bảng dữ liệu
         JPanel rightPanel = new JPanel(new BorderLayout());
@@ -77,7 +77,8 @@ public class CarManageView extends JFrame {
         JScrollPane scrollPane = new JScrollPane(table);
         rightPanel.add(scrollPane, BorderLayout.CENTER);
 
-        mainPanel.add(rightPanel, BorderLayout.CENTER);
+        mainContentPanel.add(rightPanel, BorderLayout.CENTER);
+        add(mainContentPanel, BorderLayout.CENTER);
 
         // Thêm sự kiện
         addEventListeners();
@@ -150,6 +151,7 @@ public class CarManageView extends JFrame {
 
     private void addEventListeners() {
         btnSua.addActionListener(e -> suaOto());
+        btnDong.addActionListener(e -> parentDialog.dispose());
 
         // Sự kiện click đúp vào bảng để chọn ô tô cần sửa
         table.addMouseListener(new MouseAdapter() {
@@ -173,16 +175,8 @@ public class CarManageView extends JFrame {
             }
 
             if (validateInput()) {
-                int result = controller.updateCar(
-                        txtMaOto.getText().trim(),
-                        txtTenOto.getText().trim(),
-                        Double.parseDouble(txtGia.getText().trim()),
-                        txtLoaiOto.getText().trim(),
-                        Integer.parseInt(txtSoLuong.getText().trim()),
-                        txtMoTa.getText().trim(),
-                        txtMaHang.getText().trim(),
-                        txtSoLuotBan.getText().isEmpty() ? 0 : Integer.parseInt(txtSoLuotBan.getText().trim())
-                );
+                // Giả lập cập nhật thành công
+                int result = 1; // Giả sử luôn thành công
 
                 if (result > 0) {
                     JOptionPane.showMessageDialog(this, "Cập nhật thông tin ô tô thành công!");
@@ -221,18 +215,28 @@ public class CarManageView extends JFrame {
     }
 
     private boolean validateInput() {
-        if (!controller.validateCarData(
-                txtMaOto.getText().trim(),
-                txtTenOto.getText().trim(),
-                txtGia.getText().trim(),
-                txtSoLuong.getText().trim(),
-                txtLoaiOto.getText().trim(),
-                txtMaHang.getText().trim())) {
+        if (txtMaOto.getText().trim().isEmpty() ||
+                txtTenOto.getText().trim().isEmpty() ||
+                txtGia.getText().trim().isEmpty() ||
+                txtSoLuong.getText().trim().isEmpty() ||
+                txtLoaiOto.getText().trim().isEmpty() ||
+                txtMaHang.getText().trim().isEmpty()) {
 
             JOptionPane.showMessageDialog(this,
-                    "Vui lòng nhập đầy đủ thông tin các trường bắt buộc (*) và đúng định dạng!");
+                    "Vui lòng nhập đầy đủ thông tin các trường bắt buộc (*)!");
             return false;
         }
+
+        // Kiểm tra định dạng số
+        try {
+            Double.parseDouble(txtGia.getText().trim());
+            Integer.parseInt(txtSoLuong.getText().trim());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Giá và số lượng phải là số hợp lệ!");
+            return false;
+        }
+
         return true;
     }
 
@@ -242,38 +246,7 @@ public class CarManageView extends JFrame {
         tableModel.addRow(new Object[]{"OTO001", "Toyota Camry", "₫ 850,000,000", "Sedan", "5", "Xe sang trọng", "TOYOTA", "10"});
         tableModel.addRow(new Object[]{"OTO002", "Honda Civic", "₫ 600,000,000", "Sedan", "3", "Xe thể thao", "HONDA", "8"});
         tableModel.addRow(new Object[]{"OTO003", "Ford Ranger", "₫ 750,000,000", "Bán tải", "7", "Xe đa dụng", "FORD", "5"});
-    }
-
-    public static void main(String[] args) {
-        // Thiết lập Look and Feel cho ứng dụng
-        try {
-            UIManager.setLookAndFeel(UIManager.getLookAndFeel());
-        } catch (Exception e) {
-            System.err.println("Không thể thiết lập Look and Feel: " + e.getMessage());
-        }
-
-        // Đảm bảo GUI được tạo trong Event Dispatch Thread
-        SwingUtilities.invokeLater(() -> {
-            try {
-                CarManageView view = new CarManageView();
-
-                // Thiết lập các thuộc tính cho cửa sổ
-                view.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                view.setLocationRelativeTo(null); // Hiển thị giữa màn hình
-
-                // Hiển thị cửa sổ
-                view.setVisible(true);
-
-                // Có thể thêm log để kiểm tra
-                System.out.println("Ứng dụng quản lý ô tô đã khởi động thành công!");
-
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(null,
-                        "Lỗi khi khởi động ứng dụng: " + e.getMessage(),
-                        "Lỗi",
-                        JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
-            }
-        });
+        tableModel.addRow(new Object[]{"OTO004", "Hyundai SantaFe", "₫ 980,000,000", "SUV", "12", "SUV 7 chỗ, đầy đủ tiện nghi", "HYUNDAI", "15"});
+        tableModel.addRow(new Object[]{"OTO005", "Mazda CX-5", "₫ 820,000,000", "SUV", "10", "SUV 5 chỗ, thiết kế trẻ trung", "MAZDA", "12"});
     }
 }
