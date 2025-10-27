@@ -1,5 +1,7 @@
+
 package view;
 
+import model.CarManageModel;
 import controller.CarManageController;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -7,6 +9,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
 
 public class CarManageDialog extends JPanel {
     private CarManageController controller;
@@ -22,6 +25,7 @@ public class CarManageDialog extends JPanel {
         this.parentDialog = parent;
         this.controller = new CarManageController();
         initComponents();
+        loadCarDataFromDatabase(); // Thay thế loadSampleData()
     }
 
     private void initComponents() {
@@ -82,9 +86,6 @@ public class CarManageDialog extends JPanel {
 
         // Thêm sự kiện
         addEventListeners();
-
-        // Load dữ liệu mẫu cho bảng
-        loadSampleData();
     }
 
     private JPanel createFormPanel() {
@@ -167,6 +168,41 @@ public class CarManageDialog extends JPanel {
         });
     }
 
+    // PHƯƠNG THỨC TẢI DỮ LIỆU TỪ DATABASE
+    private void loadCarDataFromDatabase() {
+        try {
+            List<CarManageModel> carList = controller.getCarList();
+            tableModel.setRowCount(0); // Xóa dữ liệu cũ
+
+            for (CarManageModel car : carList) {
+                Object[] rowData = {
+                        car.getMaOto(),
+                        car.getTenOto(),
+                        formatCurrency(car.getGia()),
+                        car.getLoaiOto(),
+                        String.valueOf(car.getSoLuong()),
+                        car.getMoTa(),
+                        car.getMaHang(),
+                        String.valueOf(car.getSoLuotBan())
+                };
+                tableModel.addRow(rowData);
+            }
+
+            System.out.println("Đã tải " + carList.size() + " ô tô từ database");
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    "Lỗi khi tải dữ liệu từ database: " + e.getMessage(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+
+            // Hiển thị thông báo lỗi chi tiết hơn
+            System.err.println("Chi tiết lỗi:");
+            e.printStackTrace();
+        }
+    }
+
+    // PHƯƠNG THỨC SỬA Ô TÔ
     private void suaOto() {
         try {
             if (txtMaOto.getText().trim().isEmpty()) {
@@ -175,12 +211,32 @@ public class CarManageDialog extends JPanel {
             }
 
             if (validateInput()) {
-                // Giả lập cập nhật thành công
-                int result = 1; // Giả sử luôn thành công
+                // Tạo đối tượng CarManageModel từ dữ liệu form
+                CarManageModel car = new CarManageModel();
+                car.setMaOto(txtMaOto.getText().trim());
+                car.setTenOto(txtTenOto.getText().trim());
+                car.setGia(Double.parseDouble(txtGia.getText().trim()));
+                car.setLoaiOto(txtLoaiOto.getText().trim());
+                car.setSoLuong(Integer.parseInt(txtSoLuong.getText().trim()));
+                car.setMoTa(txtMoTa.getText().trim());
+                car.setMaHang(txtMaHang.getText().trim());
+                // soLuotBan không sửa được
 
-                if (result > 0) {
+                System.out.println("Dữ liệu sẽ cập nhật:");
+                System.out.println("Mã: " + car.getMaOto());
+                System.out.println("Tên: " + car.getTenOto());
+                System.out.println("Giá: " + car.getGia());
+                System.out.println("Loại: " + car.getLoaiOto());
+                System.out.println("Số lượng: " + car.getSoLuong());
+                System.out.println("Mô tả: " + car.getMoTa());
+                System.out.println("Mã hãng: " + car.getMaHang());
+
+                // Gọi controller để cập nhật
+                boolean success = controller.updateCar(car);
+
+                if (success) {
                     JOptionPane.showMessageDialog(this, "Cập nhật thông tin ô tô thành công!");
-                    loadSampleData(); // Reload data
+                    loadCarDataFromDatabase(); // Reload data từ database
                     lamMoiForm();
                 } else {
                     JOptionPane.showMessageDialog(this, "Cập nhật thông tin thất bại!");
@@ -188,18 +244,35 @@ public class CarManageDialog extends JPanel {
             }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Lỗi: " + ex.getMessage());
+            ex.printStackTrace();
         }
     }
 
     private void hienThiThongTinTuTable(int row) {
-        txtMaOto.setText(tableModel.getValueAt(row, 0).toString());
-        txtTenOto.setText(tableModel.getValueAt(row, 1).toString());
-        txtGia.setText(tableModel.getValueAt(row, 2).toString().replace("₫", "").replace(",", "").trim());
-        txtLoaiOto.setText(tableModel.getValueAt(row, 3).toString());
-        txtSoLuong.setText(tableModel.getValueAt(row, 4).toString());
-        txtMoTa.setText(tableModel.getValueAt(row, 5).toString());
-        txtMaHang.setText(tableModel.getValueAt(row, 6).toString());
-        txtSoLuotBan.setText(tableModel.getValueAt(row, 7).toString());
+        try {
+            String maOTO = tableModel.getValueAt(row, 0).toString();
+            System.out.println("Đang tìm ô tô với mã: " + maOTO);
+
+            CarManageModel car = controller.getCarByMaOTO(maOTO);
+
+            if (car != null) {
+                txtMaOto.setText(car.getMaOto());
+                txtTenOto.setText(car.getTenOto());
+                txtGia.setText(String.valueOf((int)car.getGia())); // Bỏ định dạng tiền tệ
+                txtLoaiOto.setText(car.getLoaiOto());
+                txtSoLuong.setText(String.valueOf(car.getSoLuong()));
+                txtMoTa.setText(car.getMoTa());
+                txtMaHang.setText(car.getMaHang());
+                txtSoLuotBan.setText(String.valueOf(car.getSoLuotBan()));
+
+                System.out.println("Đã tải thông tin ô tô: " + car.getTenOto());
+            } else {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy thông tin ô tô với mã: " + maOTO);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi khi tải thông tin ô tô: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private void lamMoiForm() {
@@ -240,13 +313,8 @@ public class CarManageDialog extends JPanel {
         return true;
     }
 
-    private void loadSampleData() {
-        // Dữ liệu mẫu cho demo
-        tableModel.setRowCount(0);
-        tableModel.addRow(new Object[]{"OTO001", "Toyota Camry", "₫ 850,000,000", "Sedan", "5", "Xe sang trọng", "TOYOTA", "10"});
-        tableModel.addRow(new Object[]{"OTO002", "Honda Civic", "₫ 600,000,000", "Sedan", "3", "Xe thể thao", "HONDA", "8"});
-        tableModel.addRow(new Object[]{"OTO003", "Ford Ranger", "₫ 750,000,000", "Bán tải", "7", "Xe đa dụng", "FORD", "5"});
-        tableModel.addRow(new Object[]{"OTO004", "Hyundai SantaFe", "₫ 980,000,000", "SUV", "12", "SUV 7 chỗ, đầy đủ tiện nghi", "HYUNDAI", "15"});
-        tableModel.addRow(new Object[]{"OTO005", "Mazda CX-5", "₫ 820,000,000", "SUV", "10", "SUV 5 chỗ, thiết kế trẻ trung", "MAZDA", "12"});
+    // PHƯƠNG THỨC ĐỊNH DẠNG TIỀN TỆ
+    private String formatCurrency(double amount) {
+        return String.format("₫ %,d", (int) amount);
     }
 }

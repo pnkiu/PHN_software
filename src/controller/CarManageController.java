@@ -1,68 +1,48 @@
 package controller;
 
-import model.CarManageDAO;
+import dao.ProductDAO;
 import model.CarManageModel;
 import java.util.ArrayList;
+import java.util.List;
 
 public class CarManageController {
-    private CarManageDAO carDAO;
+    private ProductDAO productDAO;
 
     public CarManageController() {
-        this.carDAO = CarManageDAO.getInstance();
+        this.productDAO = ProductDAO.getInstance();
     }
 
-    public int addCar(String maOto, String tenOto, double gia, String loaiOto,
-                      int soLuong, String moTa, String maHang) {
-        CarManageModel car = new CarManageModel(gia, loaiOto, maOto, moTa,
-                soLuong, tenOto, 0, maHang);
-        return carDAO.insert(car);
+    // Cập nhật thông tin ô tô
+    public boolean updateCar(CarManageModel car) {
+        int result = productDAO.update(car);
+        return result > 0;
     }
 
-    public int updateCar(String maOto, String tenOto, double gia, String loaiOto,
-                         int soLuong, String moTa, String maHang, int soLuotBan) {
-        CarManageModel car = new CarManageModel(gia, loaiOto, maOto, moTa,
-                soLuong, tenOto, soLuotBan, maHang);
-        return carDAO.update(car);
+    // Lấy thông tin ô tô theo mã
+    public CarManageModel getCarByMaOTO(String maOTO) {
+        return productDAO.selectById(maOTO);
     }
 
-    public int deleteCar(String maOto) {
-        return carDAO.delete(maOto);
+    // Lấy danh sách ô tô
+    public List<CarManageModel> getCarList() {
+        return productDAO.selectAll();
     }
 
-    public CarManageModel findCarById(String maOto) {
-        return carDAO.selectById(maOto);
-    }
+    // Validation dữ liệu
+    public boolean validateCarData(String tenOTO, String gia, String soLuong, String loaiOTO, String maHang) {
+        if (tenOTO == null || tenOTO.trim().isEmpty()) return false;
+        if (gia == null || gia.trim().isEmpty()) return false;
+        if (soLuong == null || soLuong.trim().isEmpty()) return false;
+        if (loaiOTO == null || loaiOTO.trim().isEmpty()) return false;
+        if (maHang == null || maHang.trim().isEmpty()) return false;
 
-    public ArrayList<CarManageModel> getAllCars() {
-        return carDAO.selectAll();
-    }
-
-    public boolean validateCarData(String maOto, String tenOto, String giaStr,
-                                   String soLuongStr, String loaiOto, String maHang) {
-        if (maOto == null || maOto.trim().isEmpty()) {
-            return false;
-        }
-        if (tenOto == null || tenOto.trim().isEmpty()) {
-            return false;
-        }
-        if (loaiOto == null || loaiOto.trim().isEmpty()) {
-            return false;
-        }
-        if (maHang == null || maHang.trim().isEmpty()) {
-            return false;
-        }
         try {
-            Double.parseDouble(giaStr);
-            Integer.parseInt(soLuongStr);
+            Double.parseDouble(gia);
+            Integer.parseInt(soLuong);
         } catch (NumberFormatException e) {
             return false;
         }
-        return true;
-    }
 
-    // Thêm phương thức kiểm tra trùng mã ô tô
-    public boolean isMaOtoExists(String maOto) {
-        CarManageModel car = carDAO.selectById(maOto);
-        return car != null;
+        return true;
     }
 }

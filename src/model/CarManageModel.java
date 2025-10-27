@@ -21,6 +21,10 @@ public class CarManageModel {
         this.maHang = maHang;
     }
 
+    public CarManageModel() {
+
+    }
+
 
     public double getGia() {
         return gia;
