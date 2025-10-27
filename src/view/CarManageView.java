@@ -1,27 +1,17 @@
 package view;
 
-import controller.CarManageController;
-import model.CarManageDAO;
-import model.CarManageModel;
-
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.util.List;
-import java.awt.event.ActionEvent;
+import java.util.Calendar;
+import java.util.Date;
 
 public class CarManageView extends JFrame {
-    private JButton jButton_add;
-    private JButton jButton_edit;
-    private JButton jButton_delete;
-    private JTextField jTextField_search;
-    private JButton jButton_search;
 
-    private JDialog addDialog;
-
-    private JTable carTable;
+    private JTable tableOtoBanChay;
     private DefaultTableModel tableModel;
+
 
     public CarManageView() {
         this.init();
@@ -29,29 +19,30 @@ public class CarManageView extends JFrame {
 
     public void init() {
         this.setTitle("Car Manage Software");
-        this.setSize(1050, 620);
+        this.setSize(1050, 620); // Kích thước giữ nguyên
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.setLayout(new BorderLayout());
 
-
-        //bên trái
         Font font = new Font("Arial", Font.BOLD, 40);
         Font fonts = new Font("Arial", Font.BOLD, 17);
 
+        //bên trái
         JPanel jPanel_menu = new JPanel();
         jPanel_menu.setLayout(new BoxLayout(jPanel_menu, BoxLayout.Y_AXIS));
         jPanel_menu.setPreferredSize(new Dimension(240, 0));
         jPanel_menu.setBackground(new Color(190, 190, 190, 190));
         jPanel_menu.setBorder(BorderFactory.createEmptyBorder(35, 10, 15, 10));
 
+        // Tiêu đề
         JLabel jLabel_title = new JLabel("ADMIN", SwingConstants.CENTER);
         jLabel_title.setAlignmentX(Component.CENTER_ALIGNMENT);
         jLabel_title.setForeground(Color.BLACK);
         jLabel_title.setFont(font);
         jPanel_menu.add(jLabel_title);
-        jPanel_menu.add(Box.createRigidArea(new Dimension(0, 50)));
+        jPanel_menu.add(Box.createRigidArea(new Dimension(0, 50))); //k/cách tiêu đề
 
+        //các list role
         JButton jButton_TK = new JButton("Thống kê");
         jButton_TK.setFont(fonts);
         jButton_TK.setBackground(new Color(70, 130, 180));
@@ -72,7 +63,7 @@ public class CarManageView extends JFrame {
 
         JButton jButton_QLGD = new JButton("QUẢN LÝ GIAO DỊCH");
         jButton_QLGD.setFont(fonts);
-        jButton_QLGD.setBackground(new Color(70,130,180));
+        jButton_QLGD.setBackground(new Color(70, 130, 180));
         jButton_QLGD.setForeground(Color.white);
         jButton_QLGD.setAlignmentX(Component.CENTER_ALIGNMENT);
         jButton_QLGD.setMaximumSize(new Dimension(200, 45));
@@ -81,7 +72,7 @@ public class CarManageView extends JFrame {
 
         JButton jButton_QLKH = new JButton("QUẢN LÝ KHÁCH HÀNG");
         jButton_QLKH.setFont(fonts);
-        jButton_QLKH.setBackground(new Color(70,130,180));
+        jButton_QLKH.setBackground(new Color(70, 130, 180));
         jButton_QLKH.setForeground(Color.white);
         jButton_QLKH.setAlignmentX(Component.CENTER_ALIGNMENT);
         jButton_QLKH.setMaximumSize(new Dimension(200, 45));
@@ -90,7 +81,7 @@ public class CarManageView extends JFrame {
 
         JButton jButton_QLNV = new JButton("QUẢN LÝ NHÂN VIÊN");
         jButton_QLNV.setFont(fonts);
-        jButton_QLNV.setBackground(new Color(70,130,180));
+        jButton_QLNV.setBackground(new Color(70, 130, 180));
         jButton_QLNV.setForeground(Color.white);
         jButton_QLNV.setAlignmentX(Component.CENTER_ALIGNMENT);
         jButton_QLNV.setMaximumSize(new Dimension(200, 45));
@@ -99,197 +90,128 @@ public class CarManageView extends JFrame {
 
         JButton jButton_out = new JButton("Đăng xuất");
         jButton_out.setFont(fonts);
-        jButton_out.setBackground(new Color(70,130,180));
-        jButton_QLNV.setForeground(Color.white);
+        jButton_out.setBackground(new Color(70, 130, 180));
+        jButton_out.setForeground(Color.white);
         jButton_out.setAlignmentX(Component.CENTER_ALIGNMENT);
         jButton_out.setMaximumSize(new Dimension(200, 45));
         jPanel_menu.add(jButton_out);
 
+
         //bên phải
-        JPanel jPanel_right = new JPanel(new BorderLayout());
+        JPanel jPanel_right = new JPanel(new BorderLayout(10, 10));
         jPanel_right.setBackground(Color.WHITE);
-        JLabel jLabel_header = new JLabel("QUẢN LÝ SẢN PHẨM", SwingConstants.CENTER);
+        jPanel_right.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); //tạo viền trống
+
+        JLabel jLabel_header = new JLabel("HỆ THỐNG QUẢN LÝ CỬA HÀNG BÁN XE OTO", SwingConstants.CENTER);
         jLabel_header.setForeground(new Color(65, 105, 225));
-        jLabel_header.setFont(font);
-        jLabel_header.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
+        jLabel_header.setFont(font.deriveFont(Font.BOLD, 32f));
+        jPanel_right.add(jLabel_header, BorderLayout.NORTH);
 
-        JPanel jPanel_action = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        jPanel_action.setBackground(Color.WHITE);
 
-        jButton_add = new JButton("Thêm sản phẩm");
-        jButton_edit = new JButton("Sửa");
-        jButton_delete = new JButton("Xóa");
-        jTextField_search = new JTextField(20);
-        jButton_search = new JButton("Tìm kiếm");
+        JPanel panel_center_wrapper = new JPanel(new BorderLayout(10, 10));
+        panel_center_wrapper.setBackground(Color.WHITE);
+        // lọc
+        JPanel panel_filter = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        panel_filter.setBackground(Color.WHITE);
 
-        Font buttonFont = new Font("Arial", Font.PLAIN, 18);
-        for (JButton btn : new JButton[]{jButton_add, jButton_edit, jButton_delete, jButton_search}) {
-            btn.setFont(buttonFont);
-            btn.setBackground(new Color(65, 105, 225));
-            btn.setForeground(Color.WHITE);
-        }
+        //khúc này AI chỉ
+        panel_filter.add(new JLabel("Lọc theo:"));
+        String[] filterOptions = {"Năm", "Tháng", "Ngày"};
+        JComboBox<String> comboLocTheo = new JComboBox<>(filterOptions);
+        panel_filter.add(comboLocTheo);
 
-        jPanel_action.add(jButton_add);
-        jPanel_action.add(jButton_edit);
-        jPanel_action.add(jButton_delete);
-        jPanel_action.add(jTextField_search);
-        jPanel_action.add(jButton_search);
+        panel_filter.add(new JLabel("TG Bắt Đầu:"));
+        // lọc date
+        JSpinner jSpinner_start= createDatePicker();
+        panel_filter.add(jSpinner_start);
 
-        JPanel jPanel_north_wrapper = new JPanel(new BorderLayout());
-        jPanel_north_wrapper.setBackground(Color.WHITE);
-        jPanel_north_wrapper.add(jLabel_header, BorderLayout.NORTH);
-        jPanel_north_wrapper.add(jPanel_action, BorderLayout.CENTER);
+        panel_filter.add(new JLabel("TG Kết Thúc:"));
+        JSpinner jSpinner_end = createDatePicker();
+        panel_filter.add(jSpinner_end);
 
-        jPanel_right.add(jPanel_north_wrapper, BorderLayout.NORTH);
+        // ngày mặc định
+        Calendar cal = Calendar.getInstance();
+        Date homNay = cal.getTime();
+        jSpinner_end.setValue(homNay);
+        cal.add(Calendar.DAY_OF_MONTH, -1);
+        Date homQua = cal.getTime();
+        jSpinner_start.setValue(homQua);
 
-        String[] columnNames = {"Mã Ô tô", "Tên Ô tô", "Loại", "Giá", "Số lượng", "Mã Hãng", "Số lượt bán"};
+        JButton buttonLoc = new JButton("Lọc");
+        buttonLoc.setBackground(new Color(15, 110, 180));
+        buttonLoc.setForeground(Color.WHITE);
+        panel_filter.add(buttonLoc);
 
-        tableModel = new DefaultTableModel(columnNames, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-        carTable = new JTable(tableModel);
-        carTable.setFont(new Font("Arial", Font.PLAIN, 14));
-        carTable.setRowHeight(25);
-        carTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
-        JScrollPane scrollPane = new JScrollPane(carTable);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        jPanel_right.add(scrollPane, BorderLayout.CENTER);
+        panel_center_wrapper.add(panel_filter, BorderLayout.NORTH);
+
+        //xe bán chạy
+        String[] columnNames = {"Tên OTO", "Số lượt bán", "Giá"};
+        tableModel = new DefaultTableModel(columnNames, 0);
+        tableOtoBanChay = new JTable(tableModel);
+
+        JScrollPane scrollPane = new JScrollPane(tableOtoBanChay);
+        scrollPane.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createEtchedBorder(),
+                "DANH SÁCH OTO BÁN CHẠY NHẤT",
+                TitledBorder.LEFT,
+                TitledBorder.TOP,
+                new Font("Arial", Font.BOLD, 14),
+                Color.BLACK
+        ));
+
+        panel_center_wrapper.add(scrollPane, BorderLayout.CENTER);
+        jPanel_right.add(panel_center_wrapper, BorderLayout.CENTER);
+
+        //tiều đề
+        JPanel panel_bottom = new JPanel(new GridLayout(1, 2, 20, 0));
+        panel_bottom.setBackground(Color.WHITE);
+        panel_bottom.setPreferredSize(new Dimension(0, 150));
+
+        // khách hàng tiềm năng
+        JPanel panel_khachHang = createSummaryBox("KHÁCH HÀNG MUA NHIỀU NHẤT", "Nhân đẹp trai vãi lồn", Color.RED);
+
+        // doanh thu
+        JPanel panel_doanhThu = createSummaryBox("TỔNG DOANH THU CỬA HÀNG", "NHÂN ĐẸP TRAI VÃI LỒN", Color.GREEN);
+
+        panel_bottom.add(panel_khachHang);
+        panel_bottom.add(panel_doanhThu);
+
+        jPanel_right.add(panel_bottom, BorderLayout.SOUTH);
         this.add(jPanel_menu, BorderLayout.WEST);
         this.add(jPanel_right, BorderLayout.CENTER);
 
         this.setVisible(true);
-        CarManageController controller = new CarManageController(this, new CarManageDAO());
-        controller.hienThiDB();
-
     }
 
-    //thêm sản phẩm
-    public void addAddCarListener(ActionListener listener) {
-        jButton_add.addActionListener(listener);
-    }
-    public void hienthidulieu(List<CarManageModel> carList) {
-        tableModel.setRowCount(0);
-
-        for (CarManageModel car : carList) {
-            Object[] rowData = {
-                    car.getMaOto(),
-                    car.getTenOto(),
-                    car.getLoaiOto(),
-                    car.getGia(),
-                    car.getSoLuong(),
-                    car.getMaHang(),
-                    car.getSoLuotBan()
-            };
-            tableModel.addRow(rowData);
-        }
-    }
-    public void formThemsp(CarManageController controller) {
-        addDialog = new JDialog(this, "Thêm sản phẩm Ô tô", true);
-        addDialog.setSize(400, 550);
-        addDialog.setLocationRelativeTo(this);
-        addDialog.setLayout(new BorderLayout());
-
-        JPanel formPanel = new JPanel();
-        formPanel.setLayout(null);
-
-        JLabel l1 = new JLabel("Mã Ô tô:");
-        l1.setBounds(20, 20, 100, 30);
-        formPanel.add(l1);
-
-        JTextField txtMaOto = new JTextField();
-        txtMaOto.setBounds(130, 20, 230, 30);
-        formPanel.add(txtMaOto);
-
-        JLabel l2 = new JLabel("Tên Ô tô:");
-        l2.setBounds(20, 60, 100, 30);
-        formPanel.add(l2);
-
-        JTextField txtTenOto = new JTextField();
-        txtTenOto.setBounds(130, 60, 230, 30);
-        formPanel.add(txtTenOto);
-
-        JLabel l3 = new JLabel("Loại Ô tô:");
-        l3.setBounds(20, 100, 100, 30);
-        formPanel.add(l3);
-
-        JTextField txtLoaiOto = new JTextField();
-        txtLoaiOto.setBounds(130, 100, 230, 30);
-        formPanel.add(txtLoaiOto);
-
-        JLabel l4 = new JLabel("Giá:");
-        l4.setBounds(20, 140, 100, 30);
-        formPanel.add(l4);
-
-        JTextField txtGia = new JTextField();
-        txtGia.setBounds(130, 140, 230, 30);
-        formPanel.add(txtGia);
-
-        JLabel l5 = new JLabel("Số lượng:");
-        l5.setBounds(20, 180, 100, 30);
-        formPanel.add(l5);
-
-        JTextField txtSoLuong = new JTextField();
-        txtSoLuong.setBounds(130, 180, 230, 30);
-        formPanel.add(txtSoLuong);
-
-        JLabel l6 = new JLabel("Mã Hãng:");
-        l6.setBounds(20, 220, 100, 30);
-        formPanel.add(l6);
-
-        JTextField txtMaHang = new JTextField();
-        txtMaHang.setBounds(130, 220, 230, 30);
-        formPanel.add(txtMaHang);
-
-        JLabel l7 = new JLabel("Mô tả:");
-        l7.setBounds(20, 260, 100, 30);
-        formPanel.add(l7);
-
-        JTextArea txtMoTa = new JTextArea();
-        txtMoTa.setBounds(130, 260, 230, 150);
-        txtMoTa.setLineWrap(true);
-        txtMoTa.setWrapStyleWord(true);
-        formPanel.add(txtMoTa);
-
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        JButton btnSave = new JButton("Lưu");
-        JButton btnCancel = new JButton("Hủy");
-        buttonPanel.add(btnSave);
-        buttonPanel.add(btnCancel);
-
-        btnCancel.addActionListener(e -> addDialog.dispose());
-
-        btnSave.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                controller.them(
-                        txtMaOto.getText(),
-                        txtTenOto.getText(),
-                        txtLoaiOto.getText(),
-                        txtGia.getText(),
-                        txtSoLuong.getText(),
-                        txtMaHang.getText(),
-                        txtMoTa.getText()
-                );
-            }
-        });
-
-        addDialog.add(formPanel, BorderLayout.CENTER);
-        addDialog.add(buttonPanel, BorderLayout.SOUTH);
-        addDialog.setVisible(true);
+    // khúc này AI chỉ (chổ nút lọc ngày có để thời gian)
+    private JSpinner createDatePicker() {
+        SpinnerDateModel model = new SpinnerDateModel(
+                new Date(),
+                null,
+                null,
+                Calendar.DAY_OF_MONTH
+        );
+        JSpinner spinner = new JSpinner(model);
+        JSpinner.DateEditor editor = new JSpinner.DateEditor(spinner, "yyyy-MM-dd");
+        spinner.setEditor(editor);
+        return spinner;
     }
 
-    public void closeAddDialog() {
-        if (addDialog != null) {
-            addDialog.dispose();
-        }
-    }
-    public void showSuccessMessage(String message) {
-        JOptionPane.showMessageDialog(this, message, "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-    }
-    public void showErrorMessage(String message) {
-        JOptionPane.showMessageDialog(this, message, "Lỗi", JOptionPane.ERROR_MESSAGE);
+    private JPanel createSummaryBox(String title, String value, Color bgColor) {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(bgColor);
+        panel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+
+        JLabel labelTitle = new JLabel(title, SwingConstants.CENTER);
+        labelTitle.setFont(new Font("Arial", Font.BOLD, 18));
+        labelTitle.setBorder(BorderFactory.createEmptyBorder(15, 10, 10, 10));
+
+        JLabel labelValue = new JLabel(value, SwingConstants.CENTER);
+        labelValue.setFont(new Font("Arial", Font.BOLD, 30));
+        labelValue.setForeground(new Color(0, 50, 120));
+
+        panel.add(labelTitle, BorderLayout.NORTH);
+        panel.add(labelValue, BorderLayout.CENTER);
+        return panel;
     }
 }

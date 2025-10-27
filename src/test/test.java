@@ -1,15 +1,14 @@
 package test;
 
 
-import model.CarManageDAO;
-import view.CarManageView;
-import view.ThongKeView;
+import dao.ProductDAO;
+import view.ProductView;
 
 public class test {
     public static void main(String[] args) {
-        CarManageDAO dao = CarManageDAO.getInstance();
-//        CarManageView view = new CarManageView();
-        ThongKeView view = new ThongKeView();
+        ProductDAO dao = ProductDAO.getInstance();
+        ProductView view = new ProductView();
+//        ThongKeView view = new ThongKeView();
         view.setVisible(true);
     }
 }

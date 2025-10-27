@@ -1,5 +1,6 @@
-package model;
+package dao;
 
+import model.ProductModel;
 import until.DatabaseConnect;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -7,13 +8,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-public class CarManageDAO {
+public class ProductDAO {
 
-    public static CarManageDAO getInstance() {
-        return new CarManageDAO();
+    public static ProductDAO getInstance() {
+        return new ProductDAO();
     }
 
-    public int insert(CarManageModel car) {
+    public int insert(ProductModel car) {
         int ketQua = 0;
         try {
             //b1
@@ -40,8 +41,8 @@ public class CarManageDAO {
         return ketQua;
     }
     //hiển thị dữ liệu sau khi thêm
-    public ArrayList<CarManageModel> selectAll() {
-        ArrayList<CarManageModel> ketQua = new ArrayList<>();
+    public ArrayList<ProductModel> selectAll() {
+        ArrayList<ProductModel> ketQua = new ArrayList<>();
         try {
             Connection connection = DatabaseConnect.getConnection();
             Statement st = connection.createStatement();
@@ -56,7 +57,7 @@ public class CarManageDAO {
                 String moTa = rs.getString("moTa");
                 String maHang = rs.getString("maHang");
                 int soLuotBan = rs.getInt("soLuotBan");
-                CarManageModel car = new CarManageModel(gia, loaiOto, maOto, moTa,
+                ProductModel car = new ProductModel(gia, loaiOto, maOto, moTa,
                         soLuong, tenOto, soLuotBan, maHang);
                 ketQua.add(car);
             }
