@@ -5,11 +5,11 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-public class MainApplicationFrame extends JFrame {
+public class thu extends JFrame {
     private CardLayout cardLayout;
     private JPanel contentPanel;
 
-    public MainApplicationFrame() {
+    public thu() {
         this.init();
     }
 
@@ -26,12 +26,12 @@ public class MainApplicationFrame extends JFrame {
 
         // ============================ HEADER SECTION ============================
         JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 220, 220)));
+        headerPanel.setBorder(BorderFactory.createMatteBorder(0,0,1,0, new Color(220,220,220)));
         headerPanel.setBackground(Color.WHITE);
-        headerPanel.setPreferredSize(new Dimension(0, 64));
+        headerPanel.setPreferredSize(new Dimension(0,64));
 
         JLabel appTitle = new JLabel("Car Manage Software");
-        appTitle.setBorder(new EmptyBorder(0, 16, 0, 0));
+        appTitle.setBorder(new EmptyBorder(0,16,0,0));
         appTitle.setFont(new Font("Segoe UI", Font.BOLD, 18));
         headerPanel.add(appTitle, BorderLayout.WEST);
 
@@ -47,9 +47,9 @@ public class MainApplicationFrame extends JFrame {
         // ============================ SIDEBAR SECTION ============================
         JPanel sidebar = new JPanel();
         sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
-        sidebar.setBorder(new EmptyBorder(12, 12, 12, 12));
-        sidebar.setBackground(new Color(250, 250, 250));
-        sidebar.setPreferredSize(new Dimension(220, 0));
+        sidebar.setBorder(new EmptyBorder(12,12,12,12));
+        sidebar.setBackground(new Color(250,250,250));
+        sidebar.setPreferredSize(new Dimension(220,0));
 
         ButtonGroup menuGroup = new ButtonGroup();
 
@@ -69,7 +69,7 @@ public class MainApplicationFrame extends JFrame {
             button.setFont(new Font("Segoe UI", Font.PLAIN, 14));
             menuGroup.add(button);
             sidebar.add(button);
-            sidebar.add(Box.createRigidArea(new Dimension(0, 8)));
+            sidebar.add(Box.createRigidArea(new Dimension(0,8)));
         }
 
         // Chọn thống kê làm mặc định
@@ -80,7 +80,7 @@ public class MainApplicationFrame extends JFrame {
         // ============================ CONTENT SECTION ============================
         cardLayout = new CardLayout();
         contentPanel = new JPanel(cardLayout);
-        contentPanel.setBorder(new EmptyBorder(16, 16, 16, 16));
+        contentPanel.setBorder(new EmptyBorder(16,16,16,16));
 
         // Tạo các panel nội dung
         JPanel panelThongKe = new JPanel(new BorderLayout());
@@ -120,5 +120,18 @@ public class MainApplicationFrame extends JFrame {
         btnKhachHang.addActionListener(e -> cardLayout.show(contentPanel, "Khách hàng"));
         btnNhanVien.addActionListener(e -> cardLayout.show(contentPanel, "Nhân viên"));
         btnGiaoDich.addActionListener(e -> cardLayout.show(contentPanel, "Giao dịch"));
+    }
+
+    public static void main(String[] args) {
+        try {
+            UIManager.setLookAndFeel(UIManager.getLookAndFeel());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        SwingUtilities.invokeLater(() -> {
+            MainApplicationFrame frame = new MainApplicationFrame();
+            frame.setVisible(true);
+        });
     }
 }
