@@ -11,8 +11,9 @@ public class JDBC_Util {
 		Connection c = null;
 		try {
 			
+			
 			// Các thông số
-			String url = "jdbc:mysql://localhost:3306/qlchoto";
+			String url = "jdbc:mySQL://localhost:3306/qlchoto";
 			String username = "root";
 			String password = "Ngocho";
 						

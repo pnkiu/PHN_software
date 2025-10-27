@@ -245,14 +245,35 @@ public class CarManageView extends JFrame {
     }
 
     public static void main(String[] args) {
+    // Thiết lập Look and Feel cho ứng dụng
+    try {
+        UIManager.setLookAndFeel(UIManager.getLookAndFeel());
+    } catch (Exception e) {
+        System.err.println("Không thể thiết lập Look and Feel: " + e.getMessage());
+    }
+    
+    // Đảm bảo GUI được tạo trong Event Dispatch Thread
+    SwingUtilities.invokeLater(() -> {
         try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeel());
+            CarManageView view = new CarManageView();
+            
+            // Thiết lập các thuộc tính cho cửa sổ
+            view.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            view.setLocationRelativeTo(null); // Hiển thị giữa màn hình
+            
+            // Hiển thị cửa sổ
+            view.setVisible(true);
+            
+            // Có thể thêm log để kiểm tra
+            System.out.println("Ứng dụng quản lý ô tô đã khởi động thành công!");
+            
         } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, 
+                "Lỗi khi khởi động ứng dụng: " + e.getMessage(), 
+                "Lỗi", 
+                JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
-        
-        SwingUtilities.invokeLater(() -> {
-            new CarManageView().setVisible(true);
-        });
-    }
+    });
+}
 }
