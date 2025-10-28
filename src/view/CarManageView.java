@@ -141,11 +141,11 @@ public class CarManageView extends JFrame {
 
 
         this.setVisible(true);
-        controller.hienThiDB();
+        controller.hienThiXeBanChay();;
     }
 
     public void hienThiDuLieu(ArrayList<Oto> list) {
-        String[] columnNames = {"Mã Ô Tô", "Tên Ô Tô", "Giá", "Loại Ô Tô", "Số Lượng", "Mô Tả", "Mã Hãng"};
+        String[] columnNames = {"Mã Ô Tô", "Tên Ô Tô", "Giá", "Loại Ô Tô", "Số Lượng", "Mô Tả", "Mã Hãng", "Số Lượt Bán"};
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
         for (Oto oto : list) {
             Object[] row = {
@@ -155,7 +155,8 @@ public class CarManageView extends JFrame {
                 oto.getLoaiOTO(),
                 oto.getSoLuong(),
                 oto.getMoTa(),
-                oto.getMaHang()
+                oto.getMaHang(),
+                oto.getSoLuotBan()
             };
             model.addRow(row);
         }
@@ -174,7 +175,8 @@ public class CarManageView extends JFrame {
         int soLuong = Integer.parseInt(table.getValueAt(selectedRow, 4).toString());
         String moTa = table.getValueAt(selectedRow, 5).toString();
         String maHang = table.getValueAt(selectedRow, 6).toString();
-        return new Oto(maOTO, tenOTO, gia, loaiOTO, soLuong, moTa, maHang);
+        int soLuotBan = Integer.parseInt(table.getValueAt(selectedRow, 7).toString());
+        return new Oto(maOTO, tenOTO, gia, loaiOTO, soLuong, moTa, maHang, soLuotBan);
     }
 
 

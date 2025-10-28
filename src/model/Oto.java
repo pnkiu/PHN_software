@@ -8,12 +8,13 @@ public class Oto {
     private int soLuong;
     private String moTa;
     private String maHang;
+	private int soLuotBan;
 
     public Oto (){
         super();
     }
 
-	public Oto(String maOTO, String tenOTO, float gia, String loaiOTO, int soLuong, String moTa, String maHang) {
+	public Oto(String maOTO, String tenOTO, float gia, String loaiOTO, int soLuong, String moTa, String maHang, int soLuotBan) {
 		super();
 		this.maOTO = maOTO;
 		this.tenOTO = tenOTO;
@@ -22,6 +23,7 @@ public class Oto {
 		this.soLuong = soLuong;
 		this.moTa = moTa;
 		this.maHang = maHang;
+		this.soLuotBan = soLuotBan;
 	}
     
 	public String getMaOTO() {
@@ -66,9 +68,15 @@ public class Oto {
 	public void setMaHang(String maHang) {
 		this.maHang = maHang;
 	}
+	public int getSoLuotBan() {
+		return soLuotBan;
+	}
+	public void setSoLuotBan(int soLuotBan) {
+		this.soLuotBan = soLuotBan;
+	}
     @Override
 	public String toString() {
 		return "Oto [maOTO=" + maOTO + ", tenOTO=" + tenOTO + ", gia=" + gia + ", loaiOTO=" + loaiOTO + ", soLuong="
-				+ soLuong + ", moTa=" + moTa + ", maHang=" + maHang + "]";
+				+ soLuong + ", moTa=" + moTa + ", maHang=" + maHang + ", soLuotBan" + soLuotBan + "]";
 	}
 }

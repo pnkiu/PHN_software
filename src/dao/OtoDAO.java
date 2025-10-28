@@ -1,6 +1,7 @@
 package dao;
 import database.JDBC_Util;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -15,16 +16,24 @@ public class OtoDAO implements DAO_interface<Oto> {
     public int insert(Oto t) {
         int ketQua = 0;
         try {
-            //B1
+        
         Connection connection = JDBC_Util.getConnection();
 
-        //B2
-        Statement st = connection.createStatement();
 
-        //B3
-        String sql = "INSERT INTO oto (maOTO, tenOTO, gia, loaiOTO, soLuong, moTa, maHang)"
-					+"VALUES ('"+t.getMaOTO()+"' , '"+t.getTenOTO()+"' , "+t.getGia()+" , '"+t.getLoaiOTO()+"' , "+t.getSoLuong()+", '"+t.getMoTa()+"','"+t.getMaHang()+"')";
-        ketQua = st.executeUpdate(sql);
+        
+        String sql = "INSERT INTO oto (maOTO, tenOTO, gia, loaiOTO, soLuong, moTa, maHang, soLuotBan)  VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setString(1, t.getMaOTO());
+        ps.setString(2, t.getTenOTO());
+        ps.setFloat(3, t.getGia());
+        ps.setString(4, t.getLoaiOTO());
+        ps.setInt(5, t.getSoLuong());
+        ps.setString(6, t.getMoTa());
+        ps.setString(7, t.getMaHang());
+        ps.setInt(8, t.getSoLuotBan());
+        
+
+        ketQua = ps.executeUpdate();
 
         //B4
         System.out.println("Bạn đã thực thi "+ sql);
@@ -94,7 +103,8 @@ public class OtoDAO implements DAO_interface<Oto> {
 				int soLuong = rs.getInt("soLuong");
                 String moTa = rs.getString("moTa");
                 String maHang = rs.getString("maHang");
-                Oto oto = new Oto(maOTO, tenOTO, gia, loaiOTO, soLuong, moTa, maHang);
+                int soLuotBan = rs.getInt("soLuotBan");
+                Oto oto = new Oto(maOTO, tenOTO, gia, loaiOTO, soLuong, moTa, maHang, soLuotBan);
 				ketQua.add(oto);
 			}
 			
