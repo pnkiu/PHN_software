@@ -1,137 +1,65 @@
 //package test;
-//import view.ProductPanel;
+//
+//import database.JDBC_Util;
+//import dao.UsersDAO;
+//import view.LoginFrame;
 //import javax.swing.*;
-//import javax.swing.border.EmptyBorder;
-//import javax.swing.table.DefaultTableModel;
-//import java.awt.*;
 //
-//public class thu extends JFrame {
-//    private CardLayout cardLayout;
-//    private JPanel contentPanel;
+//public class thu {
+//    public static void main(String[] args) {
+//        System.out.println("=== BẮT ĐẦU CHẠY ỨNG DỤNG ===");
+//        System.out.println("🔍 Kiểm tra kết nối database...");
 //
-//    public thu() {
-//        this.init();
-//    }
+//        // Test kết nối database
+//        try {
+//            JDBC_Util.getConnection();
+//            System.out.println("✓ Kết nối database THÀNH CÔNG");
 //
-//    private void init() {
+//            // Test in thông tin database
+//            System.out.println("📊 Thông tin database:");
+//            JDBC_Util.printInfo(JDBC_Util.getConnection());
 //
-//        this.setTitle("Car Manage Software");
-//        this.setSize(1050, 620);
-//        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        this.setLocationRelativeTo(null);
-//        this.setLayout(new BorderLayout());
-//        // Main panel với BorderLayout
-//        JPanel root = new JPanel(new BorderLayout());
-//        setContentPane(root);
+//            // Kiểm tra bảng nhanvien
+//            UsersDAO usersDAO = new UsersDAO();
+//            if (!usersDAO.checkNhanVienTable()) {
+//                System.out.println("⚠️ CẢNH BÁO: Bảng nhanvien trống hoặc không tồn tại");
+//                System.out.println("💡 Hãy kiểm tra xem bảng nhanvien đã có dữ liệu chưa");
+//            }
 //
-//        // ============================ HEADER SECTION ============================
-//        JPanel headerPanel = new JPanel(new BorderLayout());
-//        headerPanel.setBorder(BorderFactory.createMatteBorder(0,0,1,0, new Color(220,220,220)));
-//        headerPanel.setBackground(Color.WHITE);
-//        headerPanel.setPreferredSize(new Dimension(0,64));
-//
-//        JLabel appTitle = new JLabel("Car Manage Software");
-//        appTitle.setBorder(new EmptyBorder(0,16,0,0));
-//        appTitle.setFont(new Font("Segoe UI", Font.BOLD, 18));
-//        headerPanel.add(appTitle, BorderLayout.WEST);
-//
-//        JPanel userPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 12));
-//        userPanel.setOpaque(false);
-//        JLabel userLabel = new JLabel("Quản trị viên");
-//        userLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-//        userPanel.add(userLabel);
-//        headerPanel.add(userPanel, BorderLayout.EAST);
-//
-//        root.add(headerPanel, BorderLayout.NORTH);
-//
-//        // ============================ SIDEBAR SECTION ============================
-//        JPanel sidebar = new JPanel();
-//        sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
-//        sidebar.setBorder(new EmptyBorder(12,12,12,12));
-//        sidebar.setBackground(new Color(250,250,250));
-//        sidebar.setPreferredSize(new Dimension(220,0));
-//
-//        ButtonGroup menuGroup = new ButtonGroup();
-//
-//        // Tạo các nút menu riêng biệt
-//        JToggleButton btnThongKe = new JToggleButton("Thống kê");
-//        JToggleButton btnSanPham = new JToggleButton("Sản phẩm");
-//        JToggleButton btnKhachHang = new JToggleButton("Khách hàng");
-//        JToggleButton btnNhanVien = new JToggleButton("Nhân viên");
-//        JToggleButton btnGiaoDich = new JToggleButton("Giao dịch");
-//
-//        // Thiết lập thuộc tính cho các nút
-//        JToggleButton[] buttons = {btnThongKe, btnSanPham, btnKhachHang, btnNhanVien, btnGiaoDich};
-//        for (JToggleButton button : buttons) {
-//            button.setMaximumSize(new Dimension(Integer.MAX_VALUE, 44));
-//            button.setAlignmentX(Component.LEFT_ALIGNMENT);
-//            button.setFocusPainted(false);
-//            button.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-//            menuGroup.add(button);
-//            sidebar.add(button);
-//            sidebar.add(Box.createRigidArea(new Dimension(0,8)));
+//        } catch (Exception e) {
+//            System.out.println("✗ Lỗi kết nối database: " + e.getMessage());
+//            JOptionPane.showMessageDialog(null,
+//                    "Không thể kết nối đến database!\n" +
+//                            "Vui lòng kiểm tra:\n" +
+//                            "- MySQL đã chạy chưa?\n" +
+//                            "- Database 'qlchoto' đã tồn tại chưa?\n" +
+//                            "- Tên đăng nhập và mật khẩu đúng chưa?",
+//                    "Lỗi Database",
+//                    JOptionPane.ERROR_MESSAGE);
+//            return;
 //        }
 //
-//        // Chọn thống kê làm mặc định
-//        btnThongKe.setSelected(true);
-//
-//        root.add(sidebar, BorderLayout.WEST);
-//
-//        // ============================ CONTENT SECTION ============================
-//        cardLayout = new CardLayout();
-//        contentPanel = new JPanel(cardLayout);
-//        contentPanel.setBorder(new EmptyBorder(16,16,16,16));
-//
-//        // Tạo các panel nội dung
-//        JPanel panelThongKe = new JPanel(new BorderLayout());
-//        JLabel lblThongKe = new JLabel("Thống Kê & Báo Cáo");
-//        lblThongKe.setFont(new Font("Segoe UI", Font.BOLD, 18));
-//        panelThongKe.add(lblThongKe, BorderLayout.NORTH);
-//
-//        JPanel panelSanPham = new ProductPanel();
-//
-//        JPanel panelKhachHang = new JPanel(new BorderLayout());
-//        JLabel lblKhachHang = new JLabel("Quản Lý Khách Hàng");
-//        lblKhachHang.setFont(new Font("Segoe UI", Font.BOLD, 18));
-//        panelKhachHang.add(lblKhachHang, BorderLayout.NORTH);
-//
-//        JPanel panelNhanVien = new JPanel(new BorderLayout());
-//        JLabel lblNhanVien = new JLabel("Quản Lý Nhân Viên");
-//        lblNhanVien.setFont(new Font("Segoe UI", Font.BOLD, 18));
-//        panelNhanVien.add(lblNhanVien, BorderLayout.NORTH);
-//
-//        JPanel panelGiaoDich = new JPanel(new BorderLayout());
-//        JLabel lblGiaoDich = new JLabel("Quản Lý Giao Dịch");
-//        lblGiaoDich.setFont(new Font("Segoe UI", Font.BOLD, 18));
-//        panelGiaoDich.add(lblGiaoDich, BorderLayout.NORTH);
-//
-//        // Thêm các panel vào content
-//        contentPanel.add(panelThongKe, "Thống kê");
-//        contentPanel.add(panelSanPham, "Sản phẩm");
-//        contentPanel.add(panelKhachHang, "Khách hàng");
-//        contentPanel.add(panelNhanVien, "Nhân viên");
-//        contentPanel.add(panelGiaoDich, "Giao dịch");
-//
-//        root.add(contentPanel, BorderLayout.CENTER);
-//
-//        // ============================ ADD ACTION LISTENERS ============================
-//        btnThongKe.addActionListener(e -> cardLayout.show(contentPanel, "Thống kê"));
-//        btnSanPham.addActionListener(e -> cardLayout.show(contentPanel, "Sản phẩm"));
-//        btnKhachHang.addActionListener(e -> cardLayout.show(contentPanel, "Khách hàng"));
-//        btnNhanVien.addActionListener(e -> cardLayout.show(contentPanel, "Nhân viên"));
-//        btnGiaoDich.addActionListener(e -> cardLayout.show(contentPanel, "Giao dịch"));
-//    }
-//
-//    public static void main(String[] args) {
+//        // Set look and feel
 //        try {
 //            UIManager.setLookAndFeel(UIManager.getLookAndFeel());
+//            System.out.println("✓ Thiết lập giao diện thành công");
 //        } catch (Exception e) {
-//            e.printStackTrace();
+//            System.out.println("✗ Lỗi thiết lập giao diện: " + e.getMessage());
 //        }
 //
-//        SwingUtilities.invokeLater(() -> {
-//            MainApplicationFrame frame = new MainApplicationFrame();
-//            frame.setVisible(true);
+//        // Chạy ứng dụng
+//        SwingUtilities.invokeLater(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    new LoginFrame();
+//                    System.out.println("✅ Giao diện đăng nhập đã sẵn sàng");
+//                    System.out.println("🎮 Sử dụng tài khoản từ bảng NHANVIEN để đăng nhập");
+//                } catch (Exception e) {
+//                    System.out.println("✗ Lỗi khởi tạo giao diện: " + e.getMessage());
+//                    e.printStackTrace();
+//                }
+//            }
 //        });
 //    }
 //}
