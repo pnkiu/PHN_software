@@ -5,13 +5,19 @@ import dao.ProductDAO;
 import model.ProductModel;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.awt.event.ActionEvent;
 
-public class ProductView extends JFrame {
+public class ProductView extends JPanel {
+    private JButton btnThongKe;
+    private JButton btnSanPham;
+    private JButton btnKhachHang;
+    private JButton btnNhanVien;
+    private JButton btnGiaoDich;
     private JButton jButton_add;
     private JButton jButton_edit;
     private JButton jButton_delete;
@@ -28,85 +34,15 @@ public class ProductView extends JFrame {
     }
 
     public void init() {
-        this.setTitle("Car Manage Software");
-        this.setSize(1050, 620);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setLocationRelativeTo(null);
-        this.setLayout(new BorderLayout());
-
-        //bên trái
         Font font = new Font("Arial", Font.BOLD, 40);
         Font fonts = new Font("Arial", Font.BOLD, 17);
 
-        JPanel jPanel_menu = new JPanel();
-        jPanel_menu.setLayout(new BoxLayout(jPanel_menu, BoxLayout.Y_AXIS));
-        jPanel_menu.setPreferredSize(new Dimension(240, 0));
-        jPanel_menu.setBackground(new Color(190, 190, 190, 190));
-        jPanel_menu.setBorder(BorderFactory.createEmptyBorder(35, 10, 15, 10));
+        this.setLayout(new BorderLayout());
+        this.setBackground(Color.WHITE);
 
-        JLabel jLabel_title = new JLabel("ADMIN", SwingConstants.CENTER);
-        jLabel_title.setAlignmentX(Component.CENTER_ALIGNMENT);
-        jLabel_title.setForeground(Color.BLACK);
-        jLabel_title.setFont(font);
-        jPanel_menu.add(jLabel_title);
-        jPanel_menu.add(Box.createRigidArea(new Dimension(0, 50)));
-
-        JButton jButton_TK = new JButton("Thống kê");
-        jButton_TK.setFont(fonts);
-        jButton_TK.setBackground(new Color(70, 130, 180));
-        jButton_TK.setForeground(Color.white);
-        jButton_TK.setAlignmentX(Component.CENTER_ALIGNMENT);
-        jButton_TK.setMaximumSize(new Dimension(200, 45));
-        jPanel_menu.add(jButton_TK);
-        jPanel_menu.add(Box.createRigidArea(new Dimension(0, 25)));
-
-        JButton jButton_QLSP = new JButton("QUẢN LÝ SẢN PHẨM");
-        jButton_QLSP.setFont(fonts);
-        jButton_QLSP.setBackground(new Color(70, 130, 180));
-        jButton_QLSP.setForeground(Color.white);
-        jButton_QLSP.setAlignmentX(Component.CENTER_ALIGNMENT);
-        jButton_QLSP.setMaximumSize(new Dimension(200, 45));
-        jPanel_menu.add(jButton_QLSP);
-        jPanel_menu.add(Box.createRigidArea(new Dimension(0, 25)));
-
-        JButton jButton_QLGD = new JButton("QUẢN LÝ GIAO DỊCH");
-        jButton_QLGD.setFont(fonts);
-        jButton_QLGD.setBackground(new Color(70,130,180));
-        jButton_QLGD.setForeground(Color.white);
-        jButton_QLGD.setAlignmentX(Component.CENTER_ALIGNMENT);
-        jButton_QLGD.setMaximumSize(new Dimension(200, 45));
-        jPanel_menu.add(jButton_QLGD);
-        jPanel_menu.add(Box.createRigidArea(new Dimension(0, 25)));
-
-        JButton jButton_QLKH = new JButton("QUẢN LÝ KHÁCH HÀNG");
-        jButton_QLKH.setFont(fonts);
-        jButton_QLKH.setBackground(new Color(70,130,180));
-        jButton_QLKH.setForeground(Color.white);
-        jButton_QLKH.setAlignmentX(Component.CENTER_ALIGNMENT);
-        jButton_QLKH.setMaximumSize(new Dimension(200, 45));
-        jPanel_menu.add(jButton_QLKH);
-        jPanel_menu.add(Box.createRigidArea(new Dimension(0, 25)));
-
-        JButton jButton_QLNV = new JButton("QUẢN LÝ NHÂN VIÊN");
-        jButton_QLNV.setFont(fonts);
-        jButton_QLNV.setBackground(new Color(70,130,180));
-        jButton_QLNV.setForeground(Color.white);
-        jButton_QLNV.setAlignmentX(Component.CENTER_ALIGNMENT);
-        jButton_QLNV.setMaximumSize(new Dimension(200, 45));
-        jPanel_menu.add(jButton_QLNV);
-        jPanel_menu.add(Box.createRigidArea(new Dimension(0, 25)));
-
-        JButton jButton_out = new JButton("Đăng xuất");
-        jButton_out.setFont(fonts);
-        jButton_out.setBackground(new Color(70,130,180));
-        jButton_QLNV.setForeground(Color.white);
-        jButton_out.setAlignmentX(Component.CENTER_ALIGNMENT);
-        jButton_out.setMaximumSize(new Dimension(200, 45));
-        jPanel_menu.add(jButton_out);
-
-        //bên phải
         JPanel jPanel_right = new JPanel(new BorderLayout());
         jPanel_right.setBackground(Color.WHITE);
+
         JLabel jLabel_header = new JLabel("QUẢN LÝ SẢN PHẨM", SwingConstants.CENTER);
         jLabel_header.setForeground(new Color(65, 105, 225));
         jLabel_header.setFont(font);
@@ -142,35 +78,35 @@ public class ProductView extends JFrame {
         jPanel_right.add(jPanel_north_wrapper, BorderLayout.NORTH);
 
         String[] columnNames = {"Mã Ô tô", "Tên Ô tô", "Loại", "Giá", "Số lượng", "Mã Hãng", "Số lượt bán"};
-
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
+
         carTable = new JTable(tableModel);
         carTable.setFont(new Font("Arial", Font.PLAIN, 14));
         carTable.setRowHeight(25);
         carTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+
         JScrollPane scrollPane = new JScrollPane(carTable);
         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         jPanel_right.add(scrollPane, BorderLayout.CENTER);
-        this.add(jPanel_menu, BorderLayout.WEST);
+
         this.add(jPanel_right, BorderLayout.CENTER);
 
-        this.setVisible(true);
+        // Khởi tạo controller (khi JPanel được load)
         ProductController controller = new ProductController(this, new ProductDAO());
         controller.hienThiDB();
     }
 
-    //thêm sản phẩm
     public void addAddCarListener(ActionListener listener) {
         jButton_add.addActionListener(listener);
     }
+
     public void hienthidulieu(List<ProductModel> carList) {
         tableModel.setRowCount(0);
-
         for (ProductModel car : carList) {
             Object[] rowData = {
                     car.getMaOto(),
@@ -184,8 +120,10 @@ public class ProductView extends JFrame {
             tableModel.addRow(rowData);
         }
     }
+
     public void formThemsp(ProductController controller) {
-        addDialog = new JDialog(this, "Thêm sản phẩm Ô tô", true);
+        JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+        addDialog = new JDialog(parentFrame, "Thêm sản phẩm Ô tô", true);
         addDialog.setSize(400, 550);
         addDialog.setLocationRelativeTo(this);
         addDialog.setLayout(new BorderLayout());
@@ -259,20 +197,15 @@ public class ProductView extends JFrame {
 
         btnCancel.addActionListener(e -> addDialog.dispose());
 
-        btnSave.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                controller.them(
-                        txtMaOto.getText(),
-                        txtTenOto.getText(),
-                        txtLoaiOto.getText(),
-                        txtGia.getText(),
-                        txtSoLuong.getText(),
-                        txtMaHang.getText(),
-                        txtMoTa.getText()
-                );
-            }
-        });
+        btnSave.addActionListener(e -> controller.them(
+                txtMaOto.getText(),
+                txtTenOto.getText(),
+                txtLoaiOto.getText(),
+                txtGia.getText(),
+                txtSoLuong.getText(),
+                txtMaHang.getText(),
+                txtMoTa.getText()
+        ));
 
         addDialog.add(formPanel, BorderLayout.CENTER);
         addDialog.add(buttonPanel, BorderLayout.SOUTH);
@@ -280,13 +213,13 @@ public class ProductView extends JFrame {
     }
 
     public void closeAddDialog() {
-        if (addDialog != null) {
-            addDialog.dispose();
-        }
+        if (addDialog != null) addDialog.dispose();
     }
+
     public void showSuccessMessage(String message) {
         JOptionPane.showMessageDialog(this, message, "Thông báo", JOptionPane.INFORMATION_MESSAGE);
     }
+
     public void showErrorMessage(String message) {
         JOptionPane.showMessageDialog(this, message, "Lỗi", JOptionPane.ERROR_MESSAGE);
     }

@@ -39,6 +39,7 @@
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
     <filter-actions connection-id="1bcab108-95f7-4d14-b0da-076cc5af1890" dataset="qlchoto.giaodich" active-filter-id="" />
+    <filter-actions connection-id="1bcab108-95f7-4d14-b0da-076cc5af1890" dataset="qlchoto.oto" active-filter-id="" />
   </component>
   <component name="DBNavigator.Project.ExecutionManager">
     <retain-sticky-names value="false" />
