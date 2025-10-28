@@ -118,6 +118,42 @@ public class OtoDAO implements DAO_interface<Oto> {
 		return ketQua;
         
     }
+public ArrayList<Oto> selectXeBanChayNhat() {
+    ArrayList<Oto> list = new ArrayList<>();
+    try {
+        Connection connection = JDBC_Util.getConnection();
+
+        String sql = "SELECT o.tenOTO, h.tenHang, o.soLuotBan " +
+                     "FROM oto o " +
+                     "JOIN hangoto h ON o.maHang = h.maHang " +
+                     "ORDER BY o.soLuotBan DESC " +
+                     "LIMIT 5";
+
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            String tenOTO = rs.getString("tenOTO");
+            String tenHang = rs.getString("tenHang");
+            int soLuotBan = rs.getInt("soLuotBan");
+
+            
+            Oto oto = new Oto();
+            oto.setTenOTO(tenOTO);
+            oto.setMaHang(tenHang); 
+            oto.setSoLuotBan(soLuotBan);
+
+            list.add(oto);
+        }
+
+        JDBC_Util.closeConnection(connection);
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return list;
+}
+
+
 
 
 

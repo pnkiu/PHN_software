@@ -141,7 +141,7 @@ public class CarManageView extends JFrame {
 
 
         this.setVisible(true);
-        controller.hienThiXeBanChay();;
+        controller.hienThiXeBanChay();
     }
 
     public void hienThiDuLieu(ArrayList<Oto> list) {
@@ -162,6 +162,18 @@ public class CarManageView extends JFrame {
         }
         table.setModel(model);
     }
+
+    public void hienThiXeBanChayNhat(ArrayList<Oto> list) {
+    String[] columnNames = {"Tên Xe", "Tên Hãng", "Số Lượt Bán"};
+    DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+
+    for (Oto o : list) {
+        Object[] row = { o.getTenOTO(), o.getMaHang(), o.getSoLuotBan() };
+        model.addRow(row);
+    }
+    table.setModel(model);
+}
+
 
     public Oto getSelectedOto() {
         int selectedRow = table.getSelectedRow();

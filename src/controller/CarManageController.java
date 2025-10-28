@@ -50,10 +50,8 @@ public class CarManageController implements ActionListener {
         }
     }
     public void hienThiXeBanChay(){
-        ArrayList<Oto> list = dao.selectAll();
-        list.sort((o1, o2) -> Integer.compare(o2.getSoLuotBan(), o1.getSoLuotBan()));
-        ArrayList<Oto> top5 = new ArrayList<>(list.subList(0, Math.min(5, list.size())));
-        view.hienThiDuLieu(top5);
+        ArrayList<Oto> top5 = dao.selectXeBanChayNhat();
+        view.hienThiXeBanChayNhat(top5);
     }
 }
 

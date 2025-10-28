@@ -10,6 +10,7 @@ public class Oto {
     private String maHang;
 	private int soLuotBan;
 
+
     public Oto (){
         super();
     }
@@ -25,7 +26,6 @@ public class Oto {
 		this.maHang = maHang;
 		this.soLuotBan = soLuotBan;
 	}
-    
 	public String getMaOTO() {
 		return maOTO;
 	}
