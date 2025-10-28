@@ -97,79 +97,129 @@ public class CarManageView extends JFrame {
         cardLayout = new CardLayout();
         contentPanel = new JPanel(cardLayout);
 
+
+        JPanel thongKePanel = createThongKePanel();
+        contentPanel.add(thongKePanel, "Thống kê");
+
+
+
         JPanel ProductPanel = new ProductView();
         contentPanel.add(ProductPanel, "Sản phẩm");
+
+        JPanel CustomerPanel = new CustomerView();
+        contentPanel.add(CustomerPanel, "Khách hàng");
+
+        JPanel StaffPanel = new StaffView();
+        contentPanel.add(StaffPanel, "Nhân viên");
+
+        JPanel TransactionPanel = new TransacionView();
+        contentPanel.add(TransactionPanel, "Giao dịch");
 
 
 
         root.add(sidebar, BorderLayout.WEST);
         root.add(contentPanel, BorderLayout.CENTER);
+        btnThongKe.addActionListener(e -> cardLayout.show(contentPanel, "Thống kê"));
         btnSanPham.addActionListener(e -> cardLayout.show(contentPanel, "Sản phẩm"));
+        btnNhanVien.addActionListener(e -> cardLayout.show(contentPanel, "Nhân viên"));
+        btnKhachHang.addActionListener(e -> cardLayout.show(contentPanel, "Khách hàng"));
+        btnGiaoDich.addActionListener(e -> cardLayout.show(contentPanel, "Giao dịch"));
+
+
 
         this.setVisible(true);
     }
 
     // thống kê
     private JPanel createThongKePanel() {
-        JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBackground(Color.WHITE);
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        JPanel jPanel_right = new JPanel(new BorderLayout(10, 10));
+        jPanel_right.setBackground(Color.WHITE);
+        jPanel_right.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); //tạo viền trống
 
-        JLabel jLabel_header = new JLabel("THỐNG KÊ BÁN HÀNG", SwingConstants.CENTER);
+        JLabel jLabel_header = new JLabel("HỆ THỐNG QUẢN LÝ CỬA HÀNG BÁN XE", SwingConstants.CENTER);
         jLabel_header.setForeground(Color.BLACK);
         jLabel_header.setFont(new Font("Arial", Font.BOLD, 32));
-        panel.add(jLabel_header, BorderLayout.NORTH);
+        jPanel_right.add(jLabel_header, BorderLayout.NORTH);
 
+
+        JPanel panel_center_wrapper = new JPanel(new BorderLayout(10, 10));
+        panel_center_wrapper.setBackground(Color.WHITE);
+        // lọc
         JPanel panel_filter = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
         panel_filter.setBackground(Color.WHITE);
 
-        JLabel jLabelFilter = new JLabel("LỌC:");
-        jLabelFilter.setFont(new Font("Arial", Font.BOLD, 16));
-        panel_filter.add(jLabelFilter);
-
+        //khúc này AI chỉ
+        JLabel jLabelFiler = new JLabel("LỌC:");
+        jLabelFiler.setFont(new Font("Arial", Font.BOLD, 16));
+        panel_filter.add(new JLabel("LỌC"));
         String[] filterOptions = {"Năm", "Tháng", "Ngày"};
         JComboBox<String> comboLocTheo = new JComboBox<>(filterOptions);
         panel_filter.add(comboLocTheo);
 
-        JLabel jLabelStart = new JLabel("TỪ:");
-        jLabelStart.setFont(new Font("Arial", Font.BOLD, 16));
-        panel_filter.add(jLabelStart);
-        JSpinner jSpinner_start = createDatePicker();
+        JLabel jLabelStar = new JLabel("TỪ:");
+        jLabelFiler.setFont(new Font("Arial", Font.BOLD, 16));
+        panel_filter.add(jLabelStar);
+        // lọc date
+        JSpinner jSpinner_start= createDatePicker();
         panel_filter.add(jSpinner_start);
 
         JLabel jLabelEnd = new JLabel("ĐẾN:");
-        jLabelEnd.setFont(new Font("Arial", Font.BOLD, 16));
+        jLabelFiler.setFont(new Font("Arial", Font.BOLD, 16));
         panel_filter.add(jLabelEnd);
         JSpinner jSpinner_end = createDatePicker();
         panel_filter.add(jSpinner_end);
+
+        // ngày mặc định
+        Calendar cal = Calendar.getInstance();
+        Date homNay = cal.getTime();
+        jSpinner_end.setValue(homNay);
+        cal.add(Calendar.DAY_OF_MONTH, -1);
+        Date homQua = cal.getTime();
+        jSpinner_start.setValue(homQua);
 
         JButton buttonLoc = new JButton("Lọc");
         buttonLoc.setBackground(new Color(15, 110, 180));
         buttonLoc.setForeground(Color.WHITE);
         panel_filter.add(buttonLoc);
 
-        panel.add(panel_filter, BorderLayout.NORTH);
+        panel_center_wrapper.add(panel_filter, BorderLayout.NORTH);
 
-        String[] columnNames = {"Tên xe", "Tên hãng", "Số lượt bán"};
+        //xe bán chạy
+        String[] columnNames = {"Tên xe","Tên hãng" ,"Số lượt bán"};
         tableModel = new DefaultTableModel(columnNames, 0);
         tableOtoBanChay = new JTable(tableModel);
         tableOtoBanChay.getTableHeader().setFont(new Font("Arial", Font.BOLD, 16));
-        tableOtoBanChay.setFont(new Font("Arial", Font.PLAIN, 14));
-        tableOtoBanChay.setRowHeight(25);
 
         JScrollPane scrollPane = new JScrollPane(tableOtoBanChay);
         scrollPane.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createEtchedBorder(),
-                "DANH SÁCH XE BÁN CHẠY NHẤT",
+                "DANH SÁCH OTO BÁN CHẠY NHẤT  ",
                 TitledBorder.LEFT,
                 TitledBorder.TOP,
-                new Font("Arial", Font.BOLD, 18),
+                new Font("Arial", Font.BOLD, 14),
                 Color.BLACK
         ));
 
-        panel.add(scrollPane, BorderLayout.CENTER);
+        panel_center_wrapper.add(scrollPane, BorderLayout.CENTER);
+        jPanel_right.add(panel_center_wrapper, BorderLayout.CENTER);
 
-        return panel;
+        //tiều đề
+        JPanel panel_bottom = new JPanel(new GridLayout(1, 2, 20, 0));
+        panel_bottom.setBackground(Color.WHITE);
+        panel_bottom.setPreferredSize(new Dimension(0, 150));
+
+        // khách hàng tiềm năng
+        JPanel panel_khachHang = createSummaryBox("KHÁCH HÀNG MUA NHIỀU NHẤT", "N/A", Color.RED);
+
+        // doanh thu
+        JPanel panel_doanhThu = createSummaryBox("TỔNG DOANH THU CỬA HÀNG", "1000000000 vnđ", Color.GREEN);
+
+        panel_bottom.add(panel_khachHang);
+        panel_bottom.add(panel_doanhThu);
+
+        jPanel_right.add(panel_bottom, BorderLayout.SOUTH);
+        this.add(jPanel_right, BorderLayout.CENTER);
+        return jPanel_right;
     }
 
     private JSpinner createDatePicker() {
@@ -178,5 +228,22 @@ public class CarManageView extends JFrame {
         JSpinner.DateEditor editor = new JSpinner.DateEditor(spinner, "yyyy-MM-dd");
         spinner.setEditor(editor);
         return spinner;
+    }
+    private JPanel createSummaryBox(String title, String value, Color bgColor) {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(bgColor);
+        panel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+
+        JLabel labelTitle = new JLabel(title, SwingConstants.CENTER);
+        labelTitle.setFont(new Font("Arial", Font.BOLD, 18));
+        labelTitle.setBorder(BorderFactory.createEmptyBorder(15, 10, 10, 10));
+
+        JLabel labelValue = new JLabel(value, SwingConstants.CENTER);
+        labelValue.setFont(new Font("Arial", Font.BOLD, 30));
+        labelValue.setForeground(new Color(0, 50, 120));
+
+        panel.add(labelTitle, BorderLayout.NORTH);
+        panel.add(labelValue, BorderLayout.CENTER);
+        return panel;
     }
 }

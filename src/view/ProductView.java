@@ -102,6 +102,7 @@ public class ProductView extends JPanel {
     }
 
     public void addAddCarListener(ActionListener listener) {
+
         jButton_add.addActionListener(listener);
     }
 
