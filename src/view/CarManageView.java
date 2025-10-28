@@ -104,7 +104,6 @@ public class CarManageView extends JFrame {
 
         root.add(sidebar, BorderLayout.WEST);
         root.add(contentPanel, BorderLayout.CENTER);
-
         btnSanPham.addActionListener(e -> cardLayout.show(contentPanel, "Sản phẩm"));
 
         this.setVisible(true);
