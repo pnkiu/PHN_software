@@ -41,7 +41,7 @@ public class ProductView extends JPanel {
         jPanel_right.setBackground(Color.WHITE);
 
         JLabel jLabel_header = new JLabel("QUẢN LÝ SẢN PHẨM", SwingConstants.CENTER);
-        jLabel_header.setForeground(new Color(65, 105, 225));
+        jLabel_header.setForeground(Color.BLACK);
         jLabel_header.setFont(font);
         jLabel_header.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
 
@@ -85,7 +85,9 @@ public class ProductView extends JPanel {
         carTable = new JTable(tableModel);
         carTable.setFont(new Font("Arial", Font.PLAIN, 14));
         carTable.setRowHeight(25);
-        carTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+        carTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 16));
+        carTable.getTableHeader().setBackground(new Color(52, 73, 94));
+        carTable.getTableHeader().setForeground(Color.WHITE);
 
         JScrollPane scrollPane = new JScrollPane(carTable);
         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));

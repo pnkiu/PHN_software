@@ -1,6 +1,7 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -92,6 +93,39 @@ public class ProductDAO {
             e.printStackTrace();
         }
         return ketQua;
-        
     }
+    public ArrayList<ProductModel> selectXeBanChayNhat() {
+    ArrayList<ProductModel> list = new ArrayList<>();
+    try {
+        Connection connection = DatabaseConnect.getConnection();
+
+        String sql = "SELECT o.tenOTO, h.tenHang, o.soLuotBan " +
+                     "FROM oto o " +
+                     "JOIN hangoto h ON o.maHang = h.maHang " +
+                     "ORDER BY o.soLuotBan DESC " +
+                     "LIMIT 5";
+
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            String tenOTO = rs.getString("tenOTO");
+            String tenHang = rs.getString("tenHang");
+            int soLuotBan = rs.getInt("soLuotBan");
+
+            
+            ProductModel oto = new ProductModel();
+            oto.setTenOto(tenOTO);
+            oto.setMaHang(tenHang); 
+            oto.setSoLuotBan(soLuotBan);
+
+            list.add(oto);
+        }
+
+        DatabaseConnect.closeConnection(connection);
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return list;
+}
 }
