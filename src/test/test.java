@@ -3,7 +3,6 @@ package test;
 
 import dao.ProductDAO;
 import view.CarManageView;
-import view.ProductView;
 
 public class test {
     public static void main(String[] args) {

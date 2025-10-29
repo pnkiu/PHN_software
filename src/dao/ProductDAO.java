@@ -1,12 +1,12 @@
 package dao;
 
-import model.ProductModel;
-import until.DatabaseConnect;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import model.ProductModel;
+import until.DatabaseConnect;
 
 public class ProductDAO {
 
@@ -67,5 +67,31 @@ public class ProductDAO {
             e.printStackTrace();
         }
         return ketQua;
+    }
+    public int delete(ProductModel car) {
+               int ketQua = 0;
+        try {
+            //B1
+        Connection connection = DatabaseConnect.getConnection();
+
+        //B2
+        Statement st = connection.createStatement();
+
+        //B3
+        String sql = "DELETE from oto "
+					+"WHERE maOTO = '"+car.getMaOto()+"'";
+        ketQua = st.executeUpdate(sql);
+
+        //B4
+        System.out.println("Bạn đã thực thi "+ sql);
+		System.out.println("Có "+ketQua+" dòng bị thay đổi");
+
+        //B5
+        DatabaseConnect.closeConnection(connection);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ketQua;
+        
     }
 }

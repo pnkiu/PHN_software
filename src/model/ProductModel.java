@@ -20,6 +20,9 @@ public class ProductModel {
         this.soLuotBan = soLuotBan;
         this.maHang = maHang;
     }
+    public ProductModel(){
+        
+    }
 
 
     public double getGia() {

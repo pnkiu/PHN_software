@@ -1,11 +1,12 @@
 package controller;
 
 import dao.ProductDAO;
-import model.ProductModel;
-import view.ProductView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import javax.swing.JOptionPane;
+import model.ProductModel;
+import view.ProductView;
 
 public class ProductController {
     private ProductView view;
@@ -15,6 +16,7 @@ public class ProductController {
         this.view = view;
         this.dao = dao;
         this.view.addAddCarListener(new AddCarListener());
+        this.view.addDeleteCarListener(new DeleteCarListener());
         hienThiDB();
     }
 
@@ -28,10 +30,16 @@ public class ProductController {
     class AddCarListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-
             view.formThemsp(ProductController.this);
+            view.addDeleteCarListener(new DeleteCarListener());
         }
     }
+    class DeleteCarListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            xoaOTo();
+    }
+}
 
     public void them(String maOto, String tenOto, String loaiOto, String giaStr, String soLuongStr, String maHang, String moTa) {
         try {
@@ -54,4 +62,24 @@ public class ProductController {
             view.showErrorMessage("Giá và Số lượng phải là số!");
         }
     }
+            private void xoaOTo() {
+            ProductModel selected = view.getSelectedOto();
+            if (selected == null) {
+                JOptionPane.showMessageDialog(view, "Vui lòng chọn 1 xe để xóa!");
+                return;
+            }
+            int confirm = JOptionPane.showConfirmDialog(view, 
+            "Bạn có chắc muốn xóa xe " + selected.getTenOto() + " không?", 
+            "Xác nhận", JOptionPane.YES_NO_OPTION);
+
+            if (confirm == JOptionPane.YES_OPTION) {
+            int kq = ProductDAO.getInstance().delete(selected);
+            if (kq > 0) {
+                JOptionPane.showMessageDialog(view, "Xóa thành công!");
+                hienThiDB();
+            } else {
+                JOptionPane.showMessageDialog(view, "Xóa thất bại!");
+            }
+        }
+}
 }

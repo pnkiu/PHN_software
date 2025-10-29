@@ -2,15 +2,12 @@ package view;
 
 import controller.ProductController;
 import dao.ProductDAO;
-import model.ProductModel;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.List;
-import java.awt.event.ActionEvent;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import model.ProductModel;
 
 public class ProductView extends JPanel {
     private JButton btnThongKe;
@@ -77,7 +74,7 @@ public class ProductView extends JPanel {
 
         jPanel_right.add(jPanel_north_wrapper, BorderLayout.NORTH);
 
-        String[] columnNames = {"Mã Ô tô", "Tên Ô tô", "Loại", "Giá", "Số lượng", "Mã Hãng", "Số lượt bán"};
+        String[] columnNames = {"Mã Ô Tô", "Tên Ô Tô", "Giá", "Loại Ô Tô", "Số Lượng", "Mô Tả", "Mã Hãng", "Số Lượt Bán"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -105,18 +102,22 @@ public class ProductView extends JPanel {
 
         jButton_add.addActionListener(listener);
     }
+    public void addDeleteCarListener(ActionListener listener) {
+    jButton_delete.addActionListener(listener);
+}
 
     public void hienthidulieu(List<ProductModel> carList) {
         tableModel.setRowCount(0);
         for (ProductModel car : carList) {
             Object[] rowData = {
-                    car.getMaOto(),
-                    car.getTenOto(),
-                    car.getLoaiOto(),
-                    car.getGia(),
-                    car.getSoLuong(),
-                    car.getMaHang(),
-                    car.getSoLuotBan()
+            car.getMaOto(),
+            car.getTenOto(),
+            car.getGia(),       
+            car.getLoaiOto(),   
+            car.getSoLuong(),
+            car.getMoTa(),
+            car.getMaHang(),
+            car.getSoLuotBan()
             };
             tableModel.addRow(rowData);
         }
@@ -223,5 +224,22 @@ public class ProductView extends JPanel {
 
     public void showErrorMessage(String message) {
         JOptionPane.showMessageDialog(this, message, "Lỗi", JOptionPane.ERROR_MESSAGE);
+    }
+
+    public ProductModel getSelectedOto() {
+        int selectedRow = carTable.getSelectedRow();
+        if (selectedRow == -1) {
+            return null; // chưa chọn hàng nào
+        }
+    String maOto = carTable.getValueAt(selectedRow, 0).toString();
+    String tenOto = carTable.getValueAt(selectedRow, 1).toString();
+    double gia = Double.parseDouble(carTable.getValueAt(selectedRow, 2).toString());
+    String loaiOto = carTable.getValueAt(selectedRow, 3).toString();
+    int soLuong = Integer.parseInt(carTable.getValueAt(selectedRow, 4).toString());
+    String moTa = carTable.getValueAt(selectedRow, 5).toString();
+    String maHang = carTable.getValueAt(selectedRow, 6).toString();
+    int soLuotBan = Integer.parseInt(carTable.getValueAt(selectedRow, 7).toString());
+
+    return new ProductModel(gia, loaiOto, maOto, moTa, soLuong, tenOto, soLuotBan, maHang);
     }
 }
