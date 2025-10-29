@@ -1,3 +1,5 @@
+
+
 package view;
 
 import controller.CarManageController;
@@ -14,6 +16,8 @@ public class ProductPanel extends JPanel {
     private CarManageController controller;
     private DefaultTableModel tableModel;
     private JTable table;
+    private JTextField searchField;
+    private JComboBox<String> searchTypeComboBox;
 
     public ProductPanel() {
         this.controller = new CarManageController();
@@ -49,18 +53,34 @@ public class ProductPanel extends JPanel {
         JButton btnDelete = createToolbarButton("🗑️ Xóa");
         JButton btnReload = createToolbarButton("🔄 Tải lại");
 
-        // Tạo ô tìm kiếm
+        // Tạo ô tìm kiếm và combobox loại tìm kiếm
         JLabel searchLabel = new JLabel("🔍 Tìm kiếm:");
-        JTextField searchField = new JTextField(20);
+
+        // Combobox chọn loại tìm kiếm
+        String[] searchTypes = {"Tất cả", "Mã ô tô", "Tên ô tô", "Loại ô tô"};
+        searchTypeComboBox = new JComboBox<>(searchTypes);
+        searchTypeComboBox.setPreferredSize(new Dimension(120, 30));
+        searchTypeComboBox.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+
+        // Ô nhập từ khóa tìm kiếm
+        searchField = new JTextField(20);
         searchField.setPreferredSize(new Dimension(200, 30));
+
+        // Nút tìm kiếm
+        JButton btnSearch = createToolbarButton("🔎 Tìm");
+        JButton btnClearSearch = createToolbarButton("❌ Xóa tìm kiếm");
 
         // Thêm components vào toolbar
         toolbarPanel.add(btnAdd);
         toolbarPanel.add(btnEdit);
         toolbarPanel.add(btnDelete);
         toolbarPanel.add(btnReload);
+        toolbarPanel.add(Box.createHorizontalStrut(20)); // Khoảng cách
         toolbarPanel.add(searchLabel);
+        toolbarPanel.add(searchTypeComboBox);
         toolbarPanel.add(searchField);
+        toolbarPanel.add(btnSearch);
+        toolbarPanel.add(btnClearSearch);
 
         // Thêm sự kiện cho nút Sửa
         btnEdit.addActionListener(new ActionListener() {
@@ -78,6 +98,30 @@ public class ProductPanel extends JPanel {
             }
         });
 
+        // Thêm sự kiện cho nút Tìm kiếm
+        btnSearch.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                performSearch();
+            }
+        });
+
+        // Thêm sự kiện cho nút Xóa tìm kiếm
+        btnClearSearch.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clearSearch();
+            }
+        });
+
+        // Thêm sự kiện Enter cho ô tìm kiếm
+        searchField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                performSearch();
+            }
+        });
+
         return toolbarPanel;
     }
 
@@ -87,6 +131,82 @@ public class ProductPanel extends JPanel {
         button.setFocusPainted(false);
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return button;
+    }
+
+    // ============================ SEARCH METHODS ============================
+    private void performSearch() {
+        String keyword = searchField.getText().trim();
+        String searchType = (String) searchTypeComboBox.getSelectedItem();
+
+        if (keyword.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập từ khóa tìm kiếm", "Thông báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        try {
+            List<CarManageModel> searchResults = null;
+
+            switch (searchType) {
+                case "Tất cả":
+                    searchResults = controller.searchAllFields(keyword);
+                    break;
+                case "Mã ô tô":
+                    searchResults = controller.searchByMaOto(keyword);
+                    break;
+                case "Tên ô tô":
+                    searchResults = controller.searchByTenOto(keyword);
+                    break;
+                case "Loại ô tô":
+                    searchResults = controller.searchByLoaiOto(keyword);
+                    break;
+            }
+
+            if (searchResults != null) {
+                displaySearchResults(searchResults);
+                showSearchResultMessage(searchResults.size(), keyword, searchType);
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi khi tìm kiếm: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+
+    private void displaySearchResults(List<CarManageModel> carList) {
+        tableModel.setRowCount(0); // Xóa dữ liệu cũ
+
+        for (CarManageModel car : carList) {
+            Object[] rowData = {
+                    car.getMaOto(),
+                    car.getTenOto(),
+                    formatCurrency(car.getGia()),
+                    car.getLoaiOto(),
+                    String.valueOf(car.getSoLuong()),
+                    car.getMoTa(),
+                    car.getMaHang(),
+                    "✏️ Sửa"
+            };
+            tableModel.addRow(rowData);
+        }
+    }
+
+    private void showSearchResultMessage(int resultCount, String keyword, String searchType) {
+        String message;
+        if (resultCount == 0) {
+            message = String.format("Không tìm thấy kết quả nào cho '%s' trong %s", keyword, searchType.toLowerCase());
+            JOptionPane.showMessageDialog(this, message, "Kết quả tìm kiếm", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            message = String.format("Tìm thấy %d kết quả cho '%s' trong %s", resultCount, keyword, searchType.toLowerCase());
+            // Có thể hiển thị thông báo hoặc không, tùy theo thiết kế
+            System.out.println(message);
+        }
+    }
+
+    private void clearSearch() {
+        searchField.setText("");
+        searchTypeComboBox.setSelectedIndex(0);
+        refreshData();
+        JOptionPane.showMessageDialog(this, "Đã xóa tìm kiếm và hiển thị tất cả dữ liệu", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
     }
 
     // ============================ TABLE SECTION ============================

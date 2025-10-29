@@ -45,4 +45,19 @@ public class CarManageController {
 
         return true;
     }
+    public ArrayList<CarManageModel> searchByMaOto(String keyword) {
+        return productDAO.searchByMaOto(keyword);
+    }
+
+    public ArrayList<CarManageModel> searchByTenOto(String keyword) {
+        return productDAO.searchByTenOto(keyword);
+    }
+
+    public ArrayList<CarManageModel> searchByLoaiOto(String keyword) {
+        return productDAO.searchByLoaiOto(keyword);
+    }
+
+    public ArrayList<CarManageModel> searchAllFields(String keyword) {
+        return productDAO.searchAllFields(keyword);
+    }
 }
