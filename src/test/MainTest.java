@@ -54,10 +54,10 @@ public class MainTest {
                 try {
                     // Tạo user test với thông tin từ database của bạn
                     UsersModel testUser = new UsersModel();
-                    testUser.setMaNV("2");
-                    testUser.setTenNV("Phạm Thị Mai");
+                    testUser.setMaNV("");
+                    testUser.setTenNV("");
                     testUser.setChucVu(1); // 1 = Admin
-                    testUser.setTenDangNhap("nhan456");
+                    testUser.setTenDangNhap("");
 
 
                     MainApplicationFrame frame = new MainApplicationFrame(testUser);

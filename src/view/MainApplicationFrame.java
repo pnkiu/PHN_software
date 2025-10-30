@@ -3,6 +3,8 @@ package view;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.sql.SQLException;
+
 import model.UsersModel;
 
 public class MainApplicationFrame extends JFrame {
@@ -10,12 +12,12 @@ public class MainApplicationFrame extends JFrame {
     private JPanel contentPanel;
     private UsersModel currentUser;
 
-    public MainApplicationFrame(UsersModel user) {
+    public MainApplicationFrame(UsersModel user) throws SQLException {
         this.currentUser = user;
         this.init();
     }
 
-    private void init() {
+    private void init() throws SQLException {
         this.setTitle("Car Manage Software");
         this.setSize(1050, 620);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -115,7 +117,7 @@ public class MainApplicationFrame extends JFrame {
         // Tạo các panel nội dung
         JPanel panelThongKe = createThongKePanel();
         JPanel panelSanPham = new ProductPanel();
-        JPanel panelKhachHang = createKhachHangPanel();
+        JPanel panelKhachHang = new CustomerPanel();
         JPanel panelNhanVien = new StaffPanel();
         JPanel panelGiaoDich = createGiaoDichPanel();
 
