@@ -1,17 +1,20 @@
 package model;
 
 public class StaffModel {
-    private int maNV;
+    private String maNV;
     private String tenNV;
-    private long luongNV;
+    private String luongNV;
     private String sdtNV;
     private int chucVu;
     private String tenDangNhap;
     private String matKhau;
 
-    public StaffModel() {}
+    // Constructor mặc định
+    public StaffModel() {
+    }
 
-    public StaffModel(int maNV, String tenNV, long luongNV, String sdtNV, int chucVu, String tenDangNhap, String matKhau) {
+    // Constructor đầy đủ
+    public StaffModel(String maNV, String tenNV, String luongNV, String sdtNV, int chucVu, String tenDangNhap, String matKhau) {
         this.maNV = maNV;
         this.tenNV = tenNV;
         this.luongNV = luongNV;
@@ -21,25 +24,73 @@ public class StaffModel {
         this.matKhau = matKhau;
     }
 
-    // Getter và Setter
-    public int getMaNV() { return maNV; }
-    public void setMaNV(int maNV) { this.maNV = maNV; }
+    // Getters and Setters
+    public String getMaNV() {
+        return maNV;
+    }
 
-    public String getTenNV() { return tenNV; }
-    public void setTenNV(String tenNV) { this.tenNV = tenNV; }
+    public void setMaNV(String maNV) {
+        this.maNV = maNV;
+    }
 
-    public long getLuongNV() { return luongNV; }
-    public void setLuongNV(long luongNV) { this.luongNV = luongNV; }
+    public String getTenNV() {
+        return tenNV;
+    }
 
-    public String getSdtNV() { return sdtNV; }
-    public void setSdtNV(String sdtNV) { this.sdtNV = sdtNV; }
+    public void setTenNV(String tenNV) {
+        this.tenNV = tenNV;
+    }
 
-    public int getChucVu() { return chucVu; }
-    public void setChucVu(int chucVu) { this.chucVu = chucVu; }
+    public String getLuongNV() {
+        return luongNV;
+    }
 
-    public String getTenDangNhap() { return tenDangNhap; }
-    public void setTenDangNhap(String tenDangNhap) { this.tenDangNhap = tenDangNhap; }
+    public void setLuongNV(String luongNV) {
+        this.luongNV = luongNV;
+    }
 
-    public String getMatKhau() { return matKhau; }
-    public void setMatKhau(String matKhau) { this.matKhau = matKhau; }
+    public String getSdtNV() {
+        return sdtNV;
+    }
+
+    public void setSdtNV(String sdtNV) {
+        this.sdtNV = sdtNV;
+    }
+
+    public int getChucVu() {
+        return chucVu;
+    }
+
+    public void setChucVu(int chucVu) {
+        this.chucVu = chucVu;
+    }
+
+    public String getTenDangNhap() {
+        return tenDangNhap;
+    }
+
+    public void setTenDangNhap(String tenDangNhap) {
+        this.tenDangNhap = tenDangNhap;
+    }
+
+    public String getMatKhau() {
+        return matKhau;
+    }
+
+    public void setMatKhau(String matKhau) {
+        this.matKhau = matKhau;
+    }
+
+    @Override
+    public String toString() {
+        return "StaffModel{" +
+                "maNV='" + maNV + '\'' +
+                ", tenNV='" + tenNV + '\'' +
+                ", luongNV='" + luongNV + '\'' +
+                ", sdtNV='" + sdtNV + '\'' +
+                ", chucVu=" + chucVu +
+                ", tenDangNhap='" + tenDangNhap + '\'' +
+                ", matKhau='" + matKhau + '\'' +
+                '}';
+    }
 }

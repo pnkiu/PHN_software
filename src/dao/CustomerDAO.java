@@ -12,6 +12,32 @@ public class CustomerDAO {
         this.connection = connection;
     }
 
+    /**
+     * Lấy mã khách hàng tiếp theo (tự động sinh theo định dạng KH001, KH002,...)
+     */
+    public String getNextMaKH() throws SQLException {
+        String nextMaKH = "KH001"; // Mã mặc định nếu chưa có khách hàng nào
+        String sql = "SELECT maKH FROM khachhang ORDER BY LENGTH(maKH), maKH DESC LIMIT 1";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            if (rs.next()) {
+                String lastMaKH = rs.getString("maKH");
+                if (lastMaKH != null && lastMaKH.startsWith("KH")) {
+                    try {
+                        int lastNumber = Integer.parseInt(lastMaKH.substring(2));
+                        nextMaKH = "KH" + String.format("%03d", lastNumber + 1);
+                    } catch (NumberFormatException e) {
+                        // Nếu không parse được số, sử dụng mã mặc định
+                        System.out.println("Lỗi khi phân tích mã KH: " + e.getMessage());
+                    }
+                }
+            }
+        }
+        return nextMaKH;
+    }
+
     // Lấy tất cả khách hàng
     public List<CustomerModel> getAllCustomers() throws SQLException {
         List<CustomerModel> customers = new ArrayList<>();
@@ -22,7 +48,7 @@ public class CustomerDAO {
 
             while (rs.next()) {
                 CustomerModel customer = new CustomerModel();
-                customer.setMaKH(rs.getInt("maKH"));
+                customer.setMaKH(rs.getString("maKH")); // SỬA: getString thay vì getInt
                 customer.setTenKH(rs.getString("tenKH"));
                 customer.setDckH(rs.getString("dckH"));
                 customer.setSdtKH(rs.getString("sdtKH"));
@@ -35,16 +61,16 @@ public class CustomerDAO {
     }
 
     // Lấy khách hàng theo mã
-    public CustomerModel getCustomerByMaKH(int maKH) throws SQLException {
+    public CustomerModel getCustomerByMaKH(String maKH) throws SQLException { // SỬA: tham số String
         String sql = "SELECT * FROM khachhang WHERE maKH = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, maKH);
+            stmt.setString(1, maKH); // SỬA: setString thay vì setInt
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     CustomerModel customer = new CustomerModel();
-                    customer.setMaKH(rs.getInt("maKH"));
+                    customer.setMaKH(rs.getString("maKH")); // SỬA: getString
                     customer.setTenKH(rs.getString("tenKH"));
                     customer.setDckH(rs.getString("dckH"));
                     customer.setSdtKH(rs.getString("sdtKH"));
@@ -59,28 +85,18 @@ public class CustomerDAO {
 
     // Thêm khách hàng mới
     public boolean addCustomer(CustomerModel customer) throws SQLException {
-        String sql = "INSERT INTO khachhang (tenKH, dckH, sdtKH, tongChiTieu, soLanMua) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO khachhang (maKH, tenKH, dckH, sdtKH, tongChiTieu, soLanMua) VALUES (?, ?, ?, ?, ?, ?)";
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, customer.getTenKH());
-            stmt.setString(2, customer.getDckH());
-            stmt.setString(3, customer.getSdtKH());
-            stmt.setLong(4, customer.getTongChiTieu());
-            stmt.setInt(5, customer.getSoLanMua());
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, customer.getMaKH()); // SỬA: setString
+            stmt.setString(2, customer.getTenKH());
+            stmt.setString(3, customer.getDckH());
+            stmt.setString(4, customer.getSdtKH());
+            stmt.setLong(5, customer.getTongChiTieu());
+            stmt.setInt(6, customer.getSoLanMua());
 
-            int affectedRows = stmt.executeUpdate();
-
-            if (affectedRows > 0) {
-                // Lấy mã KH tự động tạo
-                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        customer.setMaKH(generatedKeys.getInt(1));
-                    }
-                }
-                return true;
-            }
+            return stmt.executeUpdate() > 0;
         }
-        return false;
     }
 
     // Cập nhật khách hàng
@@ -93,18 +109,18 @@ public class CustomerDAO {
             stmt.setString(3, customer.getSdtKH());
             stmt.setLong(4, customer.getTongChiTieu());
             stmt.setInt(5, customer.getSoLanMua());
-            stmt.setInt(6, customer.getMaKH());
+            stmt.setString(6, customer.getMaKH()); // SỬA: setString
 
             return stmt.executeUpdate() > 0;
         }
     }
 
     // Xóa khách hàng
-    public boolean deleteCustomer(int maKH) throws SQLException {
+    public boolean deleteCustomer(String maKH) throws SQLException { // SỬA: tham số String
         String sql = "DELETE FROM khachhang WHERE maKH = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, maKH);
+            stmt.setString(1, maKH); // SỬA: setString
             return stmt.executeUpdate() > 0;
         }
     }
@@ -124,7 +140,7 @@ public class CustomerDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     CustomerModel customer = new CustomerModel();
-                    customer.setMaKH(rs.getInt("maKH"));
+                    customer.setMaKH(rs.getString("maKH")); // SỬA: getString
                     customer.setTenKH(rs.getString("tenKH"));
                     customer.setDckH(rs.getString("dckH"));
                     customer.setSdtKH(rs.getString("sdtKH"));
@@ -148,7 +164,7 @@ public class CustomerDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     CustomerModel customer = new CustomerModel();
-                    customer.setMaKH(rs.getInt("maKH"));
+                    customer.setMaKH(rs.getString("maKH")); // SỬA: getString
                     customer.setTenKH(rs.getString("tenKH"));
                     customer.setDckH(rs.getString("dckH"));
                     customer.setSdtKH(rs.getString("sdtKH"));
@@ -172,7 +188,7 @@ public class CustomerDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     CustomerModel customer = new CustomerModel();
-                    customer.setMaKH(rs.getInt("maKH"));
+                    customer.setMaKH(rs.getString("maKH")); // SỬA: getString
                     customer.setTenKH(rs.getString("tenKH"));
                     customer.setDckH(rs.getString("dckH"));
                     customer.setSdtKH(rs.getString("sdtKH"));
@@ -196,7 +212,7 @@ public class CustomerDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     CustomerModel customer = new CustomerModel();
-                    customer.setMaKH(rs.getInt("maKH"));
+                    customer.setMaKH(rs.getString("maKH")); // SỬA: getString
                     customer.setTenKH(rs.getString("tenKH"));
                     customer.setDckH(rs.getString("dckH"));
                     customer.setSdtKH(rs.getString("sdtKH"));
@@ -220,7 +236,7 @@ public class CustomerDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     CustomerModel customer = new CustomerModel();
-                    customer.setMaKH(rs.getInt("maKH"));
+                    customer.setMaKH(rs.getString("maKH")); // SỬA: getString
                     customer.setTenKH(rs.getString("tenKH"));
                     customer.setDckH(rs.getString("dckH"));
                     customer.setSdtKH(rs.getString("sdtKH"));
@@ -234,12 +250,12 @@ public class CustomerDAO {
     }
 
     // Kiểm tra số điện thoại đã tồn tại chưa (trừ mã KH hiện tại)
-    public boolean isPhoneNumberExists(String sdtKH, int excludeMaKH) throws SQLException {
+    public boolean isPhoneNumberExists(String sdtKH, String excludeMaKH) throws SQLException { // SỬA: tham số String
         String sql = "SELECT COUNT(*) FROM khachhang WHERE sdtKH = ? AND maKH != ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, sdtKH);
-            stmt.setInt(2, excludeMaKH);
+            stmt.setString(2, excludeMaKH); // SỬA: setString
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -256,6 +272,22 @@ public class CustomerDAO {
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, sdtKH);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
+
+    // Kiểm tra mã khách hàng đã tồn tại chưa
+    public boolean isMaKHExists(String maKH) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM khachhang WHERE maKH = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, maKH);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {

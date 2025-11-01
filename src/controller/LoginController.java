@@ -63,8 +63,8 @@ public class LoginController {
                     clearUserCredentials();
                 }
 
-                view.showSuccessMessage("Đăng nhập thành công! Chào mừng " +
-                        user.getRoleString() + ": " + user.getTenNV());
+//                view.showSuccessMessage("Đăng nhập thành công! Chào mừng " +
+//                        user.getRoleString() + ": " + user.getTenNV());
 
                 // Đóng form login
                 view.dispose();

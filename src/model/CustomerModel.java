@@ -1,7 +1,7 @@
 package model;
 
 public class CustomerModel {
-    private int maKH;
+    private String maKH;
     private String tenKH;
     private String dckH;
     private String sdtKH;
@@ -11,7 +11,7 @@ public class CustomerModel {
     // Constructor
     public CustomerModel() {}
 
-    public CustomerModel(int maKH, String tenKH, String dckH, String sdtKH, long tongChiTieu, int soLanMua) {
+    public CustomerModel(String maKH, String tenKH, String dckH, String sdtKH, long tongChiTieu, int soLanMua) {
         this.maKH = maKH;
         this.tenKH = tenKH;
         this.dckH = dckH;
@@ -21,11 +21,11 @@ public class CustomerModel {
     }
 
     // Getters and Setters
-    public int getMaKH() {
+    public String getMaKH() {
         return maKH;
     }
 
-    public void setMaKH(int maKH) {
+    public void setMaKH(String maKH) {
         this.maKH = maKH;
     }
 

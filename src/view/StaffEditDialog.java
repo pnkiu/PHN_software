@@ -11,13 +11,14 @@ import java.awt.event.ActionListener;
 public class StaffEditDialog extends JPanel {
     private JDialog parentDialog;
     private StaffController controller;
-    private int maNV;
+    private String maNV; // SỬA TỪ int SANG String
 
     private JTextField txtMaNV, txtTenNV, txtLuong, txtSDT, txtTenDangNhap, txtMatKhau;
     private JComboBox<String> cboChucVu;
     private JButton btnSave, btnCancel;
 
-    public StaffEditDialog(JDialog parentDialog, StaffController controller, int maNV) {
+    // SỬA CONSTRUCTOR: tham số maNV từ int sang String
+    public StaffEditDialog(JDialog parentDialog, StaffController controller, String maNV) {
         this.parentDialog = parentDialog;
         this.controller = controller;
         this.maNV = maNV;
@@ -135,9 +136,11 @@ public class StaffEditDialog extends JPanel {
 
     private void loadStaffData() {
         try {
+            // SỬA: gọi controller với tham số String
             StaffModel staff = controller.getStaffById(maNV);
             if (staff != null) {
-                txtMaNV.setText(String.valueOf(staff.getMaNV()));
+                // SỬA: không cần String.valueOf() vì maNV đã là String
+                txtMaNV.setText(staff.getMaNV());
                 txtTenNV.setText(staff.getTenNV());
                 txtLuong.setText(String.valueOf(staff.getLuongNV()));
                 txtSDT.setText(staff.getSdtNV());
@@ -154,7 +157,7 @@ public class StaffEditDialog extends JPanel {
         try {
             // Lấy thông tin từ form
             String tenNV = txtTenNV.getText().trim();
-            long luong = Long.parseLong(txtLuong.getText().trim());
+            String luong = txtLuong.getText().trim(); // GIỮ NGUYÊN KIỂU STRING
             String sdt = txtSDT.getText().trim();
             int chucVu = cboChucVu.getSelectedIndex();
             String tenDangNhap = txtTenDangNhap.getText().trim();
@@ -166,7 +169,25 @@ public class StaffEditDialog extends JPanel {
                 return;
             }
 
-            // Tạo đối tượng StaffModel
+            // Validate lương
+            try {
+                long salaryValue = Long.parseLong(luong);
+                if (salaryValue <= 0) {
+                    JOptionPane.showMessageDialog(this, "Lương phải lớn hơn 0", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Lương phải là số hợp lệ", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Validate số điện thoại
+            if (!sdt.matches("\\d{10,11}")) {
+                JOptionPane.showMessageDialog(this, "Số điện thoại phải có 10-11 chữ số", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Tạo đối tượng StaffModel - SỬA Ở ĐÂY
             StaffModel staff = new StaffModel(maNV, tenNV, luong, sdt, chucVu, tenDangNhap, matKhau);
 
             // Gọi controller để update
@@ -179,10 +200,9 @@ public class StaffEditDialog extends JPanel {
                 JOptionPane.showMessageDialog(this, "Cập nhật thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
 
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập lương hợp lệ", "Lỗi", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Lỗi khi cập nhật: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
     }
 }

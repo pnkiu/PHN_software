@@ -229,7 +229,7 @@ public class CustomerPanel extends JPanel {
 
         if (confirm == JOptionPane.YES_OPTION) {
             try {
-                boolean success = controller.deleteCustomer(maKH);
+                boolean success = controller.deleteCustomer(String.valueOf(maKH));
                 if (success) {
                     JOptionPane.showMessageDialog(this,
                             "Xóa khách hàng thành công!",

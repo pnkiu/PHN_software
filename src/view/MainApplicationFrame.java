@@ -82,10 +82,10 @@ public class MainApplicationFrame extends JFrame {
 
         // Tạo các nút menu riêng biệt
         JToggleButton btnThongKe = new JToggleButton("Thống kê");
-        JToggleButton btnSanPham = new JToggleButton("Sản phẩm");
-        JToggleButton btnKhachHang = new JToggleButton("Khách hàng");
-        JToggleButton btnNhanVien = new JToggleButton("Nhân viên");
-        JToggleButton btnGiaoDich = new JToggleButton("Giao dịch");
+        JToggleButton btnSanPham = new JToggleButton("Quản Lý Sản phẩm");
+        JToggleButton btnKhachHang = new JToggleButton("Quản Lý Khách hàng");
+        JToggleButton btnNhanVien = new JToggleButton("Quản Lý Nhân viên");
+        JToggleButton btnGiaoDich = new JToggleButton("Quản Lý Giao dịch");
 
         // Thiết lập thuộc tính cho các nút
         JToggleButton[] buttons = {btnThongKe, btnSanPham, btnKhachHang, btnNhanVien, btnGiaoDich};
@@ -123,19 +123,19 @@ public class MainApplicationFrame extends JFrame {
 
         // Thêm các panel vào content
         contentPanel.add(panelThongKe, "Thống kê");
-        contentPanel.add(panelSanPham, "Sản phẩm");
-        contentPanel.add(panelKhachHang, "Khách hàng");
-        contentPanel.add(panelNhanVien, "Nhân viên");
-        contentPanel.add(panelGiaoDich, "Giao dịch");
+        contentPanel.add(panelSanPham, "Quản Lý Sản phẩm");
+        contentPanel.add(panelKhachHang, "Quản Lý Khách hàng");
+        contentPanel.add(panelNhanVien, "Quản Lý Nhân viên");
+        contentPanel.add(panelGiaoDich, "Quản Lý Giao dịch");
 
         root.add(contentPanel, BorderLayout.CENTER);
 
         // ============================ ADD ACTION LISTENERS ============================
         btnThongKe.addActionListener(e -> cardLayout.show(contentPanel, "Thống kê"));
-        btnSanPham.addActionListener(e -> cardLayout.show(contentPanel, "Sản phẩm"));
-        btnKhachHang.addActionListener(e -> cardLayout.show(contentPanel, "Khách hàng"));
-        btnNhanVien.addActionListener(e -> cardLayout.show(contentPanel, "Nhân viên"));
-        btnGiaoDich.addActionListener(e -> cardLayout.show(contentPanel, "Giao dịch"));
+        btnSanPham.addActionListener(e -> cardLayout.show(contentPanel, "Quản Lý Sản phẩm"));
+        btnKhachHang.addActionListener(e -> cardLayout.show(contentPanel, "Quản Lý Khách hàng"));
+        btnNhanVien.addActionListener(e -> cardLayout.show(contentPanel, "Quản Lý Nhân viên"));
+        btnGiaoDich.addActionListener(e -> cardLayout.show(contentPanel, "Quản Lý Giao dịch"));
     }
 
     // ============================ PANEL CREATION METHODS ============================

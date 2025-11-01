@@ -43,7 +43,7 @@ public class CustomerController {
     public boolean updateCustomer(CustomerModel customer) {
         try {
             // Kiểm tra số điện thoại đã tồn tại chưa (trừ mã KH hiện tại)
-            if (customerDAO.isPhoneNumberExists(customer.getSdtKH(), customer.getMaKH())) {
+            if (customerDAO.isPhoneNumberExists(customer.getSdtKH(), String.valueOf(Integer.parseInt(customer.getMaKH())))) {
                 throw new IllegalArgumentException("Số điện thoại đã tồn tại trong hệ thống");
             }
             return customerDAO.updateCustomer(customer);
@@ -54,7 +54,7 @@ public class CustomerController {
     }
 
     // Xóa khách hàng
-    public boolean deleteCustomer(int maKH) {
+    public boolean deleteCustomer(String maKH) {
         try {
             return customerDAO.deleteCustomer(maKH);
         } catch (SQLException e) {
@@ -116,7 +116,7 @@ public class CustomerController {
     // Lấy khách hàng theo mã
     public CustomerModel getCustomerByMaKH(int maKH) {
         try {
-            return customerDAO.getCustomerByMaKH(maKH);
+            return customerDAO.getCustomerByMaKH(String.valueOf(maKH));
         } catch (SQLException e) {
             e.printStackTrace();
             return null;

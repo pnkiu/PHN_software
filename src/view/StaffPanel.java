@@ -9,6 +9,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 
 public class StaffPanel extends JPanel {
@@ -17,26 +18,14 @@ public class StaffPanel extends JPanel {
     private JTable table;
     private JTextField searchField;
     private JComboBox<String> searchTypeComboBox;
-    private JButton btnEdit;
-    private JButton btnReload;
-    private JButton btnSearch;
-    private JButton btnClearSearch;
 
-    // Constructor với controller
-    public StaffPanel(StaffController controller) {
-        if (controller == null) {
-            throw new IllegalArgumentException("StaffController cannot be null");
-        }
-    }
     public StaffPanel() {
         this.controller = new StaffController();
-        this.initComponents();
+        initComponents();
         loadDataFromDatabase();
-
     }
 
-
-    public void initComponents() {
+    private void initComponents() {
         setLayout(new BorderLayout(8, 8));
         setBorder(new EmptyBorder(10, 10, 10, 10));
 
@@ -45,7 +34,6 @@ public class StaffPanel extends JPanel {
         add(createTablePanel(), BorderLayout.CENTER);
     }
 
-    // ============================ TITLE SECTION ============================
     private JLabel createSectionTitle() {
         JLabel titleLabel = new JLabel("Quản Lý Nhân Viên");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
@@ -53,16 +41,15 @@ public class StaffPanel extends JPanel {
         return titleLabel;
     }
 
-    // ============================ TOOLBAR SECTION ============================
     private JPanel createToolbarPanel() {
         JPanel toolbarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 8));
         toolbarPanel.setBorder(new EmptyBorder(0, 0, 10, 0));
 
         // Tạo các nút chức năng
         JButton btnAdd = createToolbarButton("➕ Thêm Nhân Viên");
-        btnEdit = createToolbarButton("📝 Sửa");
+        JButton btnEdit = createToolbarButton("📝 Sửa");
         JButton btnDelete = createToolbarButton("🗑️ Xóa");
-        btnReload = createToolbarButton("🔄 Tải lại");
+        JButton btnReload = createToolbarButton("🔄 Tải lại");
 
         // Tạo ô tìm kiếm và combobox loại tìm kiếm
         JLabel searchLabel = new JLabel("🔍 Tìm kiếm:");
@@ -71,74 +58,37 @@ public class StaffPanel extends JPanel {
         String[] searchTypes = {"Tất cả", "Mã nhân viên", "Tên nhân viên", "Số điện thoại"};
         searchTypeComboBox = new JComboBox<>(searchTypes);
         searchTypeComboBox.setPreferredSize(new Dimension(120, 30));
-        searchTypeComboBox.setFont(new Font("Segoe UI", Font.PLAIN, 12));
 
         // Ô nhập từ khóa tìm kiếm
         searchField = new JTextField(20);
         searchField.setPreferredSize(new Dimension(200, 30));
 
         // Nút tìm kiếm
-        btnSearch = createToolbarButton("🔎 Tìm");
-        btnClearSearch = createToolbarButton("❌ Xóa tìm kiếm");
+        JButton btnSearch = createToolbarButton("🔎 Tìm");
+        JButton btnClearSearch = createToolbarButton("❌ Xóa tìm kiếm");
 
         // Thêm components vào toolbar
         toolbarPanel.add(btnAdd);
         toolbarPanel.add(btnEdit);
         toolbarPanel.add(btnDelete);
         toolbarPanel.add(btnReload);
-        toolbarPanel.add(Box.createHorizontalStrut(20)); // Khoảng cách
+        toolbarPanel.add(Box.createHorizontalStrut(20));
         toolbarPanel.add(searchLabel);
         toolbarPanel.add(searchTypeComboBox);
         toolbarPanel.add(searchField);
         toolbarPanel.add(btnSearch);
         toolbarPanel.add(btnClearSearch);
 
-        // Thêm sự kiện cho các nút
-        setupEventListeners();
+        // Thêm sự kiện
+        btnAdd.addActionListener(e -> openAddDialog());
+        btnEdit.addActionListener(e -> openEditDialog());
+        btnDelete.addActionListener(e -> deleteSelectedStaff());
+        btnReload.addActionListener(e -> refreshData());
+        btnSearch.addActionListener(e -> performSearch());
+        btnClearSearch.addActionListener(e -> clearSearch());
+        searchField.addActionListener(e -> performSearch());
 
         return toolbarPanel;
-    }
-
-    private void setupEventListeners() {
-        // Thêm sự kiện cho nút Sửa
-        btnEdit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                openEditDialog();
-            }
-        });
-
-        // Thêm sự kiện cho nút Tải lại
-        btnReload.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                refreshData();
-            }
-        });
-
-        // Thêm sự kiện cho nút Tìm kiếm
-        btnSearch.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                performSearch();
-            }
-        });
-
-        // Thêm sự kiện cho nút Xóa tìm kiếm
-        btnClearSearch.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clearSearch();
-            }
-        });
-
-        // Thêm sự kiện Enter cho ô tìm kiếm
-        searchField.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                performSearch();
-            }
-        });
     }
 
     private JButton createToolbarButton(String text) {
@@ -149,16 +99,166 @@ public class StaffPanel extends JPanel {
         return button;
     }
 
-    // ============================ SEARCH METHODS ============================
+    private void openAddDialog() {
+        // Implementation for add dialog
+        try {
+            String nextMaNV = controller.getNextStaffId();
+            StaffModel newStaff = controller.createNewStaff();
+
+            // Hiển thị form thêm nhân viên
+            showStaffForm(newStaff, "Thêm Nhân Viên Mới", true);
+        } catch (Exception e) {
+            showError("Lỗi khi mở form thêm: " + e.getMessage());
+        }
+    }
+
+    private void openEditDialog() {
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow == -1) {
+            showWarning("Vui lòng chọn nhân viên cần sửa");
+            return;
+        }
+
+        String maNV = (String) tableModel.getValueAt(selectedRow, 0);
+        StaffModel staff = controller.getStaffById(maNV);
+
+        if (staff != null) {
+            showStaffForm(staff, "Sửa Thông Tin Nhân Viên", false);
+        } else {
+            showError("Không tìm thấy thông tin nhân viên");
+        }
+    }
+
+    private void showStaffForm(StaffModel staff, String title, boolean isNew) {
+        // Tạo dialog form đơn giản
+        JDialog dialog = new JDialog();
+        dialog.setTitle(title);
+        dialog.setModal(true);
+        dialog.setSize(400, 400);
+        dialog.setLocationRelativeTo(this);
+
+        JPanel panel = new JPanel(new GridLayout(7, 2, 10, 10));
+        panel.setBorder(new EmptyBorder(20, 20, 20, 20));
+
+        // Mã NV
+        panel.add(new JLabel("Mã NV:"));
+        JTextField txtMaNV = new JTextField(staff.getMaNV());
+        txtMaNV.setEditable(false);
+        panel.add(txtMaNV);
+
+        // Tên NV
+        panel.add(new JLabel("Tên NV:"));
+        JTextField txtTenNV = new JTextField(staff.getTenNV());
+        panel.add(txtTenNV);
+
+        // Lương
+        panel.add(new JLabel("Lương:"));
+        JTextField txtLuong = new JTextField(staff.getLuongNV());
+        panel.add(txtLuong);
+
+        // Số điện thoại
+        panel.add(new JLabel("Số điện thoại:"));
+        JTextField txtSDT = new JTextField(staff.getSdtNV());
+        panel.add(txtSDT);
+
+        // Chức vụ
+        panel.add(new JLabel("Chức vụ:"));
+        JComboBox<String> cboChucVu = new JComboBox<>(new String[]{"Nhân viên", "Quản lý"});
+        cboChucVu.setSelectedIndex(staff.getChucVu());
+        panel.add(cboChucVu);
+
+        // Tên đăng nhập
+        panel.add(new JLabel("Tên đăng nhập:"));
+        JTextField txtTenDangNhap = new JTextField(staff.getTenDangNhap());
+        panel.add(txtTenDangNhap);
+
+        // Mật khẩu
+        panel.add(new JLabel("Mật khẩu:"));
+        JTextField txtMatKhau = new JTextField(staff.getMatKhau());
+        panel.add(txtMatKhau);
+
+        // Nút lưu/hủy
+        JButton btnSave = new JButton("💾 Lưu");
+        JButton btnCancel = new JButton("❌ Hủy");
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(btnSave);
+        buttonPanel.add(btnCancel);
+
+        dialog.add(panel, BorderLayout.CENTER);
+        dialog.add(buttonPanel, BorderLayout.SOUTH);
+
+        btnSave.addActionListener(e -> {
+            try {
+                staff.setTenNV(txtTenNV.getText().trim());
+                staff.setLuongNV(txtLuong.getText().trim());
+                staff.setSdtNV(txtSDT.getText().trim());
+                staff.setChucVu(cboChucVu.getSelectedIndex());
+                staff.setTenDangNhap(txtTenDangNhap.getText().trim());
+                staff.setMatKhau(txtMatKhau.getText().trim());
+
+                boolean success;
+                if (isNew) {
+                    success = controller.addStaff(staff);
+                } else {
+                    success = controller.updateStaff(staff);
+                }
+
+                if (success) {
+                    showInfo((isNew ? "Thêm" : "Cập nhật") + " nhân viên thành công!");
+                    dialog.dispose();
+                    refreshData();
+                } else {
+                    showError((isNew ? "Thêm" : "Cập nhật") + " nhân viên thất bại!");
+                }
+            } catch (Exception ex) {
+                showError("Lỗi: " + ex.getMessage());
+            }
+        });
+
+        btnCancel.addActionListener(e -> dialog.dispose());
+
+        dialog.setVisible(true);
+    }
+
+    private void deleteSelectedStaff() {
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow == -1) {
+            showWarning("Vui lòng chọn nhân viên cần xóa");
+            return;
+        }
+
+        String maNV = (String) tableModel.getValueAt(selectedRow, 0);
+        String tenNV = (String) tableModel.getValueAt(selectedRow, 1);
+
+        int confirm = JOptionPane.showConfirmDialog(this,
+                "Bạn có chắc chắn muốn xóa nhân viên:\n" +
+                        "Mã: " + maNV + " - Tên: " + tenNV + "?",
+                "Xác nhận xóa",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                boolean success = controller.deleteStaff(maNV);
+                if (success) {
+                    showInfo("Xóa nhân viên thành công!");
+                    refreshData();
+                } else {
+                    showError("Xóa nhân viên thất bại!");
+                }
+            } catch (Exception e) {
+                showError("Lỗi khi xóa nhân viên: " + e.getMessage());
+            }
+        }
+    }
+
     private void performSearch() {
         String keyword = searchField.getText().trim();
         String searchType = (String) searchTypeComboBox.getSelectedItem();
 
         if (keyword.isEmpty()) {
-            JOptionPane.showMessageDialog(this,
-                    "Vui lòng nhập từ khóa tìm kiếm",
-                    "Thông báo",
-                    JOptionPane.WARNING_MESSAGE);
+            showWarning("Vui lòng nhập từ khóa tìm kiếm");
             return;
         }
 
@@ -182,26 +282,18 @@ public class StaffPanel extends JPanel {
 
             if (searchResults != null && !searchResults.isEmpty()) {
                 displaySearchResults(searchResults);
-                showSearchResultMessage(searchResults.size(), keyword, searchType);
+                showInfo("Tìm thấy " + searchResults.size() + " kết quả");
             } else {
-                JOptionPane.showMessageDialog(this,
-                        "Không tìm thấy kết quả nào",
-                        "Thông báo",
-                        JOptionPane.INFORMATION_MESSAGE);
+                showInfo("Không tìm thấy kết quả nào");
             }
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this,
-                    "Lỗi khi tìm kiếm: " + e.getMessage(),
-                    "Lỗi",
-                    JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
+            showError("Lỗi khi tìm kiếm: " + e.getMessage());
         }
     }
 
     private void displaySearchResults(List<StaffModel> staffList) {
-        tableModel.setRowCount(0); // Xóa dữ liệu cũ
-
+        tableModel.setRowCount(0);
         for (StaffModel staff : staffList) {
             Object[] rowData = {
                     staff.getMaNV(),
@@ -210,16 +302,10 @@ public class StaffPanel extends JPanel {
                     staff.getSdtNV(),
                     getChucVuText(staff.getChucVu()),
                     staff.getTenDangNhap(),
-                    "✏️ Sửa"
+                    "***" // Ẩn mật khẩu
             };
             tableModel.addRow(rowData);
         }
-    }
-
-    private void showSearchResultMessage(int resultCount, String keyword, String searchType) {
-        String message = String.format("Tìm thấy %d kết quả cho '%s' trong %s",
-                resultCount, keyword, searchType.toLowerCase());
-        System.out.println(message);
     }
 
     private void clearSearch() {
@@ -228,46 +314,35 @@ public class StaffPanel extends JPanel {
         refreshData();
     }
 
-    // ============================ TABLE SECTION ============================
     private JScrollPane createTablePanel() {
-        // Tạo model cho bảng
-        String[] columns = {"Mã NV", "Tên NV", "Lương", "Số điện thoại", "Chức vụ", "Tên đăng nhập", "Thao tác"};
-        tableModel = createTableModel(columns);
-
-        // Tạo bảng
-        table = createTable(tableModel);
-
-        // Tạo scroll pane cho bảng
-        JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200)));
-
-        return scrollPane;
-    }
-
-    private DefaultTableModel createTableModel(String[] columns) {
-        return new DefaultTableModel(columns, 0) {
+        String[] columns = {"Mã NV", "Tên NV", "Lương", "Số điện thoại", "Chức vụ", "Tên đăng nhập", "Mật khẩu"};
+        tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                // Chỉ cho phép chỉnh sửa cột "Thao tác"
-                return column == 6;
-            }
-
-            @Override
-            public Class<?> getColumnClass(int columnIndex) {
-                // Xác định kiểu dữ liệu cho từng cột
-                if (columnIndex == 0) return Integer.class; // Mã NV là số
-                return String.class;
+                return false;
             }
         };
+
+        table = new JTable(tableModel);
+        table.setRowHeight(30);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        // Set column widths
+        table.getColumnModel().getColumn(0).setPreferredWidth(80);
+        table.getColumnModel().getColumn(1).setPreferredWidth(150);
+        table.getColumnModel().getColumn(2).setPreferredWidth(100);
+        table.getColumnModel().getColumn(3).setPreferredWidth(100);
+        table.getColumnModel().getColumn(4).setPreferredWidth(80);
+        table.getColumnModel().getColumn(5).setPreferredWidth(100);
+        table.getColumnModel().getColumn(6).setPreferredWidth(80);
+
+        return new JScrollPane(table);
     }
 
-    // Phương thức tải dữ liệu từ database
     private void loadDataFromDatabase() {
         try {
-            System.out.println("🔄 Đang tải dữ liệu nhân viên từ database...");
             List<StaffModel> staffList = controller.getStaffList();
-
-            tableModel.setRowCount(0); // Xóa dữ liệu cũ
+            tableModel.setRowCount(0);
 
             if (staffList != null && !staffList.isEmpty()) {
                 for (StaffModel staff : staffList) {
@@ -278,140 +353,44 @@ public class StaffPanel extends JPanel {
                             staff.getSdtNV(),
                             getChucVuText(staff.getChucVu()),
                             staff.getTenDangNhap(),
-                            "✏️ Sửa"
+                            "***" // Ẩn mật khẩu
                     };
                     tableModel.addRow(rowData);
                 }
-                System.out.println("✅ Đã tải " + staffList.size() + " nhân viên từ database");
-            } else {
-                System.out.println("ℹ️ Không có nhân viên nào trong database");
-                // Không hiển thị thông báo popup để tránh làm phiền người dùng
+                System.out.println("✅ Đã tải " + staffList.size() + " nhân viên");
             }
-
         } catch (Exception e) {
-            System.out.println("❌ Lỗi khi tải dữ liệu từ database: " + e.getMessage());
-            JOptionPane.showMessageDialog(this,
-                    "Lỗi khi tải dữ liệu từ database: " + e.getMessage(),
-                    "Lỗi",
-                    JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
+            showError("Lỗi khi tải dữ liệu: " + e.getMessage());
         }
     }
 
-    private JTable createTable(DefaultTableModel model) {
-        JTable table = new JTable(model);
-
-        // Thiết lập thuộc tính cho bảng
-        table.setRowHeight(35);
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        table.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
-        table.getTableHeader().setBackground(new Color(240, 240, 240));
-        table.getTableHeader().setForeground(Color.BLACK);
-
-        // Thiết lập độ rộng cột
-        table.getColumnModel().getColumn(0).setPreferredWidth(80);  // Mã NV
-        table.getColumnModel().getColumn(1).setPreferredWidth(150); // Tên NV
-        table.getColumnModel().getColumn(2).setPreferredWidth(120); // Lương
-        table.getColumnModel().getColumn(3).setPreferredWidth(100); // Số điện thoại
-        table.getColumnModel().getColumn(4).setPreferredWidth(80);  // Chức vụ
-        table.getColumnModel().getColumn(5).setPreferredWidth(100); // Tên đăng nhập
-        table.getColumnModel().getColumn(6).setPreferredWidth(70);  // Thao tác
-
-        // Căn giữa nội dung một số cột
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        table.getColumnModel().getColumn(0).setCellRenderer(centerRenderer); // Mã NV
-        table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer); // Chức vụ
-        table.getColumnModel().getColumn(6).setCellRenderer(centerRenderer); // Thao tác
-
-        // Thêm sự kiện cho cột "Thao tác"
-        table.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                int row = table.rowAtPoint(evt.getPoint());
-                int col = table.columnAtPoint(evt.getPoint());
-
-                if (row >= 0 && col == 6) { // Cột "Thao tác"
-                    openEditDialogForRow(row);
-                }
-            }
-        });
-
-        return table;
-    }
-
-    // ============================ EDIT DIALOG METHODS ============================
-    private void openEditDialog() {
-        int selectedRow = table.getSelectedRow();
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this,
-                    "Vui lòng chọn nhân viên cần sửa",
-                    "Thông báo",
-                    JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        openEditDialogForRow(selectedRow);
-    }
-
-    private void openEditDialogForRow(int row) {
-        // Lấy mã nhân viên từ hàng được chọn
-        int maNV = (int) tableModel.getValueAt(row, 0);
-
-        // Tạo JDialog
-        JDialog editDialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this),
-                "Sửa Thông Tin Nhân Viên",
-                true);
-        editDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        editDialog.setSize(600, 500);
-        editDialog.setLocationRelativeTo(this);
-
-        // Sử dụng StaffEditDialog
-        try {
-            StaffEditDialog staffEditDialog = new StaffEditDialog(editDialog, controller, maNV);
-            editDialog.setContentPane(staffEditDialog);
-
-            // Hiển thị dialog
-            editDialog.setVisible(true);
-
-            // Sau khi dialog đóng, refresh dữ liệu
-            refreshData();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this,
-                    "Lỗi khi mở form sửa: " + e.getMessage(),
-                    "Lỗi",
-                    JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
-    }
-
-    // ============================ PUBLIC METHODS ============================
     public void refreshData() {
         loadDataFromDatabase();
     }
 
-    public JTable getTable() {
-        return table;
+    // Utility methods
+    private String formatCurrency(String amount) {
+        try {
+            long value = Long.parseLong(amount);
+            return String.format("%,d VND", value);
+        } catch (NumberFormatException e) {
+            return amount;
+        }
     }
 
-    public JButton getBtnSua() {
-        return btnEdit;
-    }
-
-    // ============================ UTILITY METHODS ============================
-
-    // Phương thức định dạng tiền tệ
-    private String formatCurrency(long amount) {
-        return String.format("₫ %,d", amount);
-    }
-
-    // Phương thức chuyển đổi chức vụ từ số sang text - ĐÃ SỬA
     private String getChucVuText(int chucVu) {
-        return chucVu == 1 ? "Quản trị viên" : "Nhân viên"; // 1 = Quản lý, 0 = Nhân viên
+        return chucVu == 0 ? "Quản lý" : "Nhân viên";
     }
 
-    // Phương thức kiểm tra trạng thái
-    public boolean isReady() {
-        return controller != null && controller.isReady();
+    private void showInfo(String message) {
+        JOptionPane.showMessageDialog(this, message, "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void showWarning(String message) {
+        JOptionPane.showMessageDialog(this, message, "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+    }
+
+    private void showError(String message) {
+        JOptionPane.showMessageDialog(this, message, "Lỗi", JOptionPane.ERROR_MESSAGE);
     }
 }
