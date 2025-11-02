@@ -2,15 +2,12 @@ package view;
 
 import controller.ProductController;
 import dao.ProductDAO;
-import model.ProductModel;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.List;
-import java.awt.event.ActionEvent;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import model.ProductModel;
 
 public class ProductView extends JPanel {
     private JButton btnThongKe;
@@ -44,7 +41,7 @@ public class ProductView extends JPanel {
         jPanel_right.setBackground(Color.WHITE);
 
         JLabel jLabel_header = new JLabel("QUẢN LÝ SẢN PHẨM", SwingConstants.CENTER);
-        jLabel_header.setForeground(new Color(65, 105, 225));
+        jLabel_header.setForeground(Color.BLACK);
         jLabel_header.setFont(font);
         jLabel_header.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
 
@@ -77,7 +74,7 @@ public class ProductView extends JPanel {
 
         jPanel_right.add(jPanel_north_wrapper, BorderLayout.NORTH);
 
-        String[] columnNames = {"Mã Ô tô", "Tên Ô tô", "Loại", "Giá", "Số lượng", "Mã Hãng", "Số lượt bán"};
+        String[] columnNames = {"Mã Ô Tô", "Tên Ô Tô", "Giá", "Loại Ô Tô", "Số Lượng", "Mô Tả", "Mã Hãng", "Số Lượt Bán"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -88,7 +85,9 @@ public class ProductView extends JPanel {
         carTable = new JTable(tableModel);
         carTable.setFont(new Font("Arial", Font.PLAIN, 14));
         carTable.setRowHeight(25);
-        carTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+        carTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 16));
+        carTable.getTableHeader().setBackground(new Color(52, 73, 94));
+        carTable.getTableHeader().setForeground(Color.WHITE);
 
         JScrollPane scrollPane = new JScrollPane(carTable);
         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -105,6 +104,9 @@ public class ProductView extends JPanel {
 
         jButton_add.addActionListener(listener);
     }
+    public void addDeleteCarListener(ActionListener listener) {
+        jButton_delete.addActionListener(listener);
+    }
 
     public void hienthidulieu(List<ProductModel> carList) {
         tableModel.setRowCount(0);
@@ -112,9 +114,10 @@ public class ProductView extends JPanel {
             Object[] rowData = {
                     car.getMaOto(),
                     car.getTenOto(),
-                    car.getLoaiOto(),
                     car.getGia(),
+                    car.getLoaiOto(),
                     car.getSoLuong(),
+                    car.getMoTa(),
                     car.getMaHang(),
                     car.getSoLuotBan()
             };
@@ -223,5 +226,22 @@ public class ProductView extends JPanel {
 
     public void showErrorMessage(String message) {
         JOptionPane.showMessageDialog(this, message, "Lỗi", JOptionPane.ERROR_MESSAGE);
+    }
+
+    public ProductModel getSelectedOto() {
+        int selectedRow = carTable.getSelectedRow();
+        if (selectedRow == -1) {
+            return null; // chưa chọn hàng nào
+        }
+        String maOto = carTable.getValueAt(selectedRow, 0).toString();
+        String tenOto = carTable.getValueAt(selectedRow, 1).toString();
+        double gia = Double.parseDouble(carTable.getValueAt(selectedRow, 2).toString());
+        String loaiOto = carTable.getValueAt(selectedRow, 3).toString();
+        int soLuong = Integer.parseInt(carTable.getValueAt(selectedRow, 4).toString());
+        String moTa = carTable.getValueAt(selectedRow, 5).toString();
+        String maHang = carTable.getValueAt(selectedRow, 6).toString();
+        int soLuotBan = Integer.parseInt(carTable.getValueAt(selectedRow, 7).toString());
+
+        return new ProductModel(gia, loaiOto, maOto, moTa, soLuong, tenOto, soLuotBan, maHang);
     }
 }

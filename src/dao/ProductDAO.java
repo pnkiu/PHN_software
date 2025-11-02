@@ -1,12 +1,13 @@
 package dao;
 
-import model.ProductModel;
-import until.DatabaseConnect;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import model.ProductModel;
+import until.DatabaseConnect;
 
 public class ProductDAO {
 
@@ -64,6 +65,91 @@ public class ProductDAO {
             DatabaseConnect.closeConnection(connection);
 
         } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ketQua;
+    }
+    public int delete(ProductModel car) {
+        int ketQua = 0;
+        try {
+            //B1
+            Connection connection = DatabaseConnect.getConnection();
+
+            //B2
+            Statement st = connection.createStatement();
+
+            //B3
+            String sql = "DELETE from oto "
+                    +"WHERE maOTO = '"+car.getMaOto()+"'";
+            ketQua = st.executeUpdate(sql);
+
+            //B4
+            System.out.println("Bạn đã thực thi "+ sql);
+            System.out.println("Có "+ketQua+" dòng bị thay đổi");
+
+            //B5
+            DatabaseConnect.closeConnection(connection);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ketQua;
+    }
+    public ArrayList<ProductModel> selectXeBanChayNhat() {
+        ArrayList<ProductModel> list = new ArrayList<>();
+        try {
+            Connection connection = DatabaseConnect.getConnection();
+
+            String sql = "SELECT o.tenOTO, h.tenHang, o.soLuotBan " +
+                    "FROM oto o " +
+                    "JOIN hangoto h ON o.maHang = h.maHang " +
+                    "ORDER BY o.soLuotBan DESC " +
+                    "LIMIT 5";
+
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                String tenOTO = rs.getString("tenOTO");
+                String tenHang = rs.getString("tenHang");
+                int soLuotBan = rs.getInt("soLuotBan");
+
+
+                ProductModel oto = new ProductModel();
+                oto.setTenOto(tenOTO);
+                oto.setMaHang(tenHang);
+                oto.setSoLuotBan(soLuotBan);
+
+                list.add(oto);
+            }
+
+            DatabaseConnect.closeConnection(connection);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+    public ProductModel getProductByMaOto(String maOTO) {
+
+        String sql = "SELECT * FROM oto WHERE maOTO = ?";
+        ProductModel ketQua = null;
+        try (Connection conn = DatabaseConnect.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, maOTO);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    String tenOto = rs.getString("tenOTO");
+                    String loaiOto = rs.getString("loaiOTO");
+                    double gia = rs.getDouble("gia");
+                    int soLuong = rs.getInt("soLuong");
+                    String moTa = rs.getString("moTa");
+                    String maHang = rs.getString("maHang");
+                    int soLuotBan = rs.getInt("soLuotBan");
+                    ketQua = new ProductModel(gia, loaiOto, maOTO, moTa,
+                            soLuong, tenOto, soLuotBan, maHang);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi lấy sản phẩm theo ID: " + e.getMessage());
             e.printStackTrace();
         }
         return ketQua;

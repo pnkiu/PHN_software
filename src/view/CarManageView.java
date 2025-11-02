@@ -1,12 +1,16 @@
 package view;
 
+import controller.CarManageController;
+import dao.ProductDAO;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
-import java.util.Calendar;
-import java.util.Date;
+import model.ProductModel;
 
 public class CarManageView extends JFrame {
     private JButton btnThongKe;
@@ -25,11 +29,13 @@ public class CarManageView extends JFrame {
 
     public void init() {
         Font font = new Font("Arial", Font.BOLD, 40);
-        this.setTitle("Car Manage Software");
+        this.setTitle("Car Management Software");
         this.setSize(1050, 620);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.setLayout(new BorderLayout());
+
+        CarManageController controller = new CarManageController(this, new ProductDAO());
 
         JPanel root = new JPanel(new BorderLayout());
         setContentPane(root);
@@ -125,8 +131,7 @@ public class CarManageView extends JFrame {
         btnKhachHang.addActionListener(e -> cardLayout.show(contentPanel, "Khách hàng"));
         btnGiaoDich.addActionListener(e -> cardLayout.show(contentPanel, "Giao dịch"));
 
-
-
+        controller.hienThiXeBanChay();
         this.setVisible(true);
     }
 
@@ -185,10 +190,15 @@ public class CarManageView extends JFrame {
         panel_center_wrapper.add(panel_filter, BorderLayout.NORTH);
 
         //xe bán chạy
-        String[] columnNames = {"Tên xe","Tên hãng" ,"Số lượt bán"};
-        tableModel = new DefaultTableModel(columnNames, 0);
         tableOtoBanChay = new JTable(tableModel);
-        tableOtoBanChay.getTableHeader().setFont(new Font("Arial", Font.BOLD, 16));
+        tableOtoBanChay.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        tableOtoBanChay.setRowHeight(28);
+        tableOtoBanChay.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 16));
+        tableOtoBanChay.getTableHeader().setBackground(new Color(52, 73, 94));
+        tableOtoBanChay.getTableHeader().setForeground(Color.WHITE);
+        tableOtoBanChay.setSelectionBackground(new Color(52, 152, 219));
+        tableOtoBanChay.setSelectionForeground(Color.WHITE);
+        // tableOtoBanChay.getTableHeader().setFont(new Font("Arial", Font.BOLD, 16));
 
         JScrollPane scrollPane = new JScrollPane(tableOtoBanChay);
         scrollPane.setBorder(BorderFactory.createTitledBorder(
@@ -196,7 +206,7 @@ public class CarManageView extends JFrame {
                 "DANH SÁCH OTO BÁN CHẠY NHẤT  ",
                 TitledBorder.LEFT,
                 TitledBorder.TOP,
-                new Font("Arial", Font.BOLD, 14),
+                new Font("Segoe UI", Font.BOLD, 16),
                 Color.BLACK
         ));
 
@@ -245,5 +255,15 @@ public class CarManageView extends JFrame {
         panel.add(labelTitle, BorderLayout.NORTH);
         panel.add(labelValue, BorderLayout.CENTER);
         return panel;
+    }
+    public void hienThiXeBanChayNhat(ArrayList<ProductModel> list) {
+        String[] columnNames = {"Tên Xe", "Tên Hãng", "Số Lượt Bán"};
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+
+        for (ProductModel o : list) {
+            Object[] row = { o.getTenOto(), o.getMaHang(), o.getSoLuotBan() };
+            model.addRow(row);
+        }
+        tableOtoBanChay.setModel(model);
     }
 }
