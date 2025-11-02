@@ -25,7 +25,6 @@ public class TransactionController {
     private ChonSanPhamView chonSanPhamView;
 
 
-
     public TransactionController(TransacionView view, TransactionDAO dao) {
         this.view = view;
         this.dao = dao;
@@ -33,11 +32,11 @@ public class TransactionController {
         this.customerDAO = new CustomerDAO();
         this.staffDAO = new StaffDAO();
 
-        // (Các listener của bạn đã đúng)
         this.view.addAddgdListener(new AddgdListener());
         this.view.addDeletegdListener(new DeletegdListener());
         this.view.addViewDetailsListener(new ViewDetailsListener());
         this.view.addEditgdListener(new EditListener());
+        this.view.addSearchListener(new SearchListener());
         hienThiDB();
     }
 
@@ -45,18 +44,19 @@ public class TransactionController {
         List<TransactionModel> gd = dao.selectAll();
         view.hienthidulieu(gd);
     }
+
     public void moCuaSoThemKhachHang() {
         view.formThemKhachHang(this);
     }
 
-    // (Hàm themKhachHangMoi của bạn đã đúng)
+    //thêm khách hàng mới trong form them gd
     public void themKhachHangMoi(String tenKH, String sdtKH, String diaChi) {
         try {
             if (tenKH.isEmpty() || sdtKH.isEmpty()) {
                 view.showErrorMessage("Tên và SĐT khách hàng không được để trống!");
                 return;
             }
-            if (customerDAO.isPhoneNumberExists(sdtKH)) {
+            if (customerDAO.ktrSDT(sdtKH)) {
                 view.showErrorMessage("Số điện thoại này đã được đăng ký cho khách hàng khác!");
                 return;
             }
@@ -73,7 +73,7 @@ public class TransactionController {
                 view.showSuccessMessage("Thêm khách hàng mới thành công!");
                 view.closeAddCustomerDialog();
                 List<CustomerModel> dsMoi = customerDAO.selectAll();
-                view.refreshCustomerComboBox(dsMoi, khMoi);
+                view.refreshCustomer(dsMoi, khMoi);
             } else {
                 view.showErrorMessage("Thêm khách hàng thất bại!");
             }
@@ -84,7 +84,7 @@ public class TransactionController {
     }
 
 
-    class AddgdListener implements ActionListener {
+    public class AddgdListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
@@ -98,7 +98,7 @@ public class TransactionController {
         }
     }
 
-    class DeletegdListener implements ActionListener {
+    public class DeletegdListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             TransactionModel tx = view.getSelectedTransaction();
@@ -127,8 +127,8 @@ public class TransactionController {
         }
     }
 
-    // SỬA: Bỏ 'public' (cho nhất quán)
-    class ViewDetailsListener implements ActionListener {
+    //lấy dữ liệu để xem chi tiết giao dịch
+    public class ViewDetailsListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             TransactionModel tx = view.getSelectedTransaction();
@@ -137,10 +137,10 @@ public class TransactionController {
             }
 
             try {
-                CustomerModel kh = customerDAO.getCustomerByMaKH(tx.getMaKH());
-                StaffModel nv = staffDAO.getStaffByMaNV(tx.getMaNV());
+                CustomerModel kh = customerDAO.getCustomer(tx.getMaKH());
+                StaffModel nv = staffDAO.getStaff(tx.getMaNV());
                 ProductModel sp = productDAO.getProductByMaOto(tx.getMaOTO());
-                view.showDetailDialog(tx, kh, nv, sp);
+                view.showDetail(tx, kh, nv, sp);
 
             } catch (Exception ex) {
                 view.showErrorMessage("Lỗi khi tải chi tiết: " + ex.getMessage());
@@ -149,7 +149,7 @@ public class TransactionController {
         }
     }
 
-    // (Các hàm moCuaSoChonSanPham, setSanPhamSauKhiChon đã đúng)
+
     public void moCuaSoChonSanPham() {
         List<ProductModel> dsSanPham = productDAO.selectAll();
 
@@ -168,44 +168,38 @@ public class TransactionController {
         }
     }
 
-    // SỬA: Lỗi 1 - Xử lý 'boolean' trả về từ DAO
+
     public void them(String maGD, String maKH, String maNV, String maOTO, double tongtien, String ngayGD, int soLuong) {
         if (maGD.isEmpty() || maKH.isEmpty() || maNV.isEmpty() || maOTO.isEmpty()) {
             view.showErrorMessage("Vui lòng điền đầy đủ thông tin !");
             return;
         }
-
         TransactionModel newGD = new TransactionModel(maGD, maKH, maNV, maOTO, tongtien, ngayGD, soLuong);
-
-        // SỬA: dao.insert() giờ trả về boolean
         boolean success = dao.insert(newGD);
-
         if (success) {
             view.showSuccessMessage("Thêm giao dịch và trừ kho thành công!");
             view.closeAddDialog();
             hienThiDB();
         } else {
-            // Lỗi có thể do hết hàng
             view.showErrorMessage("Thêm thất bại! (Lỗi CSDL hoặc không đủ hàng tồn kho)");
         }
     }
 
-    // (class EditListener đã đúng)
-    class EditListener implements ActionListener {
+    public class EditListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             TransactionModel tx = view.getSelectedTransaction();
             if (tx == null) return;
 
             try {
-                CustomerModel kh = customerDAO.getCustomerByMaKH(tx.getMaKH());
-                StaffModel nv = staffDAO.getStaffByMaNV(tx.getMaNV());
+                CustomerModel kh = customerDAO.getCustomer(tx.getMaKH());
+                StaffModel nv = staffDAO.getStaff(tx.getMaNV());
                 ProductModel sp = productDAO.getProductByMaOto(tx.getMaOTO());
 
                 List<CustomerModel> dsKhachHang = customerDAO.selectAll();
                 List<StaffModel> dsNhanVien = staffDAO.selectAll();
 
-                if(kh == null || nv == null) {
+                if (kh == null || nv == null) {
                     view.showErrorMessage("Không tìm thấy thông tin Khách Hàng hoặc Nhân Viên của giao dịch này.");
                     return;
                 }
@@ -219,15 +213,12 @@ public class TransactionController {
         }
     }
 
-
-    // SỬA: Lỗi 2 - Đổi tên hàm cho khớp với View
     public void suaGiaoDich(TransactionModel tx, CustomerModel kh) {
         boolean txSuccess = false;
         boolean khSuccess = false;
         String errorMessage = "";
 
         try {
-            // (Code logic 2-trong-1 của bạn đã đúng)
             int txRows = dao.update(tx);
             if (txRows > 0) {
                 txSuccess = true;
@@ -241,7 +232,6 @@ public class TransactionController {
             errorMessage = e.getMessage();
             e.printStackTrace();
         }
-
         if (txSuccess && khSuccess) {
             view.showSuccessMessage("Cập nhật giao dịch VÀ địa chỉ khách hàng thành công!");
             hienThiDB();
@@ -250,6 +240,30 @@ public class TransactionController {
             hienThiDB();
         } else {
             view.showErrorMessage("Cập nhật thất bại: " + errorMessage);
+        }
+    }
+
+    public class SearchListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try {
+                String keyword = view.getSearchText();
+
+                // Nếu ô tìm kiếm rỗng, tải lại toàn bộ bảng
+                if (keyword == null || keyword.trim().isEmpty()) {
+                    hienThiDB(); // Gọi hàm tải lại toàn bộ
+                } else {
+                    // Nếu có chữ, gọi hàm search
+                    List<TransactionModel> searchResult = dao.search(keyword);
+                    if (searchResult.isEmpty()) {
+                        view.showErrorMessage("Không tìm thấy kết quả nào khớp với '" + keyword + "'");
+                    }
+                    view.hienthidulieu(searchResult); // Hiển thị kết quả (kể cả rỗng)
+                }
+            } catch (Exception ex) {
+                view.showErrorMessage("Lỗi khi tìm kiếm: " + ex.getMessage());
+                ex.printStackTrace();
+            }
         }
     }
 }

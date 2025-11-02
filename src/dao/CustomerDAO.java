@@ -36,32 +36,9 @@ public class CustomerDAO {
         return customers;
     }
 
-    public CustomerModel getCustomerByMaKH(int maKH) throws SQLException {
+    //lấy dữ liệu 1 kh
+    public CustomerModel getCustomer(String maKH) throws SQLException {
         String sql = "SELECT * FROM khachhang WHERE maKH = ?";
-
-        try (Connection conn = DatabaseConnect.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, maKH);
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    CustomerModel customer = new CustomerModel();
-                    customer.setMaKH(rs.getString("maKH"));
-                    customer.setTenKH(rs.getString("tenKH"));
-                    customer.setDckH(rs.getString("dckH"));
-                    customer.setSdtKH(rs.getString("sdtKH"));
-                    customer.setTongChiTieu(rs.getLong("tongChiTieu"));
-                    customer.setSoLanMua(rs.getInt("soLanMua"));
-                    return customer;
-                }
-            }
-        }
-        return null;
-    }
-
-    public CustomerModel getCustomerByMaKH(String maKH) throws SQLException {
-        String sql = "SELECT * FROM khachhang WHERE maKH = ?";
-
         try (Connection conn = DatabaseConnect.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, maKH);
@@ -81,7 +58,8 @@ public class CustomerDAO {
         }
         return null;
     }
-    private String generateNewMaKH() throws SQLException {
+    //tự động tạo mã
+    private String newMaKH() throws SQLException {
         String newMaKH = "KH001";
         String sql = "SELECT MAX(CAST(SUBSTRING(maKH, 3) AS UNSIGNED)) FROM khachhang";
 
@@ -100,15 +78,13 @@ public class CustomerDAO {
         return newMaKH;
     }
 
+    //các chức năng
     public boolean addCustomer(CustomerModel customer) throws SQLException {
-
-        String newMaKH = this.generateNewMaKH();
+        String newMaKH = this.newMaKH();
         customer.setMaKH(newMaKH);
-
         String sql = "INSERT INTO khachhang (maKH, tenKH, dckH, sdtKH, tongChiTieu, soLanMua) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnect.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-
             stmt.setString(1, customer.getMaKH());
             stmt.setString(2, customer.getTenKH());
             stmt.setString(3, customer.getDckH());
@@ -117,7 +93,6 @@ public class CustomerDAO {
             stmt.setInt(6, customer.getSoLanMua());
 
             int affectedRows = stmt.executeUpdate();
-
             return affectedRows > 0;
         }
     }
@@ -134,11 +109,11 @@ public class CustomerDAO {
             return stmt.executeUpdate() > 0;
         }
     }
-    public boolean deleteCustomer(int maKH) throws SQLException {
+    public boolean deleteCustomer(String maKH) throws SQLException {
         String sql = "DELETE FROM khachhang WHERE maKH = ?";
         try (Connection conn = DatabaseConnect.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, maKH);
+            stmt.setString(1, maKH);
             return stmt.executeUpdate() > 0;
         }
     }
@@ -186,8 +161,8 @@ public class CustomerDAO {
         return customers;
     }
 
-
-    public boolean isPhoneNumberExists(String sdtKH) throws SQLException {
+    //ktra sdt kh có tồn tại không
+    public boolean ktrSDT(String sdtKH) throws SQLException {
         String sql = "SELECT COUNT(*) FROM khachhang WHERE sdtKH = ?";
         try (Connection conn = DatabaseConnect.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

@@ -22,25 +22,50 @@ public class StaffModel {
     }
 
     public String getMaNV() { return maNV; }
-    public void setMaNV(String maNV) { this.maNV = maNV; }
+    public void setMaNV(String maNV) {
+        this.maNV = maNV;
+    }
 
-    public String getTenNV() { return tenNV; }
-    public void setTenNV(String tenNV) { this.tenNV = tenNV; }
+    public String getTenNV() {
+        return tenNV; }
+    public void setTenNV(String tenNV) {
+        this.tenNV = tenNV;
+    }
 
-    public long getLuongNV() { return luongNV; }
-    public void setLuongNV(long luongNV) { this.luongNV = luongNV; }
+    public long getLuongNV() {
+        return luongNV;
+    }
+    public void setLuongNV(long luongNV) {
+        this.luongNV = luongNV;
+    }
 
-    public String getSdtNV() { return sdtNV; }
-    public void setSdtNV(String sdtNV) { this.sdtNV = sdtNV; }
+    public String getSdtNV() {
+        return sdtNV;
+    }
+    public void setSdtNV(String sdtNV) {
+        this.sdtNV = sdtNV;
+    }
 
-    public int getChucVu() { return chucVu; }
-    public void setChucVu(int chucVu) { this.chucVu = chucVu; }
+    public int getChucVu() {
+        return chucVu;
+    }
+    public void setChucVu(int chucVu) {
+        this.chucVu = chucVu;
+    }
 
-    public String getTenDangNhap() { return tenDangNhap; }
-    public void setTenDangNhap(String tenDangNhap) { this.tenDangNhap = tenDangNhap; }
+    public String getTenDangNhap() {
+        return tenDangNhap;
+    }
+    public void setTenDangNhap(String tenDangNhap) {
+        this.tenDangNhap = tenDangNhap;
+    }
 
-    public String getMatKhau() { return matKhau; }
-    public void setMatKhau(String matKhau) { this.matKhau = matKhau; }
+    public String getMatKhau() {
+        return matKhau;
+    }
+    public void setMatKhau(String matKhau) {
+        this.matKhau = matKhau;
+    }
 
     @Override
     public String toString() {

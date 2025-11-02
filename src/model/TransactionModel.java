@@ -10,6 +10,9 @@ public class TransactionModel {
     private double tongtien;
     private String ngayGD;
     private int soLuong;
+    private String tenKH;
+    private String tenNV;
+    private String tenOTO;
 
     public TransactionModel(String maGD, String maKH, String maNV, String maOTO,double tongtien  ,String ngayGD, int soLuong) {
         this.maGD = maGD;
@@ -76,5 +79,29 @@ public class TransactionModel {
 
     public void setSoLuong(int soLuong) {
         this.soLuong = soLuong;
+    }
+
+    public String getTenKH() {
+        return tenKH;
+    }
+
+    public void setTenKH(String tenKH) {
+        this.tenKH = tenKH;
+    }
+
+    public String getTenNV() {
+        return tenNV;
+    }
+
+    public void setTenNV(String tenNV) {
+        this.tenNV = tenNV;
+    }
+
+    public String getTenOTO() {
+        return tenOTO;
+    }
+
+    public void setTenOTO(String tenOTO) {
+        this.tenOTO = tenOTO;
     }
 }

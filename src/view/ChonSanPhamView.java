@@ -1,4 +1,3 @@
-// File: view/ChonSanPhamView.java
 package view;
 
 import model.ProductModel;
@@ -7,6 +6,8 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
+
+//file này là file con của transactionview tách ra cho thuận tiện
 
 public class ChonSanPhamView extends JDialog {
     private JTable productTable;
