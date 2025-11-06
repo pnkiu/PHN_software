@@ -1,7 +1,7 @@
 
 package view;
 
-import model.CarManageModel;
+import model.ProductModel;
 import controller.CarManageController;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -171,10 +171,10 @@ public class CarManageDialog extends JPanel {
     // PHƯƠNG THỨC TẢI DỮ LIỆU TỪ DATABASE
     private void loadCarDataFromDatabase() {
         try {
-            List<CarManageModel> carList = controller.getCarList();
+            List<ProductModel> carList = controller.getCarList();
             tableModel.setRowCount(0); // Xóa dữ liệu cũ
 
-            for (CarManageModel car : carList) {
+            for (ProductModel car : carList) {
                 Object[] rowData = {
                         car.getMaOto(),
                         car.getTenOto(),
@@ -212,7 +212,7 @@ public class CarManageDialog extends JPanel {
 
             if (validateInput()) {
                 // Tạo đối tượng CarManageModel từ dữ liệu form
-                CarManageModel car = new CarManageModel();
+                ProductModel car = new ProductModel();
                 car.setMaOto(txtMaOto.getText().trim());
                 car.setTenOto(txtTenOto.getText().trim());
                 car.setGia(Double.parseDouble(txtGia.getText().trim()));
@@ -253,7 +253,7 @@ public class CarManageDialog extends JPanel {
             String maOTO = tableModel.getValueAt(row, 0).toString();
             System.out.println("Đang tìm ô tô với mã: " + maOTO);
 
-            CarManageModel car = controller.getCarByMaOTO(maOTO);
+            ProductModel car = controller.getCarByMaOTO(maOTO);
 
             if (car != null) {
                 txtMaOto.setText(car.getMaOto());

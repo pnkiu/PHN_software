@@ -244,3 +244,4 @@ public class MainApplicationFrame extends JFrame {
         return currentUser;
     }
 }
+

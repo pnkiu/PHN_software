@@ -9,7 +9,6 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
 import java.util.List;
 
 public class CustomerPanel extends JPanel {
@@ -23,10 +22,18 @@ public class CustomerPanel extends JPanel {
     private JButton btnSearch;
     private JButton btnClearSearch;
 
-    public CustomerPanel() throws SQLException {
-        this.controller = new CustomerController();
-        this.initComponents();
-        loadDataFromDatabase();
+    public CustomerPanel() {
+        try {
+            this.controller = new CustomerController();
+            this.initComponents();
+            loadDataFromDatabase();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    "Lỗi khởi tạo: " + e.getMessage(),
+                    "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
     }
 
     public void initComponents() {
@@ -160,16 +167,21 @@ public class CustomerPanel extends JPanel {
 
     // ============================ DIALOG METHODS ============================
     private void openAddDialog() {
-        CustomerDialog.showAddDialog(this, controller, new CustomerDialog.OnCustomerSavedListener() {
-            @Override
-            public void onCustomerSaved() {
-                refreshData();
-                JOptionPane.showMessageDialog(CustomerPanel.this,
-                        "Thêm khách hàng thành công!",
-                        "Thành công",
-                        JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
+        CustomerDialog dialog = new CustomerDialog(
+                (Frame) SwingUtilities.getWindowAncestor(this),
+                controller,
+                null,
+                false
+        );
+        dialog.setVisible(true);
+
+        if (dialog.isSuccess()) {
+            refreshData();
+            JOptionPane.showMessageDialog(CustomerPanel.this,
+                    "Thêm khách hàng thành công!",
+                    "Thành công",
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     private void openEditDialog() {
@@ -186,20 +198,25 @@ public class CustomerPanel extends JPanel {
 
     private void openEditDialogForRow(int row) {
         // Lấy mã khách hàng từ hàng được chọn
-        int maKH = (int) tableModel.getValueAt(row, 0);
+        String maKH = (String) tableModel.getValueAt(row, 0);
         CustomerModel customer = controller.getCustomerByMaKH(maKH);
 
         if (customer != null) {
-            CustomerDialog.showEditDialog(this, controller, customer, new CustomerDialog.OnCustomerSavedListener() {
-                @Override
-                public void onCustomerSaved() {
-                    refreshData();
-                    JOptionPane.showMessageDialog(CustomerPanel.this,
-                            "Cập nhật khách hàng thành công!",
-                            "Thành công",
-                            JOptionPane.INFORMATION_MESSAGE);
-                }
-            });
+            CustomerDialog dialog = new CustomerDialog(
+                    (Frame) SwingUtilities.getWindowAncestor(this),
+                    controller,
+                    customer,
+                    true
+            );
+            dialog.setVisible(true);
+
+            if (dialog.isSuccess()) {
+                refreshData();
+                JOptionPane.showMessageDialog(CustomerPanel.this,
+                        "Cập nhật khách hàng thành công!",
+                        "Thành công",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
         } else {
             JOptionPane.showMessageDialog(this,
                     "Không tìm thấy thông tin khách hàng",
@@ -218,7 +235,8 @@ public class CustomerPanel extends JPanel {
             return;
         }
 
-        int maKH = (int) tableModel.getValueAt(selectedRow, 0);
+        // Lấy mã KH dạng String
+        String maKH = (String) tableModel.getValueAt(selectedRow, 0);
         String tenKH = (String) tableModel.getValueAt(selectedRow, 1);
 
         int confirm = JOptionPane.showConfirmDialog(this,
@@ -229,18 +247,20 @@ public class CustomerPanel extends JPanel {
 
         if (confirm == JOptionPane.YES_OPTION) {
             try {
-                boolean success = controller.deleteCustomer(String.valueOf(maKH));
-                if (success) {
+                // Sử dụng phương thức xóa có kiểm tra
+                String result = controller.deleteCustomerWithCheck(maKH);
+
+                if (result.contains("thành công")) {
                     JOptionPane.showMessageDialog(this,
-                            "Xóa khách hàng thành công!",
+                            result,
                             "Thành công",
                             JOptionPane.INFORMATION_MESSAGE);
                     refreshData();
                 } else {
                     JOptionPane.showMessageDialog(this,
-                            "Có lỗi xảy ra khi xóa khách hàng",
-                            "Lỗi",
-                            JOptionPane.ERROR_MESSAGE);
+                            result,
+                            "Thông báo",
+                            JOptionPane.WARNING_MESSAGE);
                 }
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this,
@@ -335,7 +355,7 @@ public class CustomerPanel extends JPanel {
 
     // ============================ TABLE SECTION ============================
     private JScrollPane createTablePanel() {
-        // Tạo model cho bảng - ĐÃ BỎ CỘT THAO TÁC
+        // Tạo model cho bảng
         String[] columns = {"Mã KH", "Tên Khách Hàng", "Địa Chỉ", "Số Điện Thoại", "Tổng Chi Tiêu", "Số Lần Mua"};
         tableModel = createTableModel(columns);
 
@@ -361,7 +381,7 @@ public class CustomerPanel extends JPanel {
             public Class<?> getColumnClass(int columnIndex) {
                 // Xác định kiểu dữ liệu cho từng cột
                 switch (columnIndex) {
-                    case 0: return Integer.class; // Mã KH
+                    case 0: return String.class;  // Mã KH
                     case 4: return String.class;  // Tổng Chi Tiêu (đã format)
                     case 5: return Integer.class; // Số Lần Mua
                     default: return String.class;

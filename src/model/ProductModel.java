@@ -1,6 +1,6 @@
 package model;
 
-public class CarManageModel {
+public class ProductModel {
     private String maOto;
     private String tenOto;
     private String loaiOto;
@@ -10,7 +10,7 @@ public class CarManageModel {
     private String maHang;
     private int soLuotBan;
 
-    public CarManageModel(double gia, String loaiOto, String maOto, String moTa, int soLuong, String tenOto, int soLuotBan, String maHang) {
+    public ProductModel(double gia, String loaiOto, String maOto, String moTa, int soLuong, String tenOto, int soLuotBan, String maHang) {
         this.gia = gia;
         this.loaiOto = loaiOto;
         this.maOto = maOto;
@@ -20,8 +20,7 @@ public class CarManageModel {
         this.soLuotBan = soLuotBan;
         this.maHang = maHang;
     }
-
-    public CarManageModel() {
+    public ProductModel(){
 
     }
 

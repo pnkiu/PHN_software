@@ -1,8 +1,6 @@
-
-
 package dao;
 
-import model.CarManageModel;
+import model.ProductModel;
 import database.JDBC_Util;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -16,7 +14,7 @@ public class ProductDAO {
         return new ProductDAO();
     }
 
-    public int insert(CarManageModel car) {
+    public int insert(ProductModel car) {
         int ketQua = 0;
         try {
             //b1
@@ -44,7 +42,7 @@ public class ProductDAO {
     }
 
     // PHƯƠNG THỨC SỬA (UPDATE) - ĐÃ SỬA ĐỔI ĐỂ CỘNG DỒN SỐ LƯỢNG
-    public int update(CarManageModel car) {
+    public int update(ProductModel car) {
         int ketQua = 0;
         try {
             Connection connection = JDBC_Util.getConnection();
@@ -85,9 +83,32 @@ public class ProductDAO {
         return ketQua;
     }
 
+    // PHƯƠNG THỨC XÓA (DELETE)
+    public int delete(ProductModel car) {
+        int ketQua = 0;
+        try {
+            //B1
+            Connection connection = JDBC_Util.getConnection();
+            //B2
+            Statement st = connection.createStatement();
+            //B3
+            String sql = "DELETE from oto "
+                    + "WHERE maOTO = '" + car.getMaOto() + "'";
+            ketQua = st.executeUpdate(sql);
+            //B4
+            System.out.println("Bạn đã thực thi " + sql);
+            System.out.println("Có " + ketQua + " dòng bị thay đổi");
+            //B5
+            JDBC_Util.closeConnection(connection);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ketQua;
+    }
+
     // PHƯƠNG THỨC LẤY THÔNG TIN Ô TÔ THEO MÃ
-    public CarManageModel selectById(String maOTO) {
-        CarManageModel ketQua = null;
+    public ProductModel selectById(String maOTO) {
+        ProductModel ketQua = null;
         try {
             Connection connection = JDBC_Util.getConnection();
             Statement st = connection.createStatement();
@@ -104,7 +125,7 @@ public class ProductDAO {
                 String maHang = rs.getString("maHang");
                 int soLuotBan = rs.getInt("soLuotBan");
 
-                ketQua = new CarManageModel(gia, loaiOto, maOto, moTa,
+                ketQua = new ProductModel(gia, loaiOto, maOto, moTa,
                         soLuong, tenOto, soLuotBan, maHang);
             }
             JDBC_Util.closeConnection(connection);
@@ -115,9 +136,9 @@ public class ProductDAO {
         return ketQua;
     }
 
-    //hiển thị dữ liệu sau khi thêm
-    public ArrayList<CarManageModel> selectAll() {
-        ArrayList<CarManageModel> ketQua = new ArrayList<>();
+    // HIỂN THỊ DỮ LIỆU SAU KHI THÊM
+    public ArrayList<ProductModel> selectAll() {
+        ArrayList<ProductModel> ketQua = new ArrayList<>();
         try {
             Connection connection = JDBC_Util.getConnection();
             Statement st = connection.createStatement();
@@ -132,7 +153,7 @@ public class ProductDAO {
                 String moTa = rs.getString("moTa");
                 String maHang = rs.getString("maHang");
                 int soLuotBan = rs.getInt("soLuotBan");
-                CarManageModel car = new CarManageModel(gia, loaiOto, maOto, moTa,
+                ProductModel car = new ProductModel(gia, loaiOto, maOto, moTa,
                         soLuong, tenOto, soLuotBan, maHang);
                 ketQua.add(car);
             }
@@ -143,9 +164,10 @@ public class ProductDAO {
         }
         return ketQua;
     }
+
     // Tìm kiếm theo mã ô tô
-    public ArrayList<CarManageModel> searchByMaOto(String keyword) {
-        ArrayList<CarManageModel> ketQua = new ArrayList<>();
+    public ArrayList<ProductModel> searchByMaOto(String keyword) {
+        ArrayList<ProductModel> ketQua = new ArrayList<>();
         try {
             Connection connection = JDBC_Util.getConnection();
             Statement st = connection.createStatement();
@@ -160,7 +182,7 @@ public class ProductDAO {
                 String moTa = rs.getString("moTa");
                 String maHang = rs.getString("maHang");
                 int soLuotBan = rs.getInt("soLuotBan");
-                CarManageModel car = new CarManageModel(gia, loaiOto, maOto, moTa,
+                ProductModel car = new ProductModel(gia, loaiOto, maOto, moTa,
                         soLuong, tenOto, soLuotBan, maHang);
                 ketQua.add(car);
             }
@@ -172,8 +194,8 @@ public class ProductDAO {
     }
 
     // Tìm kiếm theo tên ô tô
-    public ArrayList<CarManageModel> searchByTenOto(String keyword) {
-        ArrayList<CarManageModel> ketQua = new ArrayList<>();
+    public ArrayList<ProductModel> searchByTenOto(String keyword) {
+        ArrayList<ProductModel> ketQua = new ArrayList<>();
         try {
             Connection connection = JDBC_Util.getConnection();
             Statement st = connection.createStatement();
@@ -188,7 +210,7 @@ public class ProductDAO {
                 String moTa = rs.getString("moTa");
                 String maHang = rs.getString("maHang");
                 int soLuotBan = rs.getInt("soLuotBan");
-                CarManageModel car = new CarManageModel(gia, loaiOto, maOto, moTa,
+                ProductModel car = new ProductModel(gia, loaiOto, maOto, moTa,
                         soLuong, tenOto, soLuotBan, maHang);
                 ketQua.add(car);
             }
@@ -200,8 +222,8 @@ public class ProductDAO {
     }
 
     // Tìm kiếm theo loại ô tô
-    public ArrayList<CarManageModel> searchByLoaiOto(String keyword) {
-        ArrayList<CarManageModel> ketQua = new ArrayList<>();
+    public ArrayList<ProductModel> searchByLoaiOto(String keyword) {
+        ArrayList<ProductModel> ketQua = new ArrayList<>();
         try {
             Connection connection = JDBC_Util.getConnection();
             Statement st = connection.createStatement();
@@ -216,7 +238,7 @@ public class ProductDAO {
                 String moTa = rs.getString("moTa");
                 String maHang = rs.getString("maHang");
                 int soLuotBan = rs.getInt("soLuotBan");
-                CarManageModel car = new CarManageModel(gia, loaiOto, maOto, moTa,
+                ProductModel car = new ProductModel(gia, loaiOto, maOto, moTa,
                         soLuong, tenOto, soLuotBan, maHang);
                 ketQua.add(car);
             }
@@ -228,8 +250,8 @@ public class ProductDAO {
     }
 
     // Tìm kiếm tổng hợp (theo nhiều tiêu chí)
-    public ArrayList<CarManageModel> searchAllFields(String keyword) {
-        ArrayList<CarManageModel> ketQua = new ArrayList<>();
+    public ArrayList<ProductModel> searchAllFields(String keyword) {
+        ArrayList<ProductModel> ketQua = new ArrayList<>();
         try {
             Connection connection = JDBC_Util.getConnection();
             Statement st = connection.createStatement();
@@ -249,7 +271,7 @@ public class ProductDAO {
                 String moTa = rs.getString("moTa");
                 String maHang = rs.getString("maHang");
                 int soLuotBan = rs.getInt("soLuotBan");
-                CarManageModel car = new CarManageModel(gia, loaiOto, maOto, moTa,
+                ProductModel car = new ProductModel(gia, loaiOto, maOto, moTa,
                         soLuong, tenOto, soLuotBan, maHang);
                 ketQua.add(car);
             }

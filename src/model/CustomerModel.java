@@ -1,7 +1,7 @@
 package model;
 
 public class CustomerModel {
-    private String maKH;
+    private String maKH;  // Đã là String - tương đương varchar trong database
     private String tenKH;
     private String dckH;
     private String sdtKH;
@@ -72,7 +72,7 @@ public class CustomerModel {
     @Override
     public String toString() {
         return "CustomerModel{" +
-                "maKH=" + maKH +
+                "maKH='" + maKH + '\'' +  // Sửa thành dấu ' thay vì dấu =
                 ", tenKH='" + tenKH + '\'' +
                 ", dckH='" + dckH + '\'' +
                 ", sdtKH='" + sdtKH + '\'' +

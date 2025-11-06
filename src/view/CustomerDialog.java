@@ -3,211 +3,299 @@ package view;
 import controller.CustomerController;
 import model.CustomerModel;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class CustomerDialog extends JPanel {
+public class CustomerDialog extends JDialog {
     private CustomerController controller;
     private CustomerModel customer;
-    private boolean isEditMode;
+    private boolean success = false;
 
-    // Components
     private JTextField txtMaKH;
     private JTextField txtTenKH;
     private JTextField txtDiaChi;
     private JTextField txtSDT;
     private JTextField txtTongChiTieu;
     private JTextField txtSoLanMua;
+
     private JButton btnSave;
     private JButton btnCancel;
 
-    // Listeners
-    private OnCustomerSavedListener savedListener;
-
-    public interface OnCustomerSavedListener {
-        void onCustomerSaved();
-    }
-
-    public CustomerDialog(CustomerController controller, CustomerModel customer) {
+    public CustomerDialog(Frame owner, CustomerController controller, CustomerModel customer, boolean isEditMode) {
+        super(owner, true);
         this.controller = controller;
         this.customer = customer;
-        this.isEditMode = (customer != null);
 
-        initComponents();
-        setupLayout();
-        setupEventListeners();
-
-        if (isEditMode) {
-            loadCustomerData();
-        } else {
-            setDefaultValues();
-        }
+        setTitle(isEditMode ? "Sửa Thông Tin Khách Hàng" : "Thêm Khách Hàng Mới");
+        initComponents(isEditMode);
+        pack();
+        setLocationRelativeTo(owner);
+        setResizable(false);
+        setSize(400, 400);
     }
 
-    private void initComponents() {
-        // Initialize components
-        txtMaKH = new JTextField(15);
-        txtMaKH.setEditable(false);
-        txtMaKH.setBackground(new Color(240, 240, 240));
-
-        txtTenKH = new JTextField(15);
-        txtDiaChi = new JTextField(15);
-        txtSDT = new JTextField(15);
-        txtTongChiTieu = new JTextField(15);
-        txtTongChiTieu.setEditable(false);
-        txtTongChiTieu.setBackground(new Color(240, 240, 240));
-        txtSoLanMua = new JTextField(15);
-        txtSoLanMua.setEditable(false);
-        txtSoLanMua.setBackground(new Color(240, 240, 240));
-
-        btnSave = new JButton("💾 Lưu");
-        btnCancel = new JButton("❌ Hủy");
-    }
-
-    private void setupLayout() {
+    private void initComponents(boolean isEditMode) {
         setLayout(new BorderLayout(10, 10));
-        setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        // Title
-        String title = isEditMode ? "SỬA THÔNG TIN KHÁCH HÀNG" : "THÊM KHÁCH HÀNG MỚI";
-        JLabel titleLabel = new JLabel(title);
+        // Main panel với padding
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        // Tiêu đề
+        JLabel titleLabel = new JLabel(isEditMode ? "SỬA THÔNG TIN KHÁCH HÀNG" : "THÊM KHÁCH HÀNG MỚI");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        titleLabel.setBorder(new EmptyBorder(0, 0, 15, 0));
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
+        mainPanel.add(titleLabel);
 
-        // Form panel
+        // Panel chứa các trường nhập liệu
         JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBorder(BorderFactory.createTitledBorder("Thông tin khách hàng"));
+        formPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(8, 8, 8, 8);
+        gbc.gridx = 0;
+        gbc.weightx = 0.3;
 
         // Mã KH
-        gbc.gridx = 0; gbc.gridy = 0;
-        formPanel.add(createLabel("Mã KH:"), gbc);
+        gbc.gridy = 0;
+        JLabel lblMaKH = new JLabel("Mã KH:");
+        lblMaKH.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        formPanel.add(lblMaKH, gbc);
+
         gbc.gridx = 1;
+        gbc.weightx = 0.7;
+        txtMaKH = new JTextField(20);
+        txtMaKH.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        if (isEditMode && customer != null) {
+            txtMaKH.setText(customer.getMaKH());
+            txtMaKH.setEditable(false);
+            txtMaKH.setBackground(new Color(240, 240, 240));
+        } else {
+            txtMaKH.setText(controller.getNextMaKH());
+            txtMaKH.setEditable(false);
+            txtMaKH.setBackground(new Color(240, 240, 240));
+        }
         formPanel.add(txtMaKH, gbc);
 
         // Tên KH
         gbc.gridx = 0; gbc.gridy = 1;
-        formPanel.add(createLabel("Tên KH *:"), gbc);
+        gbc.weightx = 0.3;
+        JLabel lblTenKH = new JLabel("Tên KH:");
+        lblTenKH.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        formPanel.add(lblTenKH, gbc);
+
         gbc.gridx = 1;
+        gbc.weightx = 0.7;
+        txtTenKH = new JTextField(20);
+        txtTenKH.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        if (isEditMode && customer != null) {
+            txtTenKH.setText(customer.getTenKH());
+        }
         formPanel.add(txtTenKH, gbc);
 
         // Địa chỉ
         gbc.gridx = 0; gbc.gridy = 2;
-        formPanel.add(createLabel("Địa chỉ *:"), gbc);
+        gbc.weightx = 0.3;
+        JLabel lblDiaChi = new JLabel("Địa chỉ:");
+        lblDiaChi.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        formPanel.add(lblDiaChi, gbc);
+
         gbc.gridx = 1;
+        gbc.weightx = 0.7;
+        txtDiaChi = new JTextField(20);
+        txtDiaChi.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        if (isEditMode && customer != null) {
+            txtDiaChi.setText(customer.getDckH());
+        }
         formPanel.add(txtDiaChi, gbc);
 
         // Số điện thoại
         gbc.gridx = 0; gbc.gridy = 3;
-        formPanel.add(createLabel("Số điện thoại *:"), gbc);
+        gbc.weightx = 0.3;
+        JLabel lblSDT = new JLabel("Số điện thoại:");
+        lblSDT.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        formPanel.add(lblSDT, gbc);
+
         gbc.gridx = 1;
+        gbc.weightx = 0.7;
+        txtSDT = new JTextField(20);
+        txtSDT.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        if (isEditMode && customer != null) {
+            txtSDT.setText(customer.getSdtKH());
+        }
         formPanel.add(txtSDT, gbc);
 
         // Tổng chi tiêu
         gbc.gridx = 0; gbc.gridy = 4;
-        formPanel.add(createLabel("Tổng chi tiêu:"), gbc);
+        gbc.weightx = 0.3;
+        JLabel lblTongChiTieu = new JLabel("Tổng chi tiêu:");
+        lblTongChiTieu.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        formPanel.add(lblTongChiTieu, gbc);
+
         gbc.gridx = 1;
+        gbc.weightx = 0.7;
+        txtTongChiTieu = new JTextField(20);
+        txtTongChiTieu.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        txtTongChiTieu.setText("0");
+        if (isEditMode && customer != null) {
+            txtTongChiTieu.setText(String.valueOf(customer.getTongChiTieu()));
+        }
+        txtTongChiTieu.setEditable(false);
+        txtTongChiTieu.setBackground(new Color(240, 240, 240));
         formPanel.add(txtTongChiTieu, gbc);
 
         // Số lần mua
         gbc.gridx = 0; gbc.gridy = 5;
-        formPanel.add(createLabel("Số lần mua:"), gbc);
+        gbc.weightx = 0.3;
+        JLabel lblSoLanMua = new JLabel("Số lần mua:");
+        lblSoLanMua.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        formPanel.add(lblSoLanMua, gbc);
+
         gbc.gridx = 1;
+        gbc.weightx = 0.7;
+        txtSoLanMua = new JTextField(20);
+        txtSoLanMua.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        txtSoLanMua.setText("0");
+        if (isEditMode && customer != null) {
+            txtSoLanMua.setText(String.valueOf(customer.getSoLanMua()));
+        }
+        txtSoLanMua.setEditable(false);
+        txtSoLanMua.setBackground(new Color(240, 240, 240));
         formPanel.add(txtSoLanMua, gbc);
 
+        mainPanel.add(formPanel);
+
         // Button panel
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+
+        btnSave = new JButton("LƯU");
+        btnSave.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btnSave.setBackground(new Color(70, 130, 180));
+        btnSave.setForeground(Color.WHITE);
+        btnSave.setFocusPainted(false);
+        btnSave.setPreferredSize(new Dimension(100, 30));
+
+        btnCancel = new JButton("HỦY");
+        btnCancel.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btnCancel.setBackground(new Color(220, 80, 60));
+        btnCancel.setForeground(Color.WHITE);
+        btnCancel.setFocusPainted(false);
+        btnCancel.setPreferredSize(new Dimension(100, 30));
+
         buttonPanel.add(btnSave);
         buttonPanel.add(btnCancel);
 
-        // Add components to main panel
-        add(titleLabel, BorderLayout.NORTH);
-        add(formPanel, BorderLayout.CENTER);
-        add(buttonPanel, BorderLayout.SOUTH);
+        mainPanel.add(buttonPanel);
+
+        add(mainPanel, BorderLayout.CENTER);
+
+        // Event listeners
+        setupEventListeners(isEditMode);
     }
 
-    private JLabel createLabel(String text) {
-        JLabel label = new JLabel(text);
-        label.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        label.setPreferredSize(new Dimension(120, 25));
-        return label;
-    }
-
-    private void setupEventListeners() {
+    private void setupEventListeners(boolean isEditMode) {
         btnSave.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                saveCustomer();
+                saveCustomer(isEditMode);
             }
         });
 
         btnCancel.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                closeDialog();
+                success = false;
+                dispose();
+            }
+        });
+
+        // Enter key listener for form submission
+        txtTenKH.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveCustomer(isEditMode);
+            }
+        });
+
+        txtDiaChi.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveCustomer(isEditMode);
+            }
+        });
+
+        txtSDT.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveCustomer(isEditMode);
             }
         });
     }
 
-    private void loadCustomerData() {
-        if (customer != null) {
-            txtMaKH.setText(String.valueOf(customer.getMaKH()));
-            txtTenKH.setText(customer.getTenKH());
-            txtDiaChi.setText(customer.getDckH());
-            txtSDT.setText(customer.getSdtKH());
-            txtTongChiTieu.setText(String.format("%,d VND", customer.getTongChiTieu()));
-            txtSoLanMua.setText(String.valueOf(customer.getSoLanMua()));
+    private void saveCustomer(boolean isEditMode) {
+        // Validate data
+        if (txtTenKH.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "Vui lòng nhập tên khách hàng",
+                    "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
+            txtTenKH.requestFocus();
+            return;
         }
-    }
 
-    private void setDefaultValues() {
-        txtMaKH.setText("Tự động tạo");
-        txtTongChiTieu.setText("0 VND");
-        txtSoLanMua.setText("0");
-    }
+        if (txtSDT.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "Vui lòng nhập số điện thoại",
+                    "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
+            txtSDT.requestFocus();
+            return;
+        }
 
-    private void saveCustomer() {
-        if (!validateInput()) {
+        // Validate số điện thoại
+        String phoneNumber = txtSDT.getText().trim();
+        if (!phoneNumber.matches("\\d{10,11}")) {
+            JOptionPane.showMessageDialog(this,
+                    "Số điện thoại phải có 10-11 chữ số",
+                    "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
+            txtSDT.requestFocus();
             return;
         }
 
         try {
-            boolean success;
-            String successMessage;
-
-            if (isEditMode) {
-                // Update existing customer
-                customer.setTenKH(txtTenKH.getText().trim());
-                customer.setDckH(txtDiaChi.getText().trim());
-                customer.setSdtKH(txtSDT.getText().trim());
-                success = controller.updateCustomer(customer);
-                successMessage = "Cập nhật khách hàng thành công!";
+            CustomerModel customerToSave;
+            if (isEditMode && customer != null) {
+                customerToSave = customer;
             } else {
-                // Add new customer
-                CustomerModel newCustomer = new CustomerModel();
-                newCustomer.setTenKH(txtTenKH.getText().trim());
-                newCustomer.setDckH(txtDiaChi.getText().trim());
-                newCustomer.setSdtKH(txtSDT.getText().trim());
-                newCustomer.setTongChiTieu(0);
-                newCustomer.setSoLanMua(0);
-                success = controller.addCustomer(newCustomer);
-                successMessage = "Thêm khách hàng thành công!";
+                customerToSave = new CustomerModel();
             }
 
-            if (success) {
-                if (savedListener != null) {
-                    savedListener.onCustomerSaved();
-                }
-                closeDialog();
+            customerToSave.setMaKH(txtMaKH.getText().trim());
+            customerToSave.setTenKH(txtTenKH.getText().trim());
+            customerToSave.setDckH(txtDiaChi.getText().trim());
+            customerToSave.setSdtKH(txtSDT.getText().trim());
+            customerToSave.setTongChiTieu(Long.parseLong(txtTongChiTieu.getText().trim()));
+            customerToSave.setSoLanMua(Integer.parseInt(txtSoLanMua.getText().trim()));
+
+            boolean result;
+            if (isEditMode) {
+                result = controller.updateCustomer(customerToSave);
+            } else {
+                result = controller.addCustomer(customerToSave);
+            }
+
+            if (result) {
+                success = true;
+                dispose();
             } else {
                 JOptionPane.showMessageDialog(this,
-                        "Có lỗi xảy ra khi lưu dữ liệu",
+                        "Lỗi khi lưu khách hàng",
                         "Lỗi",
                         JOptionPane.ERROR_MESSAGE);
             }
@@ -215,95 +303,18 @@ public class CustomerDialog extends JPanel {
         } catch (IllegalArgumentException e) {
             JOptionPane.showMessageDialog(this,
                     e.getMessage(),
-                    "Lỗi dữ liệu",
+                    "Lỗi",
                     JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this,
-                    "Lỗi hệ thống: " + e.getMessage(),
+                    "Lỗi khi lưu khách hàng: " + e.getMessage(),
                     "Lỗi",
                     JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
 
-    private boolean validateInput() {
-        // Validate tên KH
-        if (txtTenKH.getText().trim().isEmpty()) {
-            showValidationError("Vui lòng nhập tên khách hàng", txtTenKH);
-            return false;
-        }
-
-        // Validate địa chỉ
-        if (txtDiaChi.getText().trim().isEmpty()) {
-            showValidationError("Vui lòng nhập địa chỉ", txtDiaChi);
-            return false;
-        }
-
-        // Validate số điện thoại
-        String phone = txtSDT.getText().trim();
-        if (phone.isEmpty()) {
-            showValidationError("Vui lòng nhập số điện thoại", txtSDT);
-            return false;
-        }
-
-        // Validate định dạng số điện thoại
-        if (!phone.matches("\\d{10,11}")) {
-            showValidationError("Số điện thoại phải có 10-11 chữ số", txtSDT);
-            return false;
-        }
-
-        return true;
-    }
-
-    private void showValidationError(String message, JComponent component) {
-        JOptionPane.showMessageDialog(this,
-                message,
-                "Lỗi nhập liệu",
-                JOptionPane.ERROR_MESSAGE);
-        component.requestFocus();
-    }
-
-    private void closeDialog() {
-        Window window = SwingUtilities.getWindowAncestor(this);
-        if (window != null) {
-            window.dispose();
-        }
-    }
-
-    // Public methods
-    public void setOnCustomerSavedListener(OnCustomerSavedListener listener) {
-        this.savedListener = listener;
-    }
-
-    public static void showAddDialog(Component parent, CustomerController controller, OnCustomerSavedListener listener) {
-        JDialog dialog = createDialog(parent, "Thêm Khách Hàng Mới");
-        CustomerDialog customerDialog = new CustomerDialog(controller, null);
-        customerDialog.setOnCustomerSavedListener(listener);
-        setupDialog(dialog, customerDialog);
-    }
-
-    public static void showEditDialog(Component parent, CustomerController controller, CustomerModel customer, OnCustomerSavedListener listener) {
-        JDialog dialog = createDialog(parent, "Sửa Thông Tin Khách Hàng");
-        CustomerDialog customerDialog = new CustomerDialog(controller, customer);
-        customerDialog.setOnCustomerSavedListener(listener);
-        setupDialog(dialog, customerDialog);
-    }
-
-    private static JDialog createDialog(Component parent, String title) {
-        JDialog dialog = new JDialog(
-                SwingUtilities.getWindowAncestor(parent),
-                title,
-                Dialog.ModalityType.APPLICATION_MODAL
-        );
-        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        dialog.setSize(500, 400);
-        dialog.setLocationRelativeTo(parent);
-        dialog.setResizable(false);
-        return dialog;
-    }
-
-    private static void setupDialog(JDialog dialog, CustomerDialog customerDialog) {
-        dialog.setContentPane(customerDialog);
-        dialog.setVisible(true);
+    public boolean isSuccess() {
+        return success;
     }
 }
