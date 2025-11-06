@@ -13,7 +13,7 @@ public class DatabaseConnect {
             // Các thông số
             String url = "jdbc:mySQL://localhost:3306/qlchoto" ;
             String username = "root";
-            String password = "P@kwt142005";
+            String password = "";
 
             // Tạo kết nối
             c = DriverManager.getConnection(url, username, password);

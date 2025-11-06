@@ -1,4 +1,54 @@
 package model;
 
 public class CustomerModel {
+    private String maKH;
+    private String tenKH;
+    private String dcKH;
+    private String sdtKH;
+    private double tongChiTieu;
+    private int soLanMua;
+
+    public CustomerModel(String maKH, String tenKH, String dcKH, String sdtKH) {
+		this.maKH = maKH;
+		this.tenKH = tenKH;
+		this.dcKH = dcKH;
+		this.sdtKH = sdtKH;
+	}
+    public CustomerModel(){
+
+    }
+    
+	public String getMaKH() {
+		return maKH;
+	}
+	public void setMaKH(String maKH) {
+		this.maKH = maKH;
+	}
+	public String getTenKH() {
+		return tenKH;
+	}
+	public void setTenKH(String tenKH) {
+		this.tenKH = tenKH;
+	}
+	public String getDcKH() {
+		return dcKH;
+	}
+	public void setDcKH(String dcKH) {
+		this.dcKH = dcKH;
+	}
+	public String getSdtKH() {
+		return sdtKH;
+	}
+	public void setSdtKH(String sdtKH) {
+		this.sdtKH = sdtKH;
+	}
+	public double getTongChiTieu()
+	{ return tongChiTieu; }
+	public void setTongChiTieu(double tongChiTieu) 
+	{ this.tongChiTieu = tongChiTieu; }
+
+	public int getSoLanMua() 
+	{ return soLanMua; }
+	public void setSoLanMua(int soLanMua) 
+	{ this.soLanMua = soLanMua; }
 }

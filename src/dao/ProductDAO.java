@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import model.ProductModel;
 import until.DatabaseConnect;
 
@@ -124,6 +125,31 @@ public class ProductDAO {
 
         DatabaseConnect.closeConnection(connection);
     } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return list;
+}
+// 1. Xe bán chạy nhất trong khoảng thời gian
+public ArrayList<ProductModel> getXeBanChayNhat(Date start, Date end) {
+    ArrayList<ProductModel> list = new ArrayList<>();
+    String sql = "SELECT o.tenOto, o.maHang, COUNT(gd.maOto) AS soLuotBan " +
+                 "FROM giaodich gd JOIN oto o ON gd.maOto = o.maOto " +
+                 "WHERE gd.ngayGD BETWEEN ? AND ? " +
+                 "GROUP BY o.tenOto, o.maHang " +
+                 "ORDER BY soLuotBan DESC ";
+    try (Connection conn = DatabaseConnect.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setDate(1, new java.sql.Date(start.getTime()));
+        ps.setDate(2, new java.sql.Date(end.getTime()));
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            ProductModel p = new ProductModel();
+            p.setTenOto(rs.getString("tenOto"));
+            p.setMaHang(rs.getString("maHang"));
+            p.setSoLuotBan(rs.getInt("soLuotBan"));
+            list.add(p);
+        }
+    } catch (Exception e) {
         e.printStackTrace();
     }
     return list;
