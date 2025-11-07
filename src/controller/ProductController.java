@@ -69,16 +69,16 @@ public class ProductController {
                 return;
             }
             int confirm = JOptionPane.showConfirmDialog(view, 
-            "Bạn có chắc muốn xóa xe " + selected.getTenOto() + " không?", 
+            "Bạn có chắc muốn ngừng kinh doanh xe " + selected.getTenOto() + " không?", 
             "Xác nhận", JOptionPane.YES_NO_OPTION);
 
             if (confirm == JOptionPane.YES_OPTION) {
             int kq = ProductDAO.getInstance().delete(selected);
             if (kq > 0) {
-                JOptionPane.showMessageDialog(view, "Xóa thành công!");
+                JOptionPane.showMessageDialog(view, "Sản phẩm tạm ngừng kinh doanh");
                 hienThiDB();
             } else {
-                JOptionPane.showMessageDialog(view, "Xóa thất bại!");
+                JOptionPane.showMessageDialog(view, "Lỗi");
             }
         }
 }
