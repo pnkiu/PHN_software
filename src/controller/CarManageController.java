@@ -2,7 +2,7 @@ package controller;
 
 import dao.CustomerDAO;
 import dao.ProductDAO;
-import dao.TransacionDAO;
+import dao.TransactionDAO;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,11 +14,11 @@ public class CarManageController{
     private CarManageView carManageView;
     private ProductDAO dao;
     private CustomerDAO customerDao;
-    private TransacionDAO transacionDAO;
+    private TransactionDAO transacionDAO;
     public CarManageController(CarManageView carManageView, ProductDAO dao){
         this.carManageView = carManageView;
         this.customerDao = CustomerDAO.getInstance();     
-        this.transacionDAO = TransacionDAO.getInstance();
+        this.transacionDAO = TransactionDAO.getInstance();
         this.dao = dao;
     }
     public void hienThiXeBanChay(){

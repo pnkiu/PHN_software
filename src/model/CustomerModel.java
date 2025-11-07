@@ -51,4 +51,9 @@ public class CustomerModel {
 	{ return soLanMua; }
 	public void setSoLanMua(int soLanMua) 
 	{ this.soLanMua = soLanMua; }
+
+	    @Override
+    public String toString() {
+        return tenKH + ", " + sdtKH;
+    }
 }

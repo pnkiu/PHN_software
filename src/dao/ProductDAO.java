@@ -72,28 +72,23 @@ public class ProductDAO {
     }
     public int delete(ProductModel car) {
                int ketQua = 0;
-        try {
-            //B1
-        Connection connection = DatabaseConnect.getConnection();
+    String sql = "UPDATE oto SET soLuong = 0 WHERE maOTO = ?";
 
-        //B2
-        Statement st = connection.createStatement();
+    try (Connection connection = DatabaseConnect.getConnection();
+         PreparedStatement ps = connection.prepareStatement(sql)) {
 
-        //B3
-        String sql = "DELETE from oto "
-					+"WHERE maOTO = '"+car.getMaOto()+"'";
-        ketQua = st.executeUpdate(sql);
+        ps.setString(1, car.getMaOto());
 
-        //B4
-        System.out.println("Bạn đã thực thi "+ sql);
-		System.out.println("Có "+ketQua+" dòng bị thay đổi");
+        ketQua = ps.executeUpdate();
 
-        //B5
-        DatabaseConnect.closeConnection(connection);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return ketQua;
+        System.out.println("Bạn đã thực thi: " + ps.toString()); // .toString() cho PreparedStatement
+        System.out.println("Có " + ketQua + " dòng bị thay đổi");
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    
+    return ketQua;
     }
     public ArrayList<ProductModel> selectXeBanChayNhat() {
     ArrayList<ProductModel> list = new ArrayList<>();
@@ -154,4 +149,31 @@ public ArrayList<ProductModel> getXeBanChayNhat(Date start, Date end) {
     }
     return list;
 }
+    public ProductModel getProductByMaOto(String maOTO) {
+
+        String sql = "SELECT * FROM oto WHERE maOTO = ?";
+        ProductModel ketQua = null;
+        try (Connection conn = DatabaseConnect.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, maOTO);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    String tenOto = rs.getString("tenOTO");
+                    String loaiOto = rs.getString("loaiOTO");
+                    double gia = rs.getDouble("gia");
+                    int soLuong = rs.getInt("soLuong");
+                    String moTa = rs.getString("moTa");
+                    String maHang = rs.getString("maHang");
+                    int soLuotBan = rs.getInt("soLuotBan");
+                    ketQua = new ProductModel(gia, loaiOto, maOTO, moTa,
+                            soLuong, tenOto, soLuotBan, maHang);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi lấy sản phẩm theo ID: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return ketQua;
+    }
+
 }
