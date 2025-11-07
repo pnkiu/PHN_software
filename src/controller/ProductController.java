@@ -19,7 +19,7 @@ public class ProductController {
         this.view.addAddCarListener(new AddCarListener());
         this.view.addDeleteCarListener(new DeleteCarListener());
         this.view.addEditCarListener(new EditCarListener()); // <-- Thêm listener cho nút Sửa
-
+        this.view.addSearchCarListener(new SearchCarListener()); // <-- Thêm listener cho nút Tìm kiếm
         // Hiển thị dữ liệu khi khởi tạo
         hienThiDB();
     }
@@ -53,6 +53,12 @@ public class ProductController {
         public void actionPerformed(ActionEvent e) {
             // Hiển thị form sửa, truyền controller này vào
             view.formSuasp(ProductController.this);
+        }
+    }
+    class SearchCarListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            timKiem();
         }
     }
 
@@ -129,6 +135,26 @@ public class ProductController {
             } else {
                 JOptionPane.showMessageDialog(view, "Xóa thất bại!");
             }
+        }
+    }
+    public void timKiem() {
+        // Lấy từ khóa từ view
+        String keyword = view.getSearchKeyword();
+
+        // Nếu từ khóa rỗng, thì hiển thị lại toàn bộ DB
+        if (keyword == null || keyword.trim().isEmpty()) {
+            hienThiDB();
+        } else {
+            // Ngược lại, gọi DAO để tìm kiếm
+            List<ProductModel> results = dao.searchByName(keyword);
+
+            // Kiểm tra nếu không có kết quả
+            if (results.isEmpty()) {
+                view.showSuccessMessage("Không tìm thấy sản phẩm nào với từ khóa: '" + keyword + "'");
+            }
+
+            // Hiển thị kết quả lên bảng
+            view.hienthidulieu(results);
         }
     }
 }

@@ -125,6 +125,10 @@ public class ProductView extends JPanel {
     public void addEditCarListener(ActionListener listener) { // <-- Thêm hàm add listener cho nút Sửa
         jButton_edit.addActionListener(listener);
     }
+    public void addSearchCarListener(ActionListener listener) {
+        jButton_search.addActionListener(listener);
+        jTextField_search.addActionListener(listener); // Bắt cả sự kiện nhấn Enter
+    }
 
     // Hiển thị dữ liệu lên bảng chính
     public void hienthidulieu(List<ProductModel> carList) {
@@ -427,5 +431,8 @@ public class ProductView extends JPanel {
         int soLuotBan = Integer.parseInt(carTable.getValueAt(selectedRow, 7).toString());
 
         return new ProductModel(gia, loaiOto, maOto, moTa, soLuong, tenOto, soLuotBan, maHang);
+    }
+    public String getSearchKeyword() {
+        return jTextField_search.getText();
     }
 }

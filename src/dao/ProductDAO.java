@@ -197,5 +197,36 @@ public class ProductDAO {
         return ketQua;
     }
 
+    public ArrayList<ProductModel> searchByName(String tenOto) {
+        ArrayList<ProductModel> ketQua = new ArrayList<>();
+        String sql = "SELECT * FROM oto WHERE tenOTO LIKE ?";
 
+        try (Connection connection = DatabaseConnect.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            // Dùng PreparedStatement để tránh SQL Injection
+            // Dấu "%" cho phép tìm kiếm gần đúng (chứa từ khóa)
+            ps.setString(1, "%" + tenOto + "%");
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String maOto = rs.getString("maOTO");
+                    String ten = rs.getString("tenOTO");
+                    String loaiOto = rs.getString("loaiOTO");
+                    double gia = rs.getDouble("gia");
+                    int soLuong = rs.getInt("soLuong");
+                    String moTa = rs.getString("moTa");
+                    String maHang = rs.getString("maHang");
+                    int soLuotBan = rs.getInt("soLuotBan");
+
+                    ProductModel car = new ProductModel(gia, loaiOto, maOto, moTa,
+                            soLuong, ten, soLuotBan, maHang);
+                    ketQua.add(car);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ketQua;
+    }
 }
