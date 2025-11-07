@@ -69,6 +69,48 @@ public class ProductDAO {
         }
         return ketQua;
     }
+
+    public int update(ProductModel car) {
+        int ketQua = 0;
+        try {
+            Connection connection = DatabaseConnect.getConnection();
+            Statement st = connection.createStatement();
+
+            // Lấy số lượng hiện tại từ database
+            String getCurrentQuantitySQL = "SELECT soLuong FROM oto WHERE maOTO = '" + car.getMaOto() + "'";
+            ResultSet rs = st.executeQuery(getCurrentQuantitySQL);
+
+            int currentQuantity = 0;
+            if (rs.next()) {
+                currentQuantity = rs.getInt("soLuong");
+            }
+
+            // Tính tổng số lượng mới = số lượng hiện tại + số lượng nhập vào
+            int newQuantity = currentQuantity + car.getSoLuong();
+
+            String sql = "UPDATE oto SET "
+                    + " tenOTO = '" + car.getTenOto() + "'"
+                    + " , gia = " + car.getGia()
+                    + " , loaiOTO = '" + car.getLoaiOto() + "'"
+                    + " , soLuong = " + newQuantity  // Sử dụng tổng số lượng mới
+                    + " , moTa = '" + car.getMoTa() + "'"
+                    + " , maHang = '" + car.getMaHang() + "'"
+                    + " WHERE maOTO = '" + car.getMaOto() + "'";
+
+            ketQua = st.executeUpdate(sql);
+            System.out.println("Bạn đã thực thi " + sql);
+            System.out.println("Số lượng cũ: " + currentQuantity +
+                    ", Số lượng nhập thêm: " + car.getSoLuong() +
+                    ", Tổng số lượng mới: " + newQuantity);
+            System.out.println("Có " + ketQua + " dòng bị thay đổi");
+            DatabaseConnect.closeConnection(connection);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ketQua;
+    }
+
     public int delete(ProductModel car) {
         int ketQua = 0;
         try {
@@ -154,4 +196,6 @@ public class ProductDAO {
         }
         return ketQua;
     }
+
+
 }

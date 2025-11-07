@@ -216,7 +216,7 @@ public class CarManageView extends JFrame {
         //tiều đề
         JPanel panel_bottom = new JPanel(new GridLayout(1, 2, 20, 0));
         panel_bottom.setBackground(Color.WHITE);
-        panel_bottom.setPreferredSize(new Dimension(0, 150));
+        panel_bottom.setPreferredSize(new Dimension(0, 200));
 
         // khách hàng tiềm năng
         JPanel panel_khachHang = createSummaryBox("KHÁCH HÀNG MUA NHIỀU NHẤT", "N/A", Color.RED);
@@ -231,6 +231,7 @@ public class CarManageView extends JFrame {
         this.add(jPanel_right, BorderLayout.CENTER);
         return jPanel_right;
     }
+
 
     private JSpinner createDatePicker() {
         SpinnerDateModel model = new SpinnerDateModel(new Date(), null, null, Calendar.DAY_OF_MONTH);
