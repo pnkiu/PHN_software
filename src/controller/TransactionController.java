@@ -2,6 +2,7 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
 import java.util.List;
 import dao.ProductDAO;
 import dao.StaffDAO;
@@ -60,19 +61,21 @@ public class TransactionController {
                 view.showErrorMessage("Số điện thoại này đã được đăng ký cho khách hàng khác!");
                 return;
             }
-            CustomerModel khMoi = new CustomerModel();
-            khMoi.setTenKH(tenKH);
-            khMoi.setSdtKH(sdtKH);
-            khMoi.setDckH(diaChi);
-            khMoi.setTongChiTieu(0);
-            khMoi.setSoLanMua(0);
 
+            String newMaKH = customerDAO.newMaKH();
+            CustomerModel khMoi = new CustomerModel(
+                    newMaKH,
+                    tenKH,
+                    diaChi,
+                    sdtKH,
+                    BigDecimal.ZERO,
+                    0
+            );
             boolean success = customerDAO.addCustomer(khMoi);
-
             if (success) {
                 view.showSuccessMessage("Thêm khách hàng mới thành công!");
                 view.closeAddCustomerDialog();
-                List<CustomerModel> dsMoi = customerDAO.selectAll();
+                List<CustomerModel> dsMoi = customerDAO.getAllCustomers();
                 view.refreshCustomer(dsMoi, khMoi);
             } else {
                 view.showErrorMessage("Thêm khách hàng thất bại!");
@@ -82,7 +85,6 @@ public class TransactionController {
             ex.printStackTrace();
         }
     }
-
 
     public class AddgdListener implements ActionListener {
         @Override
@@ -112,8 +114,8 @@ public class TransactionController {
 
             if (confirm == JOptionPane.YES_OPTION) {
                 try {
-                    int rowsAffected = dao.delete(tx.getMaGD());
-                    if (rowsAffected > 0) {
+                    boolean rowsAffected = dao.delete(tx.getMaGD());
+                    if (rowsAffected) {
                         view.showSuccessMessage("Xóa giao dịch thành công!");
                         hienThiDB();
                     } else {
@@ -169,7 +171,7 @@ public class TransactionController {
     }
 
 
-    public void them(String maGD, String maKH, String maNV, String maOTO, double tongtien, String ngayGD, int soLuong) {
+    public void them(String maGD, String maKH, String maNV, String maOTO, BigDecimal tongtien, String ngayGD, int soLuong) {
         if (maGD.isEmpty() || maKH.isEmpty() || maNV.isEmpty() || maOTO.isEmpty()) {
             view.showErrorMessage("Vui lòng điền đầy đủ thông tin !");
             return;
@@ -219,8 +221,8 @@ public class TransactionController {
         String errorMessage = "";
 
         try {
-            int txRows = dao.update(tx);
-            if (txRows > 0) {
+            boolean txRows = dao.update(tx);
+            if (txRows ) {
                 txSuccess = true;
             }
             boolean khUpdated = customerDAO.updateCustomer(kh);
@@ -248,17 +250,14 @@ public class TransactionController {
         public void actionPerformed(ActionEvent e) {
             try {
                 String keyword = view.getSearchText();
-
-                // Nếu ô tìm kiếm rỗng, tải lại toàn bộ bảng
                 if (keyword == null || keyword.trim().isEmpty()) {
-                    hienThiDB(); // Gọi hàm tải lại toàn bộ
+                    hienThiDB();
                 } else {
-                    // Nếu có chữ, gọi hàm search
                     List<TransactionModel> searchResult = dao.search(keyword);
                     if (searchResult.isEmpty()) {
                         view.showErrorMessage("Không tìm thấy kết quả nào khớp với '" + keyword + "'");
                     }
-                    view.hienthidulieu(searchResult); // Hiển thị kết quả (kể cả rỗng)
+                    view.hienthidulieu(searchResult);
                 }
             } catch (Exception ex) {
                 view.showErrorMessage("Lỗi khi tìm kiếm: " + ex.getMessage());

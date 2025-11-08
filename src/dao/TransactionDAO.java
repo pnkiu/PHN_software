@@ -1,13 +1,16 @@
 package dao;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
 import model.TransactionModel;
 import until.DatabaseConnect;
-
 
 public class TransactionDAO {
 
@@ -33,21 +36,21 @@ public class TransactionDAO {
         stmt.close();
         return newMaGD;
     }
-    //cái lon này khủng lắm
+
     public boolean insert(TransactionModel gd) {
         Connection conn = null;
-
         String sqlUpdateStock = "UPDATE oto SET soLuong = soLuong - ?, soLuotBan = soLuotBan + ? "
                 + "WHERE maOTO = ? AND soLuong >= ?";
         String sqlInsertTx = "INSERT INTO giaodich (maGD, maKH, maNV, maOTO, tongtien, ngayGD, soLuong)"
                 + " VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sqlUpdateCustomer = "UPDATE khachhang SET tongChiTieu = tongChiTieu + ?, soLanMua = soLanMua + 1 "
+                + "WHERE maKH = ?";
         try {
             conn = DatabaseConnect.getConnection();
             conn.setAutoCommit(false);
             String newMaGD = this.newMaGD(conn);
             gd.setMaGD(newMaGD);
 
-            // quản lí số lượng oto
             try (PreparedStatement psStock = conn.prepareStatement(sqlUpdateStock)) {
                 psStock.setInt(1, gd.getSoLuong());
                 psStock.setInt(2, gd.getSoLuong());
@@ -60,12 +63,22 @@ public class TransactionDAO {
                 }
             }
 
+            try (PreparedStatement psCustomer = conn.prepareStatement(sqlUpdateCustomer)) {
+                psCustomer.setBigDecimal(1, gd.getTongtien());
+                psCustomer.setString(2, gd.getMaKH());
+
+                int rowsAffected = psCustomer.executeUpdate();
+                if (rowsAffected == 0) {
+                    throw new SQLException("Cập nhật chi tiêu khách hàng thất bại! (Mã KH không tồn tại?)");
+                }
+            }
+
             try (PreparedStatement psTx = conn.prepareStatement(sqlInsertTx)) {
                 psTx.setString(1, gd.getMaGD());
                 psTx.setString(2, gd.getMaKH());
                 psTx.setString(3, gd.getMaNV());
                 psTx.setString(4, gd.getMaOTO());
-                psTx.setDouble(5, gd.getTongtien());
+                psTx.setBigDecimal(5, gd.getTongtien());
                 psTx.setString(6, gd.getNgayGD());
                 psTx.setInt(7, gd.getSoLuong());
 
@@ -109,17 +122,14 @@ public class TransactionDAO {
         try (Connection connection = DatabaseConnect.getConnection();
              PreparedStatement ps = connection.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
-
             while (rs.next()) {
                 String maGD = rs.getString("maGD");
                 String maKH = rs.getString("maKH");
                 String maNV = rs.getString("maNV");
                 String maOTO = rs.getString("maOTO");
-                double tongtien = rs.getDouble("tongtien");
+                BigDecimal tongtien = rs.getBigDecimal("tongtien");
                 String ngayGD = rs.getString("ngayGD");
                 int soLuong = rs.getInt("soLuong");
-
-
                 TransactionModel gd = new TransactionModel(maGD, maKH, maNV, maOTO,
                         tongtien, ngayGD, soLuong);
                 gd.setTenKH(rs.getString("tenKH"));
@@ -133,47 +143,181 @@ public class TransactionDAO {
         return ketQua;
     }
 
-    //xóa
-    public int delete(String maGD) {
-        int ketQua = 0;
-        String sql = "DELETE FROM giaodich WHERE maGD = ?";
+    public boolean delete(String maGD) {
+        Connection conn = null;
+        String sqlGetTx = "SELECT maOTO, soLuong, maKH, tongtien FROM giaodich WHERE maGD = ?";
+        String sqlUpdateStock = "UPDATE oto SET soLuong = soLuong + ?, soLuotBan = soLuotBan - ? WHERE maOTO = ?";
+        String sqlUpdateCustomer = "UPDATE khachhang SET tongChiTieu = tongChiTieu - ?, soLanMua = soLanMua - 1 "
+                + "WHERE maKH = ? AND soLanMua > 0";
+        String sqlDeleteTx = "DELETE FROM giaodich WHERE maGD = ?";
 
-        try (Connection connection = DatabaseConnect.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, maGD);
-            ketQua = ps.executeUpdate();
-            System.out.println("Đã thực thi xóa " + ketQua + " dòng với maGD = " + maGD);
+        try {
+            conn = DatabaseConnect.getConnection();
+            conn.setAutoCommit(false);
+            String maOTO = null;
+            int soLuong = 0;
+            String maKH = null;
+            BigDecimal tongtien = null;
+            try (PreparedStatement psGet = conn.prepareStatement(sqlGetTx)) {
+                psGet.setString(1, maGD);
+                try (ResultSet rs = psGet.executeQuery()) {
+                    if (rs.next()) {
+                        maOTO = rs.getString("maOTO");
+                        soLuong = rs.getInt("soLuong");
+                        maKH = rs.getString("maKH");
+                        tongtien = rs.getBigDecimal("tongtien");
+                    } else {
+                        throw new SQLException("Không tìm thấy giao dịch để xóa: " + maGD);
+                    }
+                }
+            }
+
+            if (maOTO != null && soLuong > 0) {
+                try (PreparedStatement psStock = conn.prepareStatement(sqlUpdateStock)) {
+                    psStock.setInt(1, soLuong);
+                    psStock.setInt(2, soLuong);
+                    psStock.setString(3, maOTO);
+                    psStock.executeUpdate();
+                }
+            }
+
+            if (maKH != null && tongtien != null) {
+                try (PreparedStatement psCustomer = conn.prepareStatement(sqlUpdateCustomer)) {
+                    psCustomer.setBigDecimal(1, tongtien);
+                    psCustomer.setString(2, maKH);
+                    psCustomer.executeUpdate();
+                }
+            }
+
+            try (PreparedStatement psDelete = conn.prepareStatement(sqlDeleteTx)) {
+                psDelete.setString(1, maGD);
+                int rowsAffected = psDelete.executeUpdate();
+                if (rowsAffected == 0) {
+                    throw new SQLException("Xóa giao dịch thất bại.");
+                }
+            }
+            conn.commit();
+            System.out.println("Đã xóa và hoàn kho/chi tiêu thành công cho maGD = " + maGD);
+            return true;
         } catch (SQLException e) {
+            System.err.println("Lỗi Transaction khi Xóa! Đang rollback...");
             e.printStackTrace();
+            if (conn != null) {
+                try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            }
+            return false;
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    DatabaseConnect.closeConnection(conn);
+                } catch (SQLException e) { e.printStackTrace(); }
+            }
         }
-        return ketQua;
     }
 
-    //sửa
-    public int update(TransactionModel tx) {
-        int ketQua = 0;
-        String sql = "UPDATE giaodich SET maKH = ?, maNV = ?, maOTO = ?, tongtien = ?, ngayGD = ?, soLuong = ? "
+    public boolean update(TransactionModel tx) {
+        Connection conn = null;
+        String sqlGetOldTx = "SELECT maOTO, soLuong, maKH, tongtien FROM giaodich WHERE maGD = ?";
+
+        String sqlUpdateStockAdd = "UPDATE oto SET soLuong = soLuong + ?, soLuotBan = soLuotBan - ? WHERE maOTO = ?";
+        String sqlUpdateStockSubtract = "UPDATE oto SET soLuong = soLuong - ?, soLuotBan = soLuotBan + ? WHERE maOTO = ? AND soLuong >= ?";
+        String sqlUpdateCustomerAdd = "UPDATE khachhang SET tongChiTieu = tongChiTieu + ?, soLanMua = soLanMua + 1 WHERE maKH = ?";
+        String sqlUpdateCustomerSubtract = "UPDATE khachhang SET tongChiTieu = tongChiTieu - ?, soLanMua = soLanMua - 1 WHERE maKH = ? AND soLanMua > 0";
+        String sqlUpdateTx = "UPDATE giaodich SET maKH = ?, maNV = ?, maOTO = ?, tongtien = ?, ngayGD = ?, soLuong = ? "
                 + "WHERE maGD = ?";
 
-        try (Connection connection = DatabaseConnect.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
+        try {
+            conn = DatabaseConnect.getConnection();
+            conn.setAutoCommit(false);
+            String oldMaOTO = null;
+            int oldSoLuong = 0;
+            String oldMaKH = null;
+            BigDecimal oldTongtien = null;
 
-            ps.setString(1, tx.getMaKH());
-            ps.setString(2, tx.getMaNV());
-            ps.setString(3, tx.getMaOTO());
-            ps.setDouble(4, tx.getTongtien());
-            ps.setString(5, tx.getNgayGD());
-            ps.setInt(6, tx.getSoLuong());
-            ps.setString(7, tx.getMaGD());
+            try (PreparedStatement psGet = conn.prepareStatement(sqlGetOldTx)) {
+                psGet.setString(1, tx.getMaGD());
+                try (ResultSet rs = psGet.executeQuery()) {
+                    if (rs.next()) {
+                        oldMaOTO = rs.getString("maOTO");
+                        oldSoLuong = rs.getInt("soLuong");
+                        oldMaKH = rs.getString("maKH");
+                        oldTongtien = rs.getBigDecimal("tongtien");
+                    } else {
+                        throw new SQLException("Không tìm thấy giao dịch để cập nhật: " + tx.getMaGD());
+                    }
+                }
+            }
 
-            ketQua = ps.executeUpdate();
-            System.out.println("Có " + ketQua + " dòng được cập nhật");
+            if (oldMaOTO != null && oldSoLuong > 0) {
+                try (PreparedStatement psStockAdd = conn.prepareStatement(sqlUpdateStockAdd)) {
+                    psStockAdd.setInt(1, oldSoLuong);
+                    psStockAdd.setInt(2, oldSoLuong);
+                    psStockAdd.setString(3, oldMaOTO);
+                    psStockAdd.executeUpdate();
+                }
+            }
 
+            if (oldMaKH != null && oldTongtien != null) {
+                try (PreparedStatement psCustSub = conn.prepareStatement(sqlUpdateCustomerSubtract)) {
+                    psCustSub.setBigDecimal(1, oldTongtien);
+                    psCustSub.setString(2, oldMaKH);
+                    psCustSub.executeUpdate();
+                }
+            }
+
+            try (PreparedStatement psStockSub = conn.prepareStatement(sqlUpdateStockSubtract)) {
+                psStockSub.setInt(1, tx.getSoLuong());
+                psStockSub.setInt(2, tx.getSoLuong());
+                psStockSub.setString(3, tx.getMaOTO());
+                psStockSub.setInt(4, tx.getSoLuong());
+
+                int rowsAffected = psStockSub.executeUpdate();
+                if (rowsAffected == 0) {
+                    throw new SQLException("Trừ kho thất bại! (Sản phẩm mới không tồn tại hoặc không đủ hàng)");
+                }
+            }
+
+            try (PreparedStatement psCustAdd = conn.prepareStatement(sqlUpdateCustomerAdd)) {
+                psCustAdd.setBigDecimal(1, tx.getTongtien());
+                psCustAdd.setString(2, tx.getMaKH());
+                int rowsAffected = psCustAdd.executeUpdate();
+                if (rowsAffected == 0) {
+                    throw new SQLException("Cập nhật chi tiêu khách hàng mới thất bại! (Mã KH mới không tồn tại?)");
+                }
+            }
+
+            try (PreparedStatement psTx = conn.prepareStatement(sqlUpdateTx)) {
+                psTx.setString(1, tx.getMaKH());
+                psTx.setString(2, tx.getMaNV());
+                psTx.setString(3, tx.getMaOTO());
+                psTx.setBigDecimal(4, tx.getTongtien());
+                psTx.setString(5, tx.getNgayGD());
+                psTx.setInt(6, tx.getSoLuong());
+                psTx.setString(7, tx.getMaGD());
+
+                psTx.executeUpdate();
+            }
+            conn.commit();
+            System.out.println("Cập nhật (5 bước) thành công cho maGD = " + tx.getMaGD());
+            return true;
         } catch (SQLException e) {
+            System.err.println("Lỗi Transaction khi Cập nhật! Đang rollback...");
             e.printStackTrace();
+            if (conn != null) {
+                try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            }
+            return false;
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    DatabaseConnect.closeConnection(conn);
+                } catch (SQLException e) { e.printStackTrace(); }
+            }
         }
-        return ketQua;
     }
+
     //tìm kiếm
     public ArrayList<TransactionModel> search(String keyword) {
         ArrayList<TransactionModel> ketQua = new ArrayList<>();
@@ -200,7 +344,7 @@ public class TransactionDAO {
                     String maKH = rs.getString("maKH");
                     String maNV = rs.getString("maNV");
                     String maOTO = rs.getString("maOTO");
-                    double tongtien = rs.getDouble("tongtien");
+                    BigDecimal tongtien = rs.getBigDecimal("tongtien");
                     String ngayGD = rs.getString("ngayGD");
                     int soLuong = rs.getInt("soLuong");
 
@@ -218,5 +362,31 @@ public class TransactionDAO {
             e.printStackTrace();
         }
         return ketQua;
+    }
+
+
+    public double getTongDoanhThu(Date start, Date end) {
+        double total = 0;
+        String sql = "SELECT SUM(tongtien) FROM giaodich WHERE ngayGD >= ? AND ngayGD < ?";
+
+        try (Connection conn = until.DatabaseConnect.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(end);
+            cal.add(Calendar.DAY_OF_MONTH, 1);
+            Date endNextDay = cal.getTime();
+
+            ps.setDate(1, new java.sql.Date(start.getTime()));
+            ps.setDate(2, new java.sql.Date(endNextDay.getTime()));
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                total = rs.getDouble(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return total;
     }
 }

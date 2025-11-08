@@ -1,71 +1,59 @@
 package model;
 
+import java.math.BigDecimal;
+
 public class CustomerModel {
     private String maKH;
     private String tenKH;
-    private String dckH;
+    private String dcKH;
     private String sdtKH;
-    private long tongChiTieu;
+    private BigDecimal tongChiTieu;
     private int soLanMua;
 
-    public CustomerModel() {}
+    public CustomerModel() {
+    }
 
-    public CustomerModel(String maKH, String tenKH, String dckH, String sdtKH, long tongChiTieu, int soLanMua) {
+    public CustomerModel(String maKH, String tenKH, String dcKH, String sdtKH, BigDecimal tongChiTieu, int soLanMua) {
         this.maKH = maKH;
         this.tenKH = tenKH;
-        this.dckH = dckH;
+        this.dcKH = dcKH;
         this.sdtKH = sdtKH;
         this.tongChiTieu = tongChiTieu;
         this.soLanMua = soLanMua;
     }
-
     public String getMaKH() {
         return maKH;
     }
-
     public void setMaKH(String maKH) {
         this.maKH = maKH;
     }
-
     public String getTenKH() {
         return tenKH;
     }
-
     public void setTenKH(String tenKH) {
         this.tenKH = tenKH;
     }
-
-    public String getDckH() {
-        return dckH;
+    public String getDcKH() {
+        return dcKH;
     }
-
-    public void setDckH(String dckH) {
-        this.dckH = dckH;
+    public void setDcKH(String dcKH) {
+        this.dcKH = dcKH;
     }
-
     public String getSdtKH() {
         return sdtKH;
     }
-
     public void setSdtKH(String sdtKH) {
         this.sdtKH = sdtKH;
     }
+    public BigDecimal getTongChiTieu()
+    { return tongChiTieu; }
+    public void setTongChiTieu(BigDecimal tongChiTieu)
+    { this.tongChiTieu = tongChiTieu; }
 
-    public long getTongChiTieu() {
-        return tongChiTieu;
-    }
-
-    public void setTongChiTieu(long tongChiTieu) {
-        this.tongChiTieu = tongChiTieu;
-    }
-
-    public int getSoLanMua() {
-        return soLanMua;
-    }
-
-    public void setSoLanMua(int soLanMua) {
-        this.soLanMua = soLanMua;
-    }
+    public int getSoLanMua()
+    { return soLanMua; }
+    public void setSoLanMua(int soLanMua)
+    { this.soLanMua = soLanMua; }
 
     @Override
     public String toString() {

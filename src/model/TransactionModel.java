@@ -1,20 +1,22 @@
 package model;
 
 
+import java.math.BigDecimal;
+
 public class TransactionModel {
 
     private String maGD;
     private String maKH;
     private String maNV;
     private String maOTO;
-    private double tongtien;
+    private BigDecimal tongtien;
     private String ngayGD;
     private int soLuong;
     private String tenKH;
     private String tenNV;
     private String tenOTO;
 
-    public TransactionModel(String maGD, String maKH, String maNV, String maOTO,double tongtien  ,String ngayGD, int soLuong) {
+    public TransactionModel(String maGD, String maKH, String maNV, String maOTO,BigDecimal tongtien  ,String ngayGD, int soLuong) {
         this.maGD = maGD;
         this.maKH = maKH;
         this.maNV = maNV;
@@ -57,11 +59,11 @@ public class TransactionModel {
         this.maOTO = maOTO;
     }
 
-    public double getTongtien() {
+    public BigDecimal getTongtien() {
         return tongtien;
     }
 
-    public void setTongtien(double tongtien) {
+    public void setTongtien(BigDecimal tongtien) {
         this.tongtien = tongtien;
     }
 

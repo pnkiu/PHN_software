@@ -3,6 +3,8 @@ package controller;
 import dao.ProductDAO;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.List;
 import javax.swing.JOptionPane;
 import model.ProductModel;
@@ -15,43 +17,33 @@ public class ProductController {
     public ProductController(ProductView view, ProductDAO dao) {
         this.view = view;
         this.dao = dao;
-        // Thêm listener cho các nút
         this.view.addAddCarListener(new AddCarListener());
         this.view.addDeleteCarListener(new DeleteCarListener());
-        this.view.addEditCarListener(new EditCarListener()); // <-- Thêm listener cho nút Sửa
-        this.view.addSearchCarListener(new SearchCarListener()); // <-- Thêm listener cho nút Tìm kiếm
-        // Hiển thị dữ liệu khi khởi tạo
+        this.view.addEditCarListener(new EditCarListener());
+        this.view.addSearchCarListener(new SearchCarListener());
         hienThiDB();
     }
 
-    // Hiển thị toàn bộ dữ liệu lên bảng
     public void hienThiDB() {
         List<ProductModel> carList = dao.selectAll();
         view.hienthidulieu(carList);
     }
 
-    // Lớp lắng nghe sự kiện nút Thêm
     class AddCarListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             view.formThemsp(ProductController.this);
-            // Không cần add lại delete listener ở đây
         }
     }
-
-    // Lớp lắng nghe sự kiện nút Xóa
     class DeleteCarListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             xoaOTo();
         }
     }
-
-    // Lớp lắng nghe sự kiện nút Sửa
     class EditCarListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            // Hiển thị form sửa, truyền controller này vào
             view.formSuasp(ProductController.this);
         }
     }
@@ -62,52 +54,46 @@ public class ProductController {
         }
     }
 
-    // Phương thức xử lý logic Thêm
-    public void them(String maOto, String tenOto, String loaiOto, String giaStr, String soLuongStr, String maHang, String moTa) {
+    public void them(String tenOto, String loaiOto, String giaStr, String soLuongStr, String maHang, String moTa) {
         try {
-            double gia = Double.parseDouble(giaStr);
+            BigDecimal gia = BigDecimal.valueOf(Long.parseLong(giaStr));
             int soLuong = Integer.parseInt(soLuongStr);
-            if (maOto.isEmpty() || tenOto.isEmpty() || maHang.isEmpty()) {
-                view.showErrorMessage("Mã, Tên và Mã Hãng không được để trống!");
+            if (tenOto.isEmpty() || maHang.isEmpty()) {
+                view.showErrorMessage("Tên và Mã Hãng không được để trống!");
                 return;
             }
+            String maOto = dao.newMaOTO();
             ProductModel newCar = new ProductModel(gia, loaiOto, maOto, moTa, soLuong, tenOto, 0, maHang);
             int rowsAffected = dao.insert(newCar);
             if (rowsAffected > 0) {
-                view.showSuccessMessage("Thêm sản phẩm thành công!");
+                view.showSuccessMessage("Thêm sản phẩm thành công! Mã SP là: " + maOto);
                 view.closeAddDialog();
-                hienThiDB(); // Cập nhật lại bảng
+                hienThiDB();
             } else {
                 view.showErrorMessage("Thêm thất bại!");
             }
         } catch (NumberFormatException ex) {
             view.showErrorMessage("Giá và Số lượng phải là số!");
+        } catch (SQLException ex) {
+            view.showErrorMessage("Đã xảy ra lỗi CSDL khi tạo mã: " + ex.getMessage());
+            ex.printStackTrace();
         }
     }
 
-    // Phương thức xử lý logic Sửa
     public void sua(String maOto, String tenOto, String loaiOto, String giaStr, String soLuongStr, String maHang, String moTa) {
         try {
-            double gia = Double.parseDouble(giaStr);
+            BigDecimal gia = BigDecimal.valueOf(Long.parseLong(giaStr));
             int soLuong = Integer.parseInt(soLuongStr);
-
-            // Validate (Tương tự như khi thêm)
             if (maOto.isEmpty() || tenOto.isEmpty() || maHang.isEmpty()) {
                 view.showErrorMessage("Mã, Tên và Mã Hãng không được để trống!");
                 return;
             }
-
-            // Tạo đối tượng ProductModel với thông tin đã cập nhật
-            // (soLuotBan không được chỉnh sửa ở đây, nên ta có thể để là 0,
-            // vì DAO.update không cập nhật trường này)
             ProductModel updatedCar = new ProductModel(gia, loaiOto, maOto, moTa, soLuong, tenOto, 0, maHang);
-
             int rowsAffected = dao.update(updatedCar);
-
             if (rowsAffected > 0) {
                 view.showSuccessMessage("Cập nhật sản phẩm thành công!");
-                view.closeEditDialog(); // Đóng dialog sửa
-                hienThiDB(); // Cập nhật lại bảng chính
+                view.closeEditDialog();
+                hienThiDB();
             } else {
                 view.showErrorMessage("Cập nhật thất bại!");
             }
@@ -116,7 +102,6 @@ public class ProductController {
         }
     }
 
-    // Phương thức xử lý logic Xóa
     private void xoaOTo() {
         ProductModel selected = view.getSelectedOto();
         if (selected == null) {
@@ -126,34 +111,26 @@ public class ProductController {
         int confirm = JOptionPane.showConfirmDialog(view,
                 "Bạn có chắc muốn xóa xe " + selected.getTenOto() + " không?",
                 "Xác nhận", JOptionPane.YES_NO_OPTION);
-
         if (confirm == JOptionPane.YES_OPTION) {
             int kq = ProductDAO.getInstance().delete(selected);
             if (kq > 0) {
                 JOptionPane.showMessageDialog(view, "Xóa thành công!");
-                hienThiDB(); // Cập nhật lại bảng
+                hienThiDB();
             } else {
                 JOptionPane.showMessageDialog(view, "Xóa thất bại!");
             }
         }
     }
-    public void timKiem() {
-        // Lấy từ khóa từ view
-        String keyword = view.getSearchKeyword();
 
-        // Nếu từ khóa rỗng, thì hiển thị lại toàn bộ DB
+    public void timKiem() {
+        String keyword = view.getSearchKeyword();
         if (keyword == null || keyword.trim().isEmpty()) {
             hienThiDB();
         } else {
-            // Ngược lại, gọi DAO để tìm kiếm
             List<ProductModel> results = dao.searchByName(keyword);
-
-            // Kiểm tra nếu không có kết quả
             if (results.isEmpty()) {
                 view.showSuccessMessage("Không tìm thấy sản phẩm nào với từ khóa: '" + keyword + "'");
             }
-
-            // Hiển thị kết quả lên bảng
             view.hienthidulieu(results);
         }
     }

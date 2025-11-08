@@ -3,6 +3,7 @@ package view;
 import controller.TransactionController;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -33,10 +34,9 @@ public class TransacionView extends JPanel {
     private JTextField txtTongTien;
     private ProductModel sanPhamDaChon;
     private JDialog addCustomerDialog;
-    private double giaBan;
+    private BigDecimal giaBan;
     private List<TransactionModel> fullTransactionList;
 
-    // THÊM: Các biến kiểu dáng chuẩn
     private Font formLabelFont = new Font("Arial", Font.BOLD, 14);
     private Font formFieldFont = new Font("Arial", Font.PLAIN, 14);
     private Font formButtonFont = new Font("Arial", Font.BOLD, 14);
@@ -61,7 +61,6 @@ public class TransacionView extends JPanel {
         JPanel jPanel_action = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         jPanel_action.setBackground(Color.WHITE);
 
-        // (Tên nút của bạn)
         jButton_add = new JButton("Thêm");
         jButton_edit = new JButton("Sửa");
         jButton_delete = new JButton("Xóa");
@@ -69,7 +68,6 @@ public class TransacionView extends JPanel {
         jTextField_search = new JTextField(15);
         jButton_search = new JButton("Tìm kiếm");
 
-        // (Style nút của bạn đã giống ProductView)
         Font buttonFont = new Font("Arial", Font.PLAIN, 18);
         for (JButton btn : new JButton[]{jButton_add, jButton_edit, jButton_delete, jButton_details, jButton_search}) {
             btn.setFont(buttonFont);
@@ -97,8 +95,6 @@ public class TransacionView extends JPanel {
         };
 
         transactionTable = new JTable(tableModel);
-
-        // SỬA: Thêm style cho JTable (giống ProductView)
         transactionTable.setFont(new Font("Arial", Font.PLAIN, 14));
         transactionTable.setRowHeight(25);
         transactionTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 16));
@@ -112,7 +108,7 @@ public class TransacionView extends JPanel {
         TransactionController controller = new TransactionController(this, new TransactionDAO());
     }
 
-    //listener (Giữ nguyên tên hàm mới của bạn)
+
     public void addAddgdListener(ActionListener listener) {
         jButton_add.addActionListener(listener);
     }
@@ -132,7 +128,6 @@ public class TransacionView extends JPanel {
         return jTextField_search.getText();
     }
 
-
     public void hienthidulieu(List<TransactionModel> txList) {
         this.fullTransactionList = txList;
         tableModel.setRowCount(0);
@@ -141,7 +136,7 @@ public class TransacionView extends JPanel {
                     tx.getMaGD(),
                     tx.getTenKH(),
                     tx.getTenOTO(),
-                    tx.getTongtien(), // Giữ nguyên logic của bạn
+                    tx.getTongtien(),
                     tx.getNgayGD()
             };
             tableModel.addRow(rowData);
@@ -159,7 +154,6 @@ public class TransacionView extends JPanel {
         JPanel formPanel = new JPanel();
         formPanel.setLayout(null);
 
-        // SỬA: Áp dụng Font
         JLabel l1 = new JLabel("Mã Giao Dịch:");
         l1.setFont(formLabelFont);
         l1.setBounds(20, 20, 100, 30);
@@ -240,7 +234,7 @@ public class TransacionView extends JPanel {
         JTextField txtNgayGD = new JTextField();
         txtNgayGD.setFont(formFieldFont);
         LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd/HH:mm:ss");
         String thoiGianHienTai = now.format(formatter);
         txtNgayGD.setText(thoiGianHienTai);
         txtNgayGD.setEditable(false);
@@ -266,7 +260,6 @@ public class TransacionView extends JPanel {
 
         btnSave.addActionListener(e -> {
             try {
-                // (Giữ nguyên logic của bạn)
                 CustomerModel kh = (CustomerModel) cbKhachHang.getSelectedItem();
                 StaffModel nv = (StaffModel) cbNhanVien.getSelectedItem();
                 if (kh == null || nv == null || sanPhamDaChon == null) {
@@ -277,7 +270,7 @@ public class TransacionView extends JPanel {
                 String maKH = kh.getMaKH();
                 String maNV = nv.getMaNV();
                 String maOTO = sanPhamDaChon.getMaOto();
-                double tongTien = Double.parseDouble(txtTongTien.getText());
+                BigDecimal tongTien = BigDecimal.valueOf(Double.parseDouble(txtTongTien.getText()));
                 String ngayGD = txtNgayGD.getText();
                 int soLuong = (int) spinnerSoLuong.getValue();
                 controller.them(maGD, maKH, maNV, maOTO, tongTien, ngayGD, soLuong);
@@ -293,7 +286,6 @@ public class TransacionView extends JPanel {
         addDialog.setVisible(true);
     }
 
-
     public void formThemKhachHang(TransactionController controller) {
         JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this.addDialog);
         addCustomerDialog = new JDialog(parentFrame, "Thêm Khách Hàng Mới", true);
@@ -303,7 +295,6 @@ public class TransacionView extends JPanel {
         JPanel formPanel = new JPanel(null);
         formPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // SỬA: Áp dụng Font
         JLabel l1 = new JLabel("Tên Khách Hàng:");
         l1.setFont(formLabelFont);
         l1.setBounds(20, 20, 100, 30);
@@ -370,8 +361,6 @@ public class TransacionView extends JPanel {
 
         JPanel formPanel = new JPanel();
         formPanel.setLayout(null);
-
-        // SỬA: Áp dụng Font
         JLabel l1 = new JLabel("Mã Giao Dịch:");
         l1.setFont(formLabelFont);
         l1.setBounds(20, 20, 100, 30);
@@ -406,12 +395,12 @@ public class TransacionView extends JPanel {
         final JTextField txtDiaChi = new JTextField();
         txtDiaChi.setFont(formFieldFont);
         txtDiaChi.setBounds(130, 100, 280, 30);
-        txtDiaChi.setText(khachHangDaChon.getDckH());
+        txtDiaChi.setText(khachHangDaChon.getDcKH());
         formPanel.add(txtDiaChi);
         cbKH.addActionListener(e -> {
             CustomerModel selectedCustomer = (CustomerModel) cbKH.getSelectedItem();
             if (selectedCustomer != null) {
-                txtDiaChi.setText(selectedCustomer.getDckH());
+                txtDiaChi.setText(selectedCustomer.getDcKH());
             }
         });
 
@@ -461,7 +450,7 @@ public class TransacionView extends JPanel {
         JTextField txtTien = new JTextField();
         txtTien.setFont(formFieldFont);
         txtTien.setBounds(130, 260, 280, 30);
-        txtTien.setText(String.valueOf(tx.getTongtien())); // Giữ nguyên logic của bạn
+        txtTien.setText(String.valueOf(tx.getTongtien()));
         txtTien.setEditable(false);
         txtTien.setBackground(Color.LIGHT_GRAY);
         formPanel.add(txtTien);
@@ -490,19 +479,18 @@ public class TransacionView extends JPanel {
 
         btnSave.addActionListener(e -> {
             try {
-                // (Giữ nguyên logic của bạn)
                 String maGD = txtMaGD.getText();
                 String ngayGDMoi = txtNgayGD.getText();
-                double tongTien = tx.getTongtien();
+                BigDecimal tongTien = tx.getTongtien();
                 String maOto = tx.getMaOTO();
                 int soLuong = tx.getSoLuong();
                 CustomerModel khMoi = (CustomerModel) cbKH.getSelectedItem();
                 StaffModel nvMoi = (StaffModel) cbNV.getSelectedItem();
                 String diaChiMoi = txtDiaChi.getText();
-                khMoi.setDckH(diaChiMoi);
+                khMoi.setDcKH(diaChiMoi);
                 TransactionModel txMoi = new TransactionModel(maGD, khMoi.getMaKH(), nvMoi.getMaNV(), maOto, tongTien, ngayGDMoi, soLuong);
 
-                controller.suaGiaoDich(txMoi, khMoi); // Giữ nguyên tên hàm của bạn
+                controller.suaGiaoDich(txMoi, khMoi);
                 editDialog.dispose();
 
             } catch (Exception ex) {
@@ -515,7 +503,7 @@ public class TransacionView extends JPanel {
         editDialog.setVisible(true);
     }
 
-    //chi tiết giao dịch (Giữ nguyên tên hàm của bạn)
+    //chi tiết giao dịch
     public void showDetail(TransactionModel tx, CustomerModel kh, StaffModel nv, ProductModel sp) {
         JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
         JDialog detailDialog = new JDialog(parentFrame, "Chi Tiết Giao Dịch", true);
@@ -526,10 +514,9 @@ public class TransacionView extends JPanel {
         JPanel formPanel = new JPanel();
         formPanel.setLayout(null);
         formPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
         String tenKH = (kh != null) ? kh.getTenKH() : "Không tìm thấy (" + tx.getMaKH() + ")";
         String sdtKH = (kh != null) ? kh.getSdtKH() : "Chưa có sdt";
-        String diaChi = (kh != null) ? kh.getDckH() : "chưa thêm địa chỉ";
+        String diaChi = (kh != null) ? kh.getDcKH() : "chưa thêm địa chỉ";
         String tenNV = (nv != null) ? nv.getTenNV() : "Không tìm thấy (" + tx.getMaNV() + ")";
         String tenOto = (sp != null) ? sp.getTenOto() : "Không tìm thấy (" + tx.getMaOTO() + ")";
 
@@ -540,7 +527,7 @@ public class TransacionView extends JPanel {
         String[] values = {
                 tx.getMaGD(), tenKH, diaChi, sdtKH, tenNV, tenOto,
                 String.valueOf(tx.getSoLuong()),
-                String.valueOf(tx.getTongtien()), // Giữ nguyên logic của bạn
+                String.valueOf(tx.getTongtien()),
                 tx.getNgayGD()
         };
 
@@ -548,12 +535,12 @@ public class TransacionView extends JPanel {
         int y_pos = 20;
         for (int i = 0; i < labels.length; i++) {
             JLabel label = new JLabel(labels[i]);
-            label.setFont(formLabelFont); // SỬA: Áp dụng Font
+            label.setFont(formLabelFont);
             label.setBounds(20, y_pos, 120, 30);
             formPanel.add(label);
 
             JTextField textField = new JTextField(values[i]);
-            textField.setFont(formFieldFont); // SỬA: Áp dụng Font
+            textField.setFont(formFieldFont);
             textField.setBounds(150, y_pos, 250, 30);
             textField.setEditable(false);
             textField.setBackground(Color.LIGHT_GRAY);
@@ -564,7 +551,7 @@ public class TransacionView extends JPanel {
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton btnClose = new JButton("Đóng");
-        btnClose.setFont(formButtonFont); // SỬA: Áp dụng Font
+        btnClose.setFont(formButtonFont);
         buttonPanel.add(btnClose);
         btnClose.addActionListener(e -> detailDialog.dispose());
 
@@ -581,7 +568,6 @@ public class TransacionView extends JPanel {
 
     }
 
-    // Giữ nguyên tên hàm của bạn
     public void refreshCustomer(List<CustomerModel> dsKhachHang, CustomerModel khachHangMoi) {
         if (cbKhachHang == null) return;
         cbKhachHang.removeAllItems();
@@ -599,12 +585,14 @@ public class TransacionView extends JPanel {
         capNhatTongTien();
     }
     private void capNhatTongTien() {
-        if (sanPhamDaChon == null) return;
-        try {
-            int soLuong = (int) spinnerSoLuong.getValue();
-            double tongTien = this.giaBan * soLuong;
-            txtTongTien.setText(String.valueOf(tongTien));
-        } catch (Exception e) {
+        if (sanPhamDaChon == null || spinnerSoLuong == null || txtTongTien == null) {
+            return;
+        }
+        int soLuong = (int) spinnerSoLuong.getValue();
+        if (giaBan != null) {
+            BigDecimal tongTien = giaBan.multiply(BigDecimal.valueOf(soLuong));
+            txtTongTien.setText(tongTien.toPlainString());
+        } else {
             txtTongTien.setText("0");
         }
     }
@@ -635,4 +623,5 @@ public class TransacionView extends JPanel {
     public void closeAddDialog() {
         if (addDialog != null) addDialog.dispose();
     }
+
 }

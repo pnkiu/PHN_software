@@ -22,6 +22,13 @@ public class CarManageView extends JFrame {
     private JPanel contentPanel;
     private JTable tableOtoBanChay;
     private DefaultTableModel tableModel;
+    private JLabel lblKhachHangTheoTien, lblKhachHangTheoSoLan;
+    private JLabel lblDoanhThu;
+    CarManageController controller = new CarManageController(this, new ProductDAO());
+//    private ProductView productView;
+//    private CustomerView customerView;
+//    private StaffView staffView;
+//    private TransacionView transactionView;
 
     public CarManageView() {
         this.init();
@@ -35,7 +42,6 @@ public class CarManageView extends JFrame {
         this.setLocationRelativeTo(null);
         this.setLayout(new BorderLayout());
 
-        CarManageController controller = new CarManageController(this, new ProductDAO());
 
         JPanel root = new JPanel(new BorderLayout());
         setContentPane(root);
@@ -107,8 +113,6 @@ public class CarManageView extends JFrame {
         JPanel thongKePanel = createThongKePanel();
         contentPanel.add(thongKePanel, "Thống kê");
 
-
-
         JPanel ProductPanel = new ProductView();
         contentPanel.add(ProductPanel, "Sản phẩm");
 
@@ -120,8 +124,6 @@ public class CarManageView extends JFrame {
 
         JPanel TransactionPanel = new TransacionView();
         contentPanel.add(TransactionPanel, "Giao dịch");
-
-
 
         root.add(sidebar, BorderLayout.WEST);
         root.add(contentPanel, BorderLayout.CENTER);
@@ -153,13 +155,10 @@ public class CarManageView extends JFrame {
         JPanel panel_filter = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
         panel_filter.setBackground(Color.WHITE);
 
-        //khúc này AI chỉ
+
         JLabel jLabelFiler = new JLabel("LỌC:");
         jLabelFiler.setFont(new Font("Arial", Font.BOLD, 16));
         panel_filter.add(new JLabel("LỌC"));
-        String[] filterOptions = {"Năm", "Tháng", "Ngày"};
-        JComboBox<String> comboLocTheo = new JComboBox<>(filterOptions);
-        panel_filter.add(comboLocTheo);
 
         JLabel jLabelStar = new JLabel("TỪ:");
         jLabelFiler.setFont(new Font("Arial", Font.BOLD, 16));
@@ -198,7 +197,6 @@ public class CarManageView extends JFrame {
         tableOtoBanChay.getTableHeader().setForeground(Color.WHITE);
         tableOtoBanChay.setSelectionBackground(new Color(52, 152, 219));
         tableOtoBanChay.setSelectionForeground(Color.WHITE);
-        // tableOtoBanChay.getTableHeader().setFont(new Font("Arial", Font.BOLD, 16));
 
         JScrollPane scrollPane = new JScrollPane(tableOtoBanChay);
         scrollPane.setBorder(BorderFactory.createTitledBorder(
@@ -216,22 +214,33 @@ public class CarManageView extends JFrame {
         //tiều đề
         JPanel panel_bottom = new JPanel(new GridLayout(1, 2, 20, 0));
         panel_bottom.setBackground(Color.WHITE);
-        panel_bottom.setPreferredSize(new Dimension(0, 200));
+        panel_bottom.setPreferredSize(new Dimension(0, 150));
 
-        // khách hàng tiềm năng
-        JPanel panel_khachHang = createSummaryBox("KHÁCH HÀNG MUA NHIỀU NHẤT", "N/A", Color.RED);
+        // khách hàng mua nhiều nhất (theo tiền)
+        JPanel panel_khTien = createSummaryBox("KH THÂN THIẾT", "N/A", new Color(220, 220, 220));
+
+        // khách hàng mua nhiều nhất (theo số lần)
+        JPanel panel_khSoLan = createSummaryBox("KH MUA NHIỀU", "N/A", new Color(220, 220, 220));
+
 
         // doanh thu
-        JPanel panel_doanhThu = createSummaryBox("TỔNG DOANH THU CỬA HÀNG", "1000000000 vnđ", Color.GREEN);
+        JPanel panel_doanhThu = createSummaryBox("DOANH THU CỬA HÀNG", "N/A", new Color(220, 220, 220));
 
-        panel_bottom.add(panel_khachHang);
+
+        panel_bottom.add(panel_khTien);
+        panel_bottom.add(panel_khSoLan);
         panel_bottom.add(panel_doanhThu);
 
         jPanel_right.add(panel_bottom, BorderLayout.SOUTH);
         this.add(jPanel_right, BorderLayout.CENTER);
+
+        buttonLoc.addActionListener(e -> {
+            Date startDate = (Date) jSpinner_start.getValue();
+            Date endDate = (Date) jSpinner_end.getValue();
+            controller.thongKeTheoKhoangThoiGian(startDate, endDate);
+        });
         return jPanel_right;
     }
-
 
     private JSpinner createDatePicker() {
         SpinnerDateModel model = new SpinnerDateModel(new Date(), null, null, Calendar.DAY_OF_MONTH);
@@ -250,11 +259,16 @@ public class CarManageView extends JFrame {
         labelTitle.setBorder(BorderFactory.createEmptyBorder(15, 10, 10, 10));
 
         JLabel labelValue = new JLabel(value, SwingConstants.CENTER);
-        labelValue.setFont(new Font("Arial", Font.BOLD, 30));
+        labelValue.setFont(new Font("Arial", Font.BOLD, 15));
         labelValue.setForeground(new Color(0, 50, 120));
 
         panel.add(labelTitle, BorderLayout.NORTH);
         panel.add(labelValue, BorderLayout.CENTER);
+
+        if (title.equals("KH THÂN THIẾT")) lblKhachHangTheoTien = labelValue;
+        else if (title.equals("KH MUA NHIỀU")) lblKhachHangTheoSoLan = labelValue;
+        else if (title.equals("DOANH THU CỬA HÀNG")) lblDoanhThu = labelValue;
+
         return panel;
     }
     public void hienThiXeBanChayNhat(ArrayList<ProductModel> list) {
@@ -266,5 +280,18 @@ public class CarManageView extends JFrame {
             model.addRow(row);
         }
         tableOtoBanChay.setModel(model);
+    }
+
+
+    public void capNhatThongKe(String topKhTheoSoLan, String topKhTheoTien, double tongDoanhThu) {
+        // 1. Cập nhật tổng doanh thu
+        lblDoanhThu.setText(String.format("%,.0f VNĐ", tongDoanhThu));
+        // 2. Cập nhật khách hàng mua nhiều nhất
+        if (lblKhachHangTheoTien != null) {
+            lblKhachHangTheoTien.setText("<html>" + topKhTheoTien.replaceAll("\n", "<br>") + "</html>");
+        }
+        if (lblKhachHangTheoSoLan != null) {
+            lblKhachHangTheoSoLan.setText("<html>" + topKhTheoSoLan.replaceAll("\n", "<br>") + "</html>");
+        }
     }
 }

@@ -1,16 +1,18 @@
 package model;
 
+import java.math.BigDecimal;
+
 public class ProductModel {
     private String maOto;
     private String tenOto;
     private String loaiOto;
-    private double gia;
+    private BigDecimal gia;
     private int soLuong;
     private String moTa;
     private String maHang;
     private int soLuotBan;
 
-    public ProductModel(double gia, String loaiOto, String maOto, String moTa, int soLuong, String tenOto, int soLuotBan, String maHang) {
+    public ProductModel(BigDecimal gia, String loaiOto, String maOto, String moTa, int soLuong, String tenOto, int soLuotBan, String maHang) {
         this.gia = gia;
         this.loaiOto = loaiOto;
         this.maOto = maOto;
@@ -25,11 +27,11 @@ public class ProductModel {
     }
 
 
-    public double getGia() {
+    public BigDecimal getGia() {
         return gia;
     }
 
-    public void setGia(double gia) {
+    public void setGia(BigDecimal gia) {
         this.gia = gia;
     }
 
