@@ -1,20 +1,20 @@
 package controller;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
+import dao.CustomerDAO;
 import dao.ProductDAO;
 import dao.StaffDAO;
-import dao.CustomerDAO;
 import dao.TransactionDAO;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.math.BigDecimal;
+import java.util.List;
+import javax.swing.*;
 import model.CustomerModel;
 import model.ProductModel;
 import model.StaffModel;
 import model.TransactionModel;
-import view.TransacionView;
 import view.ChonSanPhamView;
-import javax.swing.*;
-import javax.swing.SwingUtilities;
+import view.TransacionView;
 
 public class TransactionController {
     private TransacionView view;
@@ -60,13 +60,15 @@ public class TransactionController {
                 view.showErrorMessage("Số điện thoại này đã được đăng ký cho khách hàng khác!");
                 return;
             }
-            CustomerModel khMoi = new CustomerModel();
-            khMoi.setTenKH(tenKH);
-            khMoi.setSdtKH(sdtKH);
-            khMoi.setDcKH(diaChi);
-            khMoi.setTongChiTieu(0);
-            khMoi.setSoLanMua(0);
-
+            String newMaKH = customerDAO.newMaKH();
+            CustomerModel khMoi = new CustomerModel(
+                newMaKH,
+                tenKH,
+                diaChi,
+                sdtKH,
+                BigDecimal.ZERO,
+        0
+            );
             boolean success = customerDAO.addCustomer(khMoi);
 
             if (success) {

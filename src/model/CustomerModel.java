@@ -1,14 +1,16 @@
 package model;
 
+import java.math.BigDecimal;
+
 public class CustomerModel {
     private String maKH;
     private String tenKH;
     private String dcKH;
     private String sdtKH;
-    private double tongChiTieu;
+    private BigDecimal tongChiTieu;
     private int soLanMua;
 
-    public CustomerModel(String maKH, String tenKH, String dcKH, String sdtKH) {
+    public CustomerModel(String maKH, String tenKH, String dcKH, String sdtKH, BigDecimal tongChiTieu, int soLanMua) {
 		this.maKH = maKH;
 		this.tenKH = tenKH;
 		this.dcKH = dcKH;
@@ -42,9 +44,9 @@ public class CustomerModel {
 	public void setSdtKH(String sdtKH) {
 		this.sdtKH = sdtKH;
 	}
-	public double getTongChiTieu()
+	public BigDecimal getTongChiTieu()
 	{ return tongChiTieu; }
-	public void setTongChiTieu(double tongChiTieu) 
+	public void setTongChiTieu(BigDecimal tongChiTieu) 
 	{ this.tongChiTieu = tongChiTieu; }
 
 	public int getSoLanMua() 
