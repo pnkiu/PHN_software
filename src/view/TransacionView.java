@@ -1,18 +1,20 @@
 package view;
 
 import controller.TransactionController;
+import dao.TransactionDAO;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import dao.TransactionDAO;
 import model.CustomerModel;
+import model.ProductModel;
 import model.StaffModel;
 import model.TransactionModel;
-import model.ProductModel;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
 
 public class TransacionView extends JPanel {
 
@@ -33,8 +35,9 @@ public class TransacionView extends JPanel {
     private JTextField txtTongTien;
     private ProductModel sanPhamDaChon;
     private JDialog addCustomerDialog;
-    private double giaBan;
+    private BigDecimal giaBan;
     private List<TransactionModel> fullTransactionList;
+    
 
     // THÊM: Các biến kiểu dáng chuẩn
     private Font formLabelFont = new Font("Arial", Font.BOLD, 14);
@@ -599,12 +602,14 @@ public class TransacionView extends JPanel {
         capNhatTongTien();
     }
     private void capNhatTongTien() {
-        if (sanPhamDaChon == null) return;
-        try {
-            int soLuong = (int) spinnerSoLuong.getValue();
-            double tongTien = this.giaBan * soLuong;
-            txtTongTien.setText(String.valueOf(tongTien));
-        } catch (Exception e) {
+        if (sanPhamDaChon == null || spinnerSoLuong == null || txtTongTien == null) {
+            return;
+        }
+        int soLuong = (int) spinnerSoLuong.getValue();
+        if (giaBan != null) {
+            BigDecimal tongTien = giaBan.multiply(BigDecimal.valueOf(soLuong));
+            txtTongTien.setText(tongTien.toPlainString());
+        } else {
             txtTongTien.setText("0");
         }
     }

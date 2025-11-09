@@ -3,6 +3,8 @@ package controller;
 import dao.ProductDAO;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.List;
 import javax.swing.JOptionPane;
 import model.ProductModel;
@@ -17,42 +19,54 @@ public class ProductController {
         this.dao = dao;
         this.view.addAddCarListener(new AddCarListener());
         this.view.addDeleteCarListener(new DeleteCarListener());
+        this.view.addEditCarListener(new EditCarListener());
+        this.view.addSearchCarListener(new SearchCarListener());
         hienThiDB();
     }
-
 
     public void hienThiDB() {
         List<ProductModel> carList = dao.selectAll();
         view.hienthidulieu(carList);
     }
 
-
     class AddCarListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             view.formThemsp(ProductController.this);
-            view.addDeleteCarListener(new DeleteCarListener());
         }
     }
     class DeleteCarListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             xoaOTo();
+        }
     }
-}
+    class EditCarListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            view.formSuasp(ProductController.this);
+        }
+    }
+    class SearchCarListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            timKiem();
+        }
+    }
 
-    public void them(String maOto, String tenOto, String loaiOto, String giaStr, String soLuongStr, String maHang, String moTa) {
+    public void them(String tenOto, String loaiOto, String giaStr, String soLuongStr, String maHang, String moTa) {
         try {
-            double gia = Double.parseDouble(giaStr);
+            BigDecimal gia = BigDecimal.valueOf(Long.parseLong(giaStr));
             int soLuong = Integer.parseInt(soLuongStr);
-            if (maOto.isEmpty() || tenOto.isEmpty() || maHang.isEmpty()) {
-                view.showErrorMessage("Mã, Tên và Mã Hãng không được để trống!");
+            if (tenOto.isEmpty() || maHang.isEmpty()) {
+                view.showErrorMessage("Tên và Mã Hãng không được để trống!");
                 return;
             }
+            String maOto = dao.newMaOTO();
             ProductModel newCar = new ProductModel(gia, loaiOto, maOto, moTa, soLuong, tenOto, 0, maHang);
             int rowsAffected = dao.insert(newCar);
             if (rowsAffected > 0) {
-                view.showSuccessMessage("Thêm sản phẩm thành công!");
+                view.showSuccessMessage("Thêm sản phẩm thành công! Mã SP là: " + maOto);
                 view.closeAddDialog();
                 hienThiDB();
             } else {
@@ -60,10 +74,37 @@ public class ProductController {
             }
         } catch (NumberFormatException ex) {
             view.showErrorMessage("Giá và Số lượng phải là số!");
+        } catch (SQLException ex) {
+            view.showErrorMessage("Đã xảy ra lỗi CSDL khi tạo mã: " + ex.getMessage());
+            ex.printStackTrace();
         }
     }
-            private void xoaOTo() {
-            ProductModel selected = view.getSelectedOto();
+
+    public void sua(String maOto, String tenOto, String loaiOto, String giaStr, String soLuongStr, String maHang, String moTa) {
+        try {
+            // BigDecimal gia = BigDecimal.valueOf(Long.parseLong(giaStr));
+            BigDecimal gia = new BigDecimal(giaStr);
+            int soLuong = Integer.parseInt(soLuongStr);
+            if (maOto.isEmpty() || tenOto.isEmpty() || maHang.isEmpty()) {
+                view.showErrorMessage("Mã, Tên và Mã Hãng không được để trống!");
+                return;
+            }
+            ProductModel updatedCar = new ProductModel(gia, loaiOto, maOto, moTa, soLuong, tenOto, 0, maHang);
+            int rowsAffected = dao.update(updatedCar);
+            if (rowsAffected > 0) {
+                view.showSuccessMessage("Cập nhật sản phẩm thành công!");
+                view.closeEditDialog();
+                hienThiDB();
+            } else {
+                view.showErrorMessage("Cập nhật thất bại!");
+            }
+        } catch (NumberFormatException ex) {
+            view.showErrorMessage("Giá và Số lượng phải là số!");
+        }
+    }
+
+    private void xoaOTo() {
+        ProductModel selected = view.getSelectedOto();
             if (selected == null) {
                 JOptionPane.showMessageDialog(view, "Vui lòng chọn 1 xe để xóa!");
                 return;
@@ -81,5 +122,18 @@ public class ProductController {
                 JOptionPane.showMessageDialog(view, "Lỗi");
             }
         }
-}
+    }
+
+    public void timKiem() {
+        String keyword = view.getSearchKeyword();
+        if (keyword == null || keyword.trim().isEmpty()) {
+            hienThiDB();
+        } else {
+            List<ProductModel> results = dao.searchByName(keyword);
+            if (results.isEmpty()) {
+                view.showSuccessMessage("Không tìm thấy sản phẩm nào với từ khóa: '" + keyword + "'");
+            }
+            view.hienthidulieu(results);
+        }
+    }
 }
