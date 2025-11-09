@@ -9,8 +9,11 @@ public class StaffModel {
     private String tenDangNhap;
     private String matKhau;
 
-    public StaffModel() {}
+    // Constructor mặc định
+    public StaffModel() {
+    }
 
+    // Constructor đầy đủ
     public StaffModel(String maNV, String tenNV, long luongNV, String sdtNV, int chucVu, String tenDangNhap, String matKhau) {
         this.maNV = maNV;
         this.tenNV = tenNV;
@@ -21,13 +24,19 @@ public class StaffModel {
         this.matKhau = matKhau;
     }
 
-    public String getMaNV() { return maNV; }
+    // Getters and Setters
+    public String getMaNV() {
+        return maNV;
+    }
+
     public void setMaNV(String maNV) {
         this.maNV = maNV;
     }
 
     public String getTenNV() {
-        return tenNV; }
+        return tenNV;
+    }
+
     public void setTenNV(String tenNV) {
         this.tenNV = tenNV;
     }
@@ -35,6 +44,7 @@ public class StaffModel {
     public long getLuongNV() {
         return luongNV;
     }
+
     public void setLuongNV(long luongNV) {
         this.luongNV = luongNV;
     }
@@ -42,6 +52,7 @@ public class StaffModel {
     public String getSdtNV() {
         return sdtNV;
     }
+
     public void setSdtNV(String sdtNV) {
         this.sdtNV = sdtNV;
     }
@@ -49,6 +60,7 @@ public class StaffModel {
     public int getChucVu() {
         return chucVu;
     }
+
     public void setChucVu(int chucVu) {
         this.chucVu = chucVu;
     }
@@ -56,6 +68,7 @@ public class StaffModel {
     public String getTenDangNhap() {
         return tenDangNhap;
     }
+
     public void setTenDangNhap(String tenDangNhap) {
         this.tenDangNhap = tenDangNhap;
     }
@@ -63,12 +76,22 @@ public class StaffModel {
     public String getMatKhau() {
         return matKhau;
     }
+
     public void setMatKhau(String matKhau) {
         this.matKhau = matKhau;
     }
 
     @Override
     public String toString() {
-        return this.maNV + ", " + this.tenNV;
+        return "StaffModel{" +
+                "maNV='" + maNV + '\'' +
+                ", tenNV='" + tenNV + '\'' +
+                ", luongNV='" + luongNV + '\'' +
+                ", sdtNV='" + sdtNV + '\'' +
+                ", chucVu=" + chucVu +
+                ", tenDangNhap='" + tenDangNhap + '\'' +
+                ", matKhau='" + matKhau + '\'' +
+                '}';
     }
 }
+//model

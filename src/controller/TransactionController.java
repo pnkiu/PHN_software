@@ -195,7 +195,7 @@ public class TransactionController {
 
             try {
                 CustomerModel kh = customerDAO.getCustomer(tx.getMaKH());
-                StaffModel nv = staffDAO.getStaff(tx.getMaNV());
+                StaffModel nv = staffDAO.getClass(tx.getMaNV());
                 ProductModel sp = productDAO.getProductByMaOto(tx.getMaOTO());
 
                 List<CustomerModel> dsKhachHang = customerDAO.selectAll();
