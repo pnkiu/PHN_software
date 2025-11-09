@@ -84,36 +84,28 @@ public class ProductDAO {
 
     public int update(ProductModel car) {
         int ketQua = 0;
-        int currentQuantity = 0;
 
-        String getCurrentQuantitySQL = "SELECT soLuong FROM oto WHERE maOTO = ?";
+        // Chỉ cần 1 câu lệnh SQL
         String sql = "UPDATE oto SET tenOTO = ?, gia = ?, loaiOTO = ?, soLuong = ?, moTa = ?, maHang = ? "
                 + " WHERE maOTO = ?";
 
-        try (Connection connection = DatabaseConnect.getConnection()) {
-            try (PreparedStatement psGet = connection.prepareStatement(getCurrentQuantitySQL)) {
-                psGet.setString(1, car.getMaOto());
-                try (ResultSet rs = psGet.executeQuery()) {
-                    if (rs.next()) {
-                        currentQuantity = rs.getInt("soLuong");
-                    }
-                }
-            }
-            int newQuantity = currentQuantity + car.getSoLuong();
-            try (PreparedStatement psUpdate = connection.prepareStatement(sql)) {
-                psUpdate.setString(1, car.getTenOto());
-                psUpdate.setBigDecimal(2, car.getGia());
-                psUpdate.setString(3, car.getLoaiOto());
-                psUpdate.setInt(4, newQuantity); // Sử dụng tổng số lượng mới
-                psUpdate.setString(5, car.getMoTa());
-                psUpdate.setString(6, car.getMaHang());
-                psUpdate.setString(7, car.getMaOto());
+        // Gộp 2 try-with-resources lại làm 1
+        try (Connection connection = DatabaseConnect.getConnection();
+             PreparedStatement psUpdate = connection.prepareStatement(sql)) {
 
-                ketQua = psUpdate.executeUpdate();
-            }
-            System.out.println("Số lượng cũ: " + currentQuantity +
-                    ", Số lượng nhập thêm: " + car.getSoLuong() +
-                    ", Tổng số lượng mới: " + newQuantity);
+            // TOÀN BỘ KHỐI try (PreparedStatement psGet...) ĐÃ BỊ XÓA VÌ KHÔNG CẦN THIẾT
+
+            psUpdate.setString(1, car.getTenOto());
+            psUpdate.setBigDecimal(2, car.getGia());
+            psUpdate.setString(3, car.getLoaiOto());
+            psUpdate.setInt(4, car.getSoLuong()); // Dùng trực tiếp số lượng MỚI từ đối tượng car
+            psUpdate.setString(5, car.getMoTa());
+            psUpdate.setString(6, car.getMaHang());
+            psUpdate.setString(7, car.getMaOto());
+
+            ketQua = psUpdate.executeUpdate();
+
+            // XÓA CÂU LỆNH LOG GÂY HIỂU NHẦM
             System.out.println("Có " + ketQua + " dòng bị thay đổi (Update Oto)");
 
         } catch (Exception e) {
