@@ -82,8 +82,10 @@ public class ProductController {
 
     public void sua(String maOto, String tenOto, String loaiOto, String giaStr, String soLuongStr, String maHang, String moTa) {
         try {
-            BigDecimal gia = BigDecimal.valueOf(Long.parseLong(giaStr));
-            int soLuong = Integer.parseInt(soLuongStr);
+            String giaClean = giaStr.replaceAll("[.,]", "");
+            String soLuongClean = soLuongStr.replaceAll("[.,]", "");
+            BigDecimal gia = BigDecimal.valueOf(Long.parseLong(giaClean));
+            int soLuong = Integer.parseInt(soLuongClean);
             if (maOto.isEmpty() || tenOto.isEmpty() || maHang.isEmpty()) {
                 view.showErrorMessage("Mã, Tên và Mã Hãng không được để trống!");
                 return;
@@ -98,7 +100,8 @@ public class ProductController {
                 view.showErrorMessage("Cập nhật thất bại!");
             }
         } catch (NumberFormatException ex) {
-            view.showErrorMessage("Giá và Số lượng phải là số!");
+            view.showErrorMessage("Giá và Số lượng phải là số nguyên!\n" +
+                    "Vui lòng không nhập chữ, dấu chấm, hoặc dấu phẩy.\n");
         }
     }
 
