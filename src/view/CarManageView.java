@@ -152,6 +152,13 @@ public class CarManageView extends JFrame {
         btnNhanVien.addActionListener(e -> cardLayout.show(contentPanel, "Nhân viên"));
         btnKhachHang.addActionListener(e -> cardLayout.show(contentPanel, "Khách hàng"));
         btnGiaoDich.addActionListener(e -> cardLayout.show(contentPanel, "Giao dịch"));
+
+        if (!currentUser.isAdmin()) {
+            btnNhanVien.setVisible(false);
+        }
+
+        // Chọn thống kê làm mặc định
+        btnThongKe.setSelected(true);
         
         controller.hienThiXeBanChay();
         this.setVisible(true);
