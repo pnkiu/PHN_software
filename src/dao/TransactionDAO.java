@@ -1,5 +1,6 @@
 package dao;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,17 +17,6 @@ public class TransactionDAO {
         return new TransactionDAO();
     }
 
-    // private static TransactionDAO instance;
-    // private TransactionDAO() {
-    // }
-
-    // 2. Phương thức getInstance() công khai (public static)
-//     public static TransacionDAO getInstance() {
-//         if (instance == null) {
-//             instance = new TransacionDAO();
-//         }
-//         return instance;
-//     }
 public double getTongDoanhThu(Date start, Date end) {
     double total = 0;
     
@@ -70,7 +60,7 @@ private String newMaGD(Connection conn) throws SQLException {
         stmt.close();
         return newMaGD;
     }
-    //cái lon này khủng lắm
+
     public boolean insert(TransactionModel gd) {
         Connection conn = null;
 
@@ -78,7 +68,11 @@ private String newMaGD(Connection conn) throws SQLException {
                 + "WHERE maOTO = ? AND soLuong >= ?";
         String sqlInsertTx = "INSERT INTO giaodich (maGD, maKH, maNV, maOTO, tongtien, ngayGD, soLuong)"
                 + " VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try {
+        String sqlUpdateCustomer = "UPDATE khachhang SET " +
+                            "tongChiTieu = tongChiTieu + ?, " +
+                            "soLanMua = soLanMua + 1 " +
+                            "WHERE maKH = ?";
+                try {
             conn = DatabaseConnect.getConnection();
             conn.setAutoCommit(false);
             String newMaGD = this.newMaGD(conn);
@@ -102,12 +96,18 @@ private String newMaGD(Connection conn) throws SQLException {
                 psTx.setString(2, gd.getMaKH());
                 psTx.setString(3, gd.getMaNV());
                 psTx.setString(4, gd.getMaOTO());
-                psTx.setDouble(5, gd.getTongtien());
+                psTx.setBigDecimal(5, gd.getTongtien());
                 psTx.setString(6, gd.getNgayGD());
                 psTx.setInt(7, gd.getSoLuong());
-
                 psTx.executeUpdate();
             }
+
+            try (PreparedStatement psCustomer = conn.prepareStatement(sqlUpdateCustomer)) {
+            psCustomer.setBigDecimal(1, gd.getTongtien());
+            psCustomer.setString(2, gd.getMaKH());     // Cho khách hàng nào
+            psCustomer.executeUpdate();
+        }
+
             conn.commit();
             return true;
 
@@ -152,7 +152,7 @@ private String newMaGD(Connection conn) throws SQLException {
                 String maKH = rs.getString("maKH");
                 String maNV = rs.getString("maNV");
                 String maOTO = rs.getString("maOTO");
-                double tongtien = rs.getDouble("tongtien");
+                BigDecimal tongtien = rs.getBigDecimal("tongtien");
                 String ngayGD = rs.getString("ngayGD");
                 int soLuong = rs.getInt("soLuong");
 
@@ -198,7 +198,7 @@ private String newMaGD(Connection conn) throws SQLException {
             ps.setString(1, tx.getMaKH());
             ps.setString(2, tx.getMaNV());
             ps.setString(3, tx.getMaOTO());
-            ps.setDouble(4, tx.getTongtien());
+            ps.setBigDecimal(4, tx.getTongtien());
             ps.setString(5, tx.getNgayGD());
             ps.setInt(6, tx.getSoLuong());
             ps.setString(7, tx.getMaGD());
@@ -237,7 +237,7 @@ private String newMaGD(Connection conn) throws SQLException {
                     String maKH = rs.getString("maKH");
                     String maNV = rs.getString("maNV");
                     String maOTO = rs.getString("maOTO");
-                    double tongtien = rs.getDouble("tongtien");
+                    BigDecimal tongtien = rs.getBigDecimal("tongtien");
                     String ngayGD = rs.getString("ngayGD");
                     int soLuong = rs.getInt("soLuong");
 
@@ -255,6 +255,19 @@ private String newMaGD(Connection conn) throws SQLException {
             e.printStackTrace();
         }
         return ketQua;
+    }
+    public boolean ktrSDT(String sdtKH) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM khachhang WHERE sdtKH = ?";
+        try (Connection conn = DatabaseConnect.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, sdtKH);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
     }
 
 

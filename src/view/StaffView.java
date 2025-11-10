@@ -228,7 +228,7 @@ public class StaffView extends JPanel {
                 hienthidulieu(searchResult);
             } else {
                 hienthidulieu(searchResult);
-                showSuccessMessage("Tìm thấy " + searchResult.size() + " nhân viên phù hợp");
+                // showSuccessMessage("Tìm thấy " + searchResult.size() + " nhân viên phù hợp");
             }
 
         } catch (Exception e) {

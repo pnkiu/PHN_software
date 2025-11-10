@@ -15,6 +15,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import model.ProductModel;
+import java.awt.event.ActionEvent;
+
 
 public class ProductView extends JPanel {
     private JButton btnThongKe;
@@ -38,6 +40,7 @@ public class ProductView extends JPanel {
     private ProductController controller;
     private JTable carTable;
     private DefaultTableModel tableModel;
+    private JButton jButton_reset;
     
 
     public ProductView() {
@@ -67,9 +70,10 @@ public class ProductView extends JPanel {
         jButton_delete = new JButton("Xóa");
         jTextField_search = new JTextField(20);
         jButton_search = new JButton("Tìm kiếm");
+        jButton_reset = new JButton("Làm mới");
 
         Font buttonFont = new Font("Arial", Font.PLAIN, 18);
-        for (JButton btn : new JButton[]{jButton_add, jButton_edit, jButton_delete, jButton_search}) {
+        for (JButton btn : new JButton[]{jButton_add, jButton_edit, jButton_delete, jButton_search, jButton_reset}) {
             btn.setFont(buttonFont);
             btn.setBackground(new Color(65, 105, 225));
             btn.setForeground(Color.WHITE);
@@ -78,13 +82,30 @@ public class ProductView extends JPanel {
         jPanel_action.add(jButton_add);
         jPanel_action.add(jButton_edit);
         jPanel_action.add(jButton_delete);
+        jPanel_action.add(jButton_reset);
         jPanel_action.add(jTextField_search);
         jPanel_action.add(jButton_search);
+
+        jButton_reset.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Gọi hàm làm mới dữ liệu
+                controller.hienThiDB();
+                
+                // (Tùy chọn) Xóa nội dung ô tìm kiếm
+                jTextField_search.setText(""); 
+                
+                // (Tùy chọn) Hiển thị thông báo
+                showSuccessMessage("Đã tải lại danh sách sản phẩm."); 
+            }
+        });
 
         JPanel jPanel_north_wrapper = new JPanel(new BorderLayout());
         jPanel_north_wrapper.setBackground(Color.WHITE);
         jPanel_north_wrapper.add(jLabel_header, BorderLayout.NORTH);
         jPanel_north_wrapper.add(jPanel_action, BorderLayout.CENTER);
+
+        
 
         jPanel_right.add(jPanel_north_wrapper, BorderLayout.NORTH);
 

@@ -77,6 +77,18 @@ public class CustomerController {
                 view.showErrorMessage("Số điện thoại này đã tồn tại!");
                 return;
             }
+            String phoneRegex = "^0\\d{9}$";
+
+            if (!sdtKH.matches(phoneRegex)) {
+                view.showErrorMessage("Số điện thoại không hợp lệ! (Phải đủ 10 số và bắt đầu bằng 0)");
+                return; // Dừng lại nếu SĐT không hợp lệ
+            }
+
+            if (dao.ktrSDT(sdtKH)) {
+                view.showErrorMessage("Số điện thoại này đã tồn tại!");
+                return;
+            }
+
             String newMaKH = dao.newMaKH();
             CustomerModel newCustomer = new CustomerModel(newMaKH, tenKH, dcKH, sdtKH, BigDecimal.ZERO, 0);
             boolean success = dao.addCustomer(newCustomer);

@@ -7,21 +7,11 @@ import model.StaffModel;
 public class StaffController {
     private StaffDAO staffDAO;
 
-    // public StaffController() {
-    //     this.staffDAO = StaffDAO.getInstance();
-    // }
-
     public StaffController(StaffDAO dao) {
         this.staffDAO = dao;
     }
     
 
-    /**
-     * Thêm nhân viên mới
-     */
-//    public boolean addStaff(StaffModel staff) {
-//        return insertStaff(staff);
-//    }
 
     public boolean insertStaff(StaffModel staff) {
         if (!validateStaffData(staff)) {

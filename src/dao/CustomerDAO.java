@@ -17,6 +17,67 @@ public class CustomerDAO {
     public List<CustomerModel> selectAll() throws SQLException {
         return getAllCustomers();
     }
+
+    public List<CustomerModel> getTopKhachHangTheoTongTien_AllTime() {
+        List<CustomerModel> list = new ArrayList<>();
+        // Câu SQL này KHÔNG CÓ "WHERE gd.ngayGD..."
+        String sql = "SELECT kh.maKH, kh.tenKH, SUM(gd.tongTien) AS tongChiTieu " +
+                     "FROM khachhang kh " +
+                     "JOIN giaodich gd ON kh.maKH = gd.maKH " +
+                     "GROUP BY kh.maKH, kh.tenKH " +
+                     "ORDER BY tongChiTieu DESC LIMIT 5"; 
+                     
+        try (Connection conn = DatabaseConnect.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+             
+            ResultSet rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                CustomerModel kh = new CustomerModel();
+                kh.setMaKH(rs.getString("maKH"));
+                kh.setTenKH(rs.getString("tenKH"));
+                kh.setTongChiTieu(rs.getBigDecimal("tongChiTieu")); 
+                list.add(kh);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    /**
+     * Lấy top khách hàng theo SỐ LẦN MUA (Mọi thời đại)
+     */
+    public List<CustomerModel> getTopKhachHangTheoSoLanMua_AllTime() {
+        List<CustomerModel> list = new ArrayList<>();
+        // Câu SQL này KHÔNG CÓ "WHERE gd.ngayGD..."
+        String sql = "SELECT kh.maKH, kh.tenKH, COUNT(gd.maGD) AS soLanMua " +
+                     "FROM khachhang kh " +
+                     "JOIN giaodich gd ON kh.maKH = gd.maKH " +
+                     "GROUP BY kh.maKH, kh.tenKH " +
+                     "ORDER BY soLanMua DESC LIMIT 5";
+
+        try (Connection conn = DatabaseConnect.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+             
+            ResultSet rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                CustomerModel kh = new CustomerModel();
+                kh.setMaKH(rs.getString("maKH"));
+                kh.setTenKH(rs.getString("tenKH"));
+                kh.setSoLanMua(rs.getInt("soLanMua")); 
+                list.add(kh);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+
+
+
         // lấy tất cả khách hàng
     public List<CustomerModel> getAllCustomers() throws SQLException {
         List<CustomerModel> customers = new ArrayList<>();

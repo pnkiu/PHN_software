@@ -60,6 +60,22 @@ public class TransactionController {
                 view.showErrorMessage("Số điện thoại này đã được đăng ký cho khách hàng khác!");
                 return;
             }
+
+             String phoneRegex = "^0\\d{9}$";
+
+            if (!sdtKH.matches(phoneRegex)) {
+                view.showErrorMessage("Số điện thoại không hợp lệ");
+                return;
+            }
+
+            if (dao.ktrSDT(sdtKH)) {
+                view.showErrorMessage("Số điện thoại này đã tồn tại!");
+                return;
+            }
+
+
+
+
             String newMaKH = customerDAO.newMaKH();
             CustomerModel khMoi = new CustomerModel(
                 newMaKH,
@@ -171,7 +187,7 @@ public class TransactionController {
     }
 
 
-    public void them(String maGD, String maKH, String maNV, String maOTO, double tongtien, String ngayGD, int soLuong) {
+    public void them(String maGD, String maKH, String maNV, String maOTO, BigDecimal tongtien, String ngayGD, int soLuong) {
         if (maGD.isEmpty() || maKH.isEmpty() || maNV.isEmpty() || maOTO.isEmpty()) {
             view.showErrorMessage("Vui lòng điền đầy đủ thông tin !");
             return;

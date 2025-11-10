@@ -151,7 +151,7 @@ public class ProductDAO {
                     "FROM oto o " +
                     "JOIN hangoto h ON o.maHang = h.maHang " +
                     "ORDER BY o.soLuotBan DESC " +
-                    "LIMIT 5";
+                    "LIMIT 20";
 
             PreparedStatement ps = connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();

@@ -40,6 +40,7 @@ public class CarManageView extends JFrame {
         Font font = new Font("Arial", Font.BOLD, 40);
         this.setTitle("Car Management Software");
         this.setSize(1050, 620);
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.setLayout(new BorderLayout());
@@ -160,7 +161,27 @@ public class CarManageView extends JFrame {
         // Chọn thống kê làm mặc định
         btnThongKe.setSelected(true);
         
-        controller.hienThiXeBanChay();
+        // controller.hienThiXeBanChay();
+        try {
+            System.out.println("Đang tải dữ liệu khởi động...");
+            
+            // 1. Tải xe bán chạy (MỌI LÚC) vào Bảng
+            controller.hienThiXeBanChay();
+            
+            // 2. Lấy ngày tháng hiện tại
+            Calendar cal = Calendar.getInstance();
+            Date homNay = cal.getTime();
+            cal.set(Calendar.DAY_OF_MONTH, 1);
+            Date dauThang = cal.getTime();
+            
+            // 3. Tải thống kê (THÁNG NÀY) vào 3 Hộp tóm tắt
+            // (Hàm này chỉ cập nhật 3 hộp, không đè lên bảng)
+            controller.taiThongKeMacDinh(dauThang, homNay); 
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Không thể tải dữ liệu thống kê mặc định.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
         this.setVisible(true);
     }
 
@@ -234,6 +255,7 @@ public class CarManageView extends JFrame {
                 new Font("Segoe UI", Font.BOLD, 16),
                 Color.BLACK
         ));
+                scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
         panel_center_wrapper.add(scrollPane, BorderLayout.CENTER);
         jPanel_right.add(panel_center_wrapper, BorderLayout.CENTER);
@@ -241,7 +263,7 @@ public class CarManageView extends JFrame {
         //tiều đề
         JPanel panel_bottom = new JPanel(new GridLayout(1, 2, 20, 0));
         panel_bottom.setBackground(Color.WHITE);
-        panel_bottom.setPreferredSize(new Dimension(0, 150));
+        panel_bottom.setPreferredSize(new Dimension(0, 200));
 
         // khách hàng mua nhiều nhất (theo tiền)
         JPanel panel_khTien = createSummaryBox("KH THÂN THIẾT", "N/A", new Color(220, 220, 220));
