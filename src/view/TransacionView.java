@@ -115,7 +115,7 @@ public class TransacionView extends JPanel {
         TransactionController controller = new TransactionController(this, new TransactionDAO());
     }
 
-    //listener (Giữ nguyên tên hàm mới của bạn)
+    
     public void addAddgdListener(ActionListener listener) {
         jButton_add.addActionListener(listener);
     }
@@ -152,8 +152,8 @@ public class TransacionView extends JPanel {
     }
 
     public void formThemsp(TransactionController controller,
-                           List<CustomerModel> dsKhachHang,
-                           List<StaffModel> dsNhanVien) {
+                        List<CustomerModel> dsKhachHang,
+                        List<StaffModel> dsNhanVien) {
         JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
         addDialog = new JDialog(parentFrame, "Thêm Giao Dịch", true);
         addDialog.setSize(450, 450);

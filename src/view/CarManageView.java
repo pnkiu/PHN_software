@@ -1,7 +1,9 @@
 package view;
 
 import controller.CarManageController;
+import controller.StaffController;
 import dao.ProductDAO;
+import dao.StaffDAO;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -109,16 +111,19 @@ public class CarManageView extends JFrame {
         JPanel thongKePanel = createThongKePanel();
         contentPanel.add(thongKePanel, "Thống kê");
 
-
-
         JPanel ProductPanel = new ProductView();
         contentPanel.add(ProductPanel, "Sản phẩm");
 
         JPanel CustomerPanel = new CustomerView();
         contentPanel.add(CustomerPanel, "Khách hàng");
 
-        JPanel StaffPanel = new StaffView();
-        contentPanel.add(StaffPanel, "Nhân viên");
+        // JPanel StaffPanel = new StaffView();
+        // contentPanel.add(StaffPanel, "Nhân viên");
+        
+        StaffDAO staffDAO = StaffDAO.getInstance();
+        StaffController staffController = new StaffController(staffDAO);
+        JPanel panelNhanVien = new StaffView(staffController); 
+        contentPanel.add(panelNhanVien, "Nhân viên");
 
         JPanel TransactionPanel = new TransacionView();
         contentPanel.add(TransactionPanel, "Giao dịch");

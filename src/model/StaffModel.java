@@ -69,6 +69,14 @@ public class StaffModel {
 
     @Override
     public String toString() {
-        return this.maNV + ", " + this.tenNV;
+        return "StaffModel{" +
+                "maNV='" + maNV + '\'' +
+                ", tenNV='" + tenNV + '\'' +
+                ", luongNV='" + luongNV + '\'' +
+                ", sdtNV='" + sdtNV + '\'' +
+                ", chucVu=" + chucVu +
+                ", tenDangNhap='" + tenDangNhap + '\'' +
+                ", matKhau='" + matKhau + '\'' +
+                '}';
     }
 }
