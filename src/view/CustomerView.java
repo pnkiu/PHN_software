@@ -8,8 +8,8 @@ import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import model.CustomerModel;
 
 public class CustomerView extends JPanel {

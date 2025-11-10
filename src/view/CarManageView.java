@@ -13,6 +13,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import model.ProductModel;
+import model.UsersModel;
 
 public class CarManageView extends JFrame {
     private JButton btnThongKe;
@@ -26,9 +27,12 @@ public class CarManageView extends JFrame {
     private DefaultTableModel tableModel;
     private JLabel lblKhachHangTheoTien, lblKhachHangTheoSoLan;
     private JLabel lblDoanhThu;
+    private UsersModel currentUser;
+
     CarManageController controller = new CarManageController(this, new ProductDAO());
 
-    public CarManageView() {
+    public CarManageView(UsersModel user) {
+        this.currentUser = user;
         this.init();
     }
 
@@ -55,8 +59,9 @@ public class CarManageView extends JFrame {
         headerPanel.add(appTitle, BorderLayout.WEST);
 
         JPanel userPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 12));
+        String roleText = currentUser.isAdmin() ? "Quản trị viên" : "Nhân viên";
+        JLabel userLabel = new JLabel(currentUser.getTenNV() + " (" + roleText + ")");
         userPanel.setOpaque(false);
-        JLabel userLabel = new JLabel("Quản trị viên");
         userLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
         userPanel.add(userLabel);
 
@@ -68,6 +73,16 @@ public class CarManageView extends JFrame {
         btnDangXuat.setBorder(BorderFactory.createEmptyBorder(4, 10, 4, 10));
         btnDangXuat.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         userPanel.add(btnDangXuat);
+        btnDangXuat.addActionListener(e -> {
+            int result = JOptionPane.showConfirmDialog(this,
+                    "Bạn có chắc muốn đăng xuất?",
+                    "Xác nhận đăng xuất",
+                    JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.YES_OPTION) {
+                this.dispose();
+                new LoginFrame().setVisible(true);
+            }
+        });
 
         headerPanel.add(userPanel, BorderLayout.EAST);
         root.add(headerPanel, BorderLayout.NORTH);
