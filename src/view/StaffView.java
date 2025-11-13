@@ -35,61 +35,14 @@ public class StaffView extends JPanel {
 
     public void init() {
         Font font = new Font("Arial", Font.BOLD, 40);
-//        this.setLayout(new BorderLayout());
-//        this.setBackground(Color.WHITE);
-//
-//        JPanel jPanel_right = new JPanel(new BorderLayout());
-//        jPanel_right.setBackground(Color.WHITE);
-//
-//        // Header
-//        JLabel jLabel_header = new JLabel("QUẢN LÝ NHÂN VIÊN", SwingConstants.CENTER);
-//        jLabel_header.setForeground(Color.BLACK);
-//        jLabel_header.setFont(font);
-//        jLabel_header.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
-//
-//        // Panel action
-//        JPanel jPanel_action = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-//        jPanel_action.setBackground(Color.WHITE);
-//
-//        jButton_add = new JButton("Thêm nhân viên");
-//        jButton_edit = new JButton("Sửa");
-//        jButton_delete = new JButton("Xóa");
-//        jTextField_search = new JTextField(15);
-//        jButton_search = new JButton("Tìm kiếm");
-//
-//        // ComboBox cho loại tìm kiếm
-//        String[] searchTypes = {"Tất cả", "Mã NV", "Tên NV", "Số điện thoại", "Chức vụ"};
-//        jComboBox_searchType = new JComboBox<>(searchTypes);
-//
-//        // Style buttons
-//        Font buttonFont = new Font("Arial", Font.PLAIN, 16);
-//        for (JButton btn : new JButton[]{jButton_add, jButton_edit, jButton_delete, jButton_search}) {
-//            btn.setFont(buttonFont);
-//            btn.setBackground(new Color(65, 105, 225));
-//            btn.setForeground(Color.WHITE);
-//            btn.setPreferredSize(new Dimension(140, 35));
-//        }
-//
-//        jPanel_action.add(jButton_add);
-//        jPanel_action.add(jButton_edit);
-//        jPanel_action.add(jButton_delete);
-//        jPanel_action.add(jComboBox_searchType);
-//        jPanel_action.add(jTextField_search);
-//        jPanel_action.add(jButton_search);
-//
-//        JPanel jPanel_north_wrapper = new JPanel(new BorderLayout());
-//        jPanel_north_wrapper.setBackground(Color.WHITE);
-//        jPanel_north_wrapper.add(jLabel_header, BorderLayout.NORTH);
-//        jPanel_north_wrapper.add(jPanel_action, BorderLayout.CENTER);
-//
-//        jPanel_right.add(jPanel_north_wrapper, BorderLayout.NORTH);
+
         this.setLayout(new BorderLayout());
         this.setBackground(Color.WHITE);
 
         JPanel jPanel_right = new JPanel(new BorderLayout());
         jPanel_right.setBackground(Color.WHITE);
 
-        JLabel jLabel_header = new JLabel("QUẢN LÝ Nhân Viên", SwingConstants.CENTER);
+        JLabel jLabel_header = new JLabel("QUẢN LÝ NHÂN VIÊN", SwingConstants.CENTER);
         jLabel_header.setForeground(Color.BLACK);
         jLabel_header.setFont(font);
         jLabel_header.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
@@ -535,7 +488,6 @@ public class StaffView extends JPanel {
             // Create new staff model
             StaffModel newStaff = controller.createNewStaff();
             newStaff.setTenNV(txtTenNV.getText().trim());
-            // newStaff.setLuongNV(txtLuongNV.getText().trim());
             try {
                 long luong = Long.parseLong(txtLuongNV.getText().trim()); // Chuyển String sang long
                 newStaff.setLuongNV(luong); // Giờ đã là long, gán thành công
@@ -674,8 +626,8 @@ public class StaffView extends JPanel {
 
         // Button panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
-        JButton btnSave = new JButton("💾 Lưu");
-        JButton btnCancel = new JButton("❌ Hủy");
+        JButton btnSave = new JButton("Lưu");
+        JButton btnCancel = new JButton("Hủy");
 
         btnSave.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         btnCancel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
@@ -787,7 +739,7 @@ public class StaffView extends JPanel {
     public void hienthidulieu(ArrayList<StaffModel> staffList) {
         tableModel.setRowCount(0);
         for (StaffModel staff : staffList) {
-            String chucVu = staff.getChucVu() == 0 ? "Quản lý" : "Nhân viên";
+            String chucVu = staff.getChucVu() == 1 ? "Quản lý" : "Nhân viên";
             Object[] rowData = {
                     staff.getMaNV(),
                     staff.getTenNV(),

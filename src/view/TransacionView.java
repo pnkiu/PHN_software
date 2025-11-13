@@ -39,9 +39,10 @@ public class TransacionView extends JPanel {
     private JDialog addCustomerDialog;
     private BigDecimal giaBan;
     private List<TransactionModel> fullTransactionList;
+    private NumberFormat numberFormatter;
     
 
-    // THÊM: Các biến kiểu dáng chuẩn
+    
     private Font formLabelFont = new Font("Arial", Font.BOLD, 14);
     private Font formFieldFont = new Font("Arial", Font.PLAIN, 14);
     private Font formButtonFont = new Font("Arial", Font.BOLD, 14);
@@ -65,6 +66,11 @@ public class TransacionView extends JPanel {
         jLabel_header.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
         JPanel jPanel_action = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         jPanel_action.setBackground(Color.WHITE);
+
+        Locale localeVN = new Locale("vi", "VN");
+        this.numberFormatter = NumberFormat.getNumberInstance(localeVN);
+
+
 
         // (Tên nút của bạn)
         jButton_add = new JButton("Thêm");
@@ -114,7 +120,10 @@ public class TransacionView extends JPanel {
         jPanel_right.add(scrollPane, BorderLayout.CENTER);
         this.add(jPanel_right, BorderLayout.CENTER);
         TransactionController controller = new TransactionController(this, new TransactionDAO());
+        
+
     }
+
 
     
     public void addAddgdListener(ActionListener listener) {
@@ -273,7 +282,6 @@ public class TransacionView extends JPanel {
 
         btnSave.addActionListener(e -> {
             try {
-                // (Giữ nguyên logic của bạn)
                 CustomerModel kh = (CustomerModel) cbKhachHang.getSelectedItem();
                 StaffModel nv = (StaffModel) cbNhanVien.getSelectedItem();
                 if (kh == null || nv == null || sanPhamDaChon == null) {
@@ -284,14 +292,12 @@ public class TransacionView extends JPanel {
                 String maKH = kh.getMaKH();
                 String maNV = nv.getMaNV();
                 String maOTO = sanPhamDaChon.getMaOto();
-                // BigDecimal tongTien = BigDecimal.valueOf(txtTongTien.getText());
-                String tienTuTextField = txtTongTien.getText();
-                BigDecimal tongTien = new BigDecimal(tienTuTextField);
-                String ngayGD = txtNgayGD.getText();
+
                 int soLuong = (int) spinnerSoLuong.getValue();
+                BigDecimal tongTien = sanPhamDaChon.getGia().multiply(BigDecimal.valueOf(soLuong));
+                String ngayGD = txtNgayGD.getText();
+                
                 controller.them(maGD, maKH, maNV, maOTO, tongTien, ngayGD, soLuong);
-            } catch (NumberFormatException ex) {
-                showErrorMessage("Tổng tiền không hợp lệ!");
             } catch (Exception ex) {
                 showErrorMessage("Lỗi khi lấy dữ liệu: " + ex.getMessage());
                 ex.printStackTrace();
@@ -523,8 +529,10 @@ public class TransacionView extends JPanel {
         editDialog.setVisible(true);
     }
 
-    //chi tiết giao dịch (Giữ nguyên tên hàm của bạn)
+    //chi tiết giao dịch 
     public void showDetail(TransactionModel tx, CustomerModel kh, StaffModel nv, ProductModel sp) {
+        Locale localeVN = new Locale("vi", "VN");
+        NumberFormat numberFormatter = NumberFormat.getNumberInstance(localeVN);
         JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
         JDialog detailDialog = new JDialog(parentFrame, "Chi Tiết Giao Dịch", true);
         detailDialog.setSize(500, 500);
@@ -548,7 +556,7 @@ public class TransacionView extends JPanel {
         String[] values = {
                 tx.getMaGD(), tenKH, diaChi, sdtKH, tenNV, tenOto,
                 String.valueOf(tx.getSoLuong()),
-                String.valueOf(tx.getTongtien()), // Giữ nguyên logic của bạn
+                numberFormatter.format(tx.getTongtien()), 
                 tx.getNgayGD()
         };
 
@@ -613,7 +621,7 @@ public class TransacionView extends JPanel {
         int soLuong = (int) spinnerSoLuong.getValue();
         if (giaBan != null) {
             BigDecimal tongTien = giaBan.multiply(BigDecimal.valueOf(soLuong));
-            txtTongTien.setText(tongTien.toPlainString());
+            txtTongTien.setText(numberFormatter.format(tongTien));
         } else {
             txtTongTien.setText("0");
         }

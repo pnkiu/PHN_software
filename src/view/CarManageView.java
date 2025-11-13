@@ -106,10 +106,10 @@ public class CarManageView extends JFrame {
         btnThongKe = new JButton("THỐNG KÊ");
         btnSanPham = new JButton("SẢN PHẨM");
         btnKhachHang = new JButton("KHÁCH HÀNG");
-        btnNhanVien = new JButton("NHÂN VIÊN");
         btnGiaoDich = new JButton("GIAO DỊCH");
+        btnNhanVien = new JButton("NHÂN VIÊN");
 
-        JButton[] buttons = {btnThongKe, btnSanPham, btnKhachHang, btnNhanVien, btnGiaoDich};
+        JButton[] buttons = {btnThongKe, btnSanPham, btnKhachHang, btnGiaoDich, btnNhanVien};
         for (JButton button : buttons) {
             button.setMaximumSize(buttonSize);
             button.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -133,16 +133,14 @@ public class CarManageView extends JFrame {
         JPanel CustomerPanel = new CustomerView();
         contentPanel.add(CustomerPanel, "Khách hàng");
 
-        // JPanel StaffPanel = new StaffView();
-        // contentPanel.add(StaffPanel, "Nhân viên");
+        JPanel TransactionPanel = new TransacionView();
+        contentPanel.add(TransactionPanel, "Giao dịch");
         
         StaffDAO staffDAO = StaffDAO.getInstance();
         StaffController staffController = new StaffController(staffDAO);
         JPanel panelNhanVien = new StaffView(staffController); 
         contentPanel.add(panelNhanVien, "Nhân viên");
 
-        JPanel TransactionPanel = new TransacionView();
-        contentPanel.add(TransactionPanel, "Giao dịch");
 
 
 
@@ -266,10 +264,10 @@ public class CarManageView extends JFrame {
         panel_bottom.setPreferredSize(new Dimension(0, 200));
 
         // khách hàng mua nhiều nhất (theo tiền)
-        JPanel panel_khTien = createSummaryBox("KH THÂN THIẾT", "N/A", new Color(220, 220, 220));
+        JPanel panel_khTien = createSummaryBox("KHÁCH HÀNG THÂN THIẾT", "N/A", new Color(220, 220, 220));
 
         // khách hàng mua nhiều nhất (theo số lần)
-        JPanel panel_khSoLan = createSummaryBox("KH MUA NHIỀU", "N/A", new Color(220, 220, 220));
+        JPanel panel_khSoLan = createSummaryBox("KHÁCH HÀNG MUA NHIỀU", "N/A", new Color(220, 220, 220));
 
 
         // doanh thu
@@ -314,8 +312,8 @@ public class CarManageView extends JFrame {
         panel.add(labelTitle, BorderLayout.NORTH);
         panel.add(labelValue, BorderLayout.CENTER);
 
-        if (title.equals("KH THÂN THIẾT")) lblKhachHangTheoTien = labelValue;
-        else if (title.equals("KH MUA NHIỀU")) lblKhachHangTheoSoLan = labelValue;
+        if (title.equals("KHÁCH HÀNG THÂN THIẾT")) lblKhachHangTheoTien = labelValue;
+        else if (title.equals("KHÁCH HÀNG MUA NHIỀU")) lblKhachHangTheoSoLan = labelValue;
         else if (title.equals("DOANH THU CỬA HÀNG")) lblDoanhThu = labelValue;
 
         return panel;
@@ -333,7 +331,6 @@ public class CarManageView extends JFrame {
 
 
 public void capNhatThongKe(String topKhTheoSoLan, String topKhTheoTien, double tongDoanhThu) {
-    
     // 1. Cập nhật tổng doanh thu
     lblDoanhThu.setText(String.format("%,.0f VNĐ", tongDoanhThu));
 

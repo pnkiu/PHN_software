@@ -193,7 +193,7 @@ private String newMaGD(Connection conn) throws SQLException {
                 + "WHERE maGD = ?";
 
         try (Connection connection = DatabaseConnect.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
+            PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setString(1, tx.getMaKH());
             ps.setString(2, tx.getMaNV());
@@ -223,7 +223,7 @@ private String newMaGD(Connection conn) throws SQLException {
                 "WHERE g.maGD LIKE ? OR kh.tenKH LIKE ? OR o.tenOTO LIKE ? OR g.ngayGD LIKE ?";
 
         try (Connection connection = DatabaseConnect.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
+            PreparedStatement ps = connection.prepareStatement(sql)) {
 
             String searchKeyword = "%" + keyword + "%";
             ps.setString(1, searchKeyword);

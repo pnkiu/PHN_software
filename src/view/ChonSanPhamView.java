@@ -1,11 +1,14 @@
 package view;
 
-import model.ProductModel;
 import controller.TransactionController;
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
+import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import model.ProductModel;
 
 //file này là file con của transactionview tách ra cho thuận tiện
 
@@ -13,6 +16,7 @@ public class ChonSanPhamView extends JDialog {
     private JTable productTable;
     private DefaultTableModel tableModel;
     private TransactionController controller;
+    
 
     public ChonSanPhamView(JFrame parent, TransactionController controller, List<ProductModel> dsSanPham) {
         super(parent, "Chọn Sản Phẩm Ô Tô", true);
@@ -30,6 +34,7 @@ public class ChonSanPhamView extends JDialog {
             }
         };
         productTable = new JTable(tableModel);
+        productTable.getColumnModel().getColumn(2).setCellRenderer(new PriceRenderer());
         updateTable(dsSanPham);
 
         JScrollPane scrollPane = new JScrollPane(productTable);
@@ -68,6 +73,24 @@ public class ChonSanPhamView extends JDialog {
                     sp.getSoLuong()
             };
             tableModel.addRow(row);
+        }
+    }
+    class PriceRenderer extends DefaultTableCellRenderer {
+        private NumberFormat formatter;
+
+        public PriceRenderer() {
+            Locale localeVN = new Locale("vi", "VN");
+            formatter = NumberFormat.getNumberInstance(localeVN);
+            setHorizontalAlignment(JLabel.RIGHT);
+        }
+
+        @Override
+        public void setValue(Object value) {
+            if (value instanceof Number) {
+                setText(formatter.format(value));
+            } else {
+                super.setValue(value);
+            }
         }
     }
 }

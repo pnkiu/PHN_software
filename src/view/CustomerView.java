@@ -2,6 +2,7 @@ package view;
 
 import controller.CustomerController;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
@@ -26,6 +27,7 @@ public class CustomerView extends JPanel {
     private JDialog editDialog;
 
     private CustomerController controller;
+    private JButton jButton_reset;
 
     public CustomerView() {
         this.init();
@@ -48,8 +50,9 @@ public class CustomerView extends JPanel {
         jButton_delete = new JButton("Xóa");
         jTextField_search = new JTextField(20);
         jButton_search = new JButton("Tìm kiếm");
+        jButton_reset = new JButton("Làm mới");
         Font buttonFont = new Font("Arial", Font.PLAIN, 18);
-        for (JButton btn : new JButton[]{jButton_add, jButton_edit, jButton_delete, jButton_search}) {
+        for (JButton btn : new JButton[]{jButton_add, jButton_edit, jButton_delete, jButton_search,  jButton_reset}) {
             btn.setFont(buttonFont);
             btn.setBackground(new Color(65, 105, 225));
             btn.setForeground(Color.WHITE);
@@ -57,8 +60,19 @@ public class CustomerView extends JPanel {
         jPanel_action.add(jButton_add);
         jPanel_action.add(jButton_edit);
         jPanel_action.add(jButton_delete);
+        jPanel_action.add(jButton_reset);
         jPanel_action.add(jTextField_search);
         jPanel_action.add(jButton_search);
+
+        jButton_reset.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Gọi hàm làm mới dữ liệu
+                controller.hienThiDB();
+            }
+        });
+
+
         JPanel jPanel_north_wrapper = new JPanel(new BorderLayout());
         jPanel_north_wrapper.setBackground(Color.WHITE);
         jPanel_north_wrapper.add(jLabel_header, BorderLayout.NORTH);

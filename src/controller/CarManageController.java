@@ -95,17 +95,17 @@ public class CarManageController{
     StringBuilder sbSoLan = new StringBuilder();
     for (CustomerModel kh : topKhTheoSoLan) {
         sbSoLan.append(kh.getTenKH())
-               .append(" (")
-               .append(kh.getSoLanMua())
-               .append(" lần)\n");
+            .append(" (")
+            .append(kh.getSoLanMua())
+            .append(" lần)\n");
     }
 
     StringBuilder sbTien = new StringBuilder();
     for (CustomerModel kh : topKhTheoTien) {
         sbTien.append(kh.getTenKH())
-              .append(" (")
-              .append(String.format("%,.0f VNĐ", kh.getTongChiTieu()))
-              .append(")\n");
+            .append(" (")
+            .append(String.format("%,.0f VNĐ", kh.getTongChiTieu()))
+            .append(")\n");
     }
 
     // 5️⃣ Lấy tổng doanh thu

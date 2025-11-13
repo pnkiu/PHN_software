@@ -20,8 +20,8 @@ public class ProductDAO {
         String newMaOTO = "OTO001";
         String sql = "SELECT MAX(CAST(SUBSTRING(maOTO, 4) AS UNSIGNED)) FROM oto";
         try (Connection conn = DatabaseConnect.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery()) {
             if (rs.next()) {
                 int maxId = rs.getInt(1);
                 if (maxId > 0) {
@@ -38,7 +38,7 @@ public class ProductDAO {
         String sql = "INSERT INTO oto (maOTO, tenOTO, gia, loaiOTO, soLuong, moTa, maHang, soLuotBan)"
                 + " VALUES (?, ?, ?, ?, ?, ?, ?, 0)";
         try (Connection connection = DatabaseConnect.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
+            PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, car.getMaOto());
             ps.setString(2, car.getTenOto());
             ps.setBigDecimal(3, car.getGia());
@@ -176,7 +176,7 @@ public class ProductDAO {
         String sql = "SELECT * FROM oto WHERE maOTO = ?";
         ProductModel ketQua = null;
         try (Connection conn = DatabaseConnect.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+            PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, maOTO);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {

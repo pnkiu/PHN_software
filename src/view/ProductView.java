@@ -3,6 +3,7 @@ package view;
 import controller.ProductController;
 import dao.ProductDAO;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -15,15 +16,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import model.ProductModel;
-import java.awt.event.ActionEvent;
 
 
 public class ProductView extends JPanel {
-    private JButton btnThongKe;
-    private JButton btnSanPham;
-    private JButton btnKhachHang;
-    private JButton btnNhanVien;
-    private JButton btnGiaoDich;
     private JButton btnSua;
     private JButton btnDong;
     private JDialog addDialog;
@@ -91,12 +86,6 @@ public class ProductView extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 // Gọi hàm làm mới dữ liệu
                 controller.hienThiDB();
-                
-                // (Tùy chọn) Xóa nội dung ô tìm kiếm
-                jTextField_search.setText(""); 
-                
-                // (Tùy chọn) Hiển thị thông báo
-                showSuccessMessage("Đã tải lại danh sách sản phẩm."); 
             }
         });
 
@@ -123,7 +112,9 @@ public class ProductView extends JPanel {
         carTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 16));
         carTable.getTableHeader().setBackground(new Color(52, 73, 94));
         carTable.getTableHeader().setForeground(Color.WHITE);
-
+        
+        carTable.getColumnModel().getColumn(2).setCellRenderer(new PriceRenderer());
+        
         JScrollPane scrollPane = new JScrollPane(carTable);
         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         jPanel_right.add(scrollPane, BorderLayout.CENTER);
@@ -323,118 +314,7 @@ public class ProductView extends JPanel {
 
         editDialog.setVisible(true);
     }
-
-    // public JPanel formSuasp(ProductController controller) {
-    //     JPanel formPanel = new JPanel(new GridBagLayout());
-    //     formPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-    //     GridBagConstraints gbc = new GridBagConstraints();
-    //     gbc.insets = new Insets(5, 5, 5, 5);
-    //     gbc.fill = GridBagConstraints.HORIZONTAL;
-    //     gbc.gridx = 0; gbc.gridy = 0; gbc.anchor = GridBagConstraints.WEST;
-    //     formPanel.add(new JLabel("Mã Ô tô:"), gbc);
-    //     gbc.gridx = 1; gbc.weightx = 1.0;
-    //     txtMaOtoEdit = new JTextField();
-    //     txtMaOtoEdit.setEditable(false);
-    //     txtMaOtoEdit.setBackground(Color.LIGHT_GRAY);
-    //     formPanel.add(txtMaOtoEdit, gbc);
-
-    //     gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0;
-    //     formPanel.add(new JLabel("Tên Ô tô:"), gbc);
-    //     gbc.gridx = 1; gbc.weightx = 1.0;
-    //     txtTenOtoEdit = new JTextField();
-    //     formPanel.add(txtTenOtoEdit, gbc);
-
-    //     gbc.gridx = 0; gbc.gridy = 2;
-    //     formPanel.add(new JLabel("Loại Ô tô:"), gbc);
-    //     gbc.gridx = 1;
-    //     txtLoaiOtoEdit = new JTextField();
-    //     formPanel.add(txtLoaiOtoEdit, gbc);
-
-    //     gbc.gridx = 0; gbc.gridy = 3;
-    //     formPanel.add(new JLabel("Giá:"), gbc);
-    //     gbc.gridx = 1;
-    //     txtGiaEdit = new JTextField();
-    //     formPanel.add(txtGiaEdit, gbc);
-
-    //     gbc.gridx = 0; gbc.gridy = 4;
-    //     formPanel.add(new JLabel("Số lượng:"), gbc);
-    //     gbc.gridx = 1;
-    //     txtSoLuongEdit = new JTextField();
-    //     formPanel.add(txtSoLuongEdit, gbc);
-
-    //     gbc.gridx = 0; gbc.gridy = 5;
-    //     formPanel.add(new JLabel("Mã Hãng:"), gbc);
-    //     gbc.gridx = 1;
-    //     txtMaHangEdit = new JTextField();
-    //     formPanel.add(txtMaHangEdit, gbc);
-
-    //     gbc.gridx = 0; gbc.gridy = 6; gbc.anchor = GridBagConstraints.NORTHWEST;
-    //     formPanel.add(new JLabel("Mô tả:"), gbc);
-    //     gbc.gridx = 1; gbc.fill = GridBagConstraints.BOTH; gbc.weighty = 1.0;
-    //     txtMoTaEdit = new JTextArea(5, 20);
-    //     txtMoTaEdit.setLineWrap(true); txtMoTaEdit.setWrapStyleWord(true);
-    //     JScrollPane moTaScroll = new JScrollPane(txtMoTaEdit);
-    //     formPanel.add(moTaScroll, gbc);
-
-
-    //     return formPanel;
-    // }
-
-    // public void openEditDialog(ProductController controller) {
-    //     // 1. Kiểm tra xem người dùng đã chọn xe chưa
-    //     ProductModel selectedCar = getSelectedOto();
-    //     if (selectedCar == null) {
-    //         showErrorMessage("Vui lòng chọn một sản phẩm trong bảng để sửa!");
-    //         return;
-    //     }
-
-    //     // 2. Tạo JDialog
-    //     JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
-    //     editDialog = new JDialog(parentFrame, "Sửa sản phẩm Ô tô", true);
-    //     editDialog.setSize(450, 550); // Đặt kích thước
-    //     editDialog.setLocationRelativeTo(this);
-    //     editDialog.setLayout(new BorderLayout());
-
-    //     // 3. Gọi hàm formSuasp() của bạn để lấy JPanel
-    //     JPanel formPanel = formSuasp(controller);
-
-    //     // 4. Điền thông tin của xe đã chọn vào các ô JTextField
-    //     txtMaOtoEdit.setText(selectedCar.getMaOto());
-    //     txtTenOtoEdit.setText(selectedCar.getTenOto());
-    //     txtLoaiOtoEdit.setText(selectedCar.getLoaiOto());
-    //     txtGiaEdit.setText(selectedCar.getGia().toString());
-    //     txtSoLuongEdit.setText(String.valueOf(selectedCar.getSoLuong()));
-    //     txtMaHangEdit.setText(selectedCar.getMaHang());
-    //     txtMoTaEdit.setText(selectedCar.getMoTa());
-        
-    //     // 5. Tạo các nút bấm cho dialog Sửa
-    //     JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    //     JButton btnUpdate = createStyledButton("Cập nhật", new Color(0, 123, 255)); 
-    //     JButton btnCancel = createStyledButton("Hủy", new Color(108, 117, 125));
-    //     buttonPanel.add(btnUpdate);
-    //     buttonPanel.add(btnCancel);
-
-    //     // 6. Gán sự kiện cho các nút
-    //     btnCancel.addActionListener(e -> editDialog.dispose());
-        
-    //     btnUpdate.addActionListener(e -> {
-    //         // Gọi hàm sua() trong controller
-    //         controller.sua(
-    //             txtMaOtoEdit.getText(),
-    //             txtTenOtoEdit.getText(),
-    //             txtLoaiOtoEdit.getText(),
-    //             txtGiaEdit.getText(),
-    //             txtSoLuongEdit.getText(),
-    //             txtMaHangEdit.getText(),
-    //             txtMoTaEdit.getText()
-    //         );
-    //     });
-
-    //     // 7. Thêm panel và hiển thị dialog
-    //     editDialog.add(formPanel, BorderLayout.CENTER);
-    //     editDialog.add(buttonPanel, BorderLayout.SOUTH);
-    //     editDialog.setVisible(true); // <-- DÒNG QUAN TRỌNG NHẤT
-    // }   
+    
     private JButton createStyledButton(String text, Color background) {
         JButton button = new JButton(text);
         button.setFont(new Font("Segoe UI", Font.BOLD, 14));
@@ -444,13 +324,15 @@ public class ProductView extends JPanel {
         return button;
     }
     private void loadCarDataToDialogTable() {
+        Locale localeVN = new Locale("vi", "VN");
+        NumberFormat numberFormatter = NumberFormat.getNumberInstance(localeVN);
         dialogTableModel.setRowCount(0);
         List<ProductModel> carList = ProductDAO.getInstance().selectAll();
         for (ProductModel car : carList) {
             Object[] rowData = {
                     car.getMaOto(),
                     car.getTenOto(),
-                    car.getGia(),
+                    numberFormatter.format(car.getGia()) ,
                     car.getLoaiOto(),
                     car.getSoLuong(),
                     car.getMoTa(),
@@ -501,23 +383,6 @@ public class ProductView extends JPanel {
     public void showErrorMessage(String message) {
         JOptionPane.showMessageDialog(this, message, "Lỗi", JOptionPane.ERROR_MESSAGE);
     }
-
-    // public ProductModel getSelectedOto() {
-    //     int selectedRow = carTable.getSelectedRow();
-    //     if (selectedRow == -1) {
-    //         return null; // chưa chọn hàng nào
-    //     }
-    // String maOto = carTable.getValueAt(selectedRow, 0).toString();
-    // String tenOto = carTable.getValueAt(selectedRow, 1).toString();
-    // double gia = Double.parseDouble(carTable.getValueAt(selectedRow, 2).toString());
-    // String loaiOto = carTable.getValueAt(selectedRow, 3).toString();
-    // int soLuong = Integer.parseInt(carTable.getValueAt(selectedRow, 4).toString());
-    // String moTa = carTable.getValueAt(selectedRow, 5).toString();
-    // String maHang = carTable.getValueAt(selectedRow, 6).toString();
-    // int soLuotBan = Integer.parseInt(carTable.getValueAt(selectedRow, 7).toString());
-
-    // return new ProductModel(gia, loaiOto, maOto, moTa, soLuong, tenOto, soLuotBan, maHang);
-    // }
 
     public ProductModel getSelectedOto() {
         int selectedRow = carTable.getSelectedRow();
