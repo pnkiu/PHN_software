@@ -112,7 +112,7 @@ public class LoginController {
         List<UsersModel> users = usersDAO.getAllUsers();
         if (users.isEmpty()) {
             System.out.println("✗ Không có nhân viên nào trong database");
-            System.out.println("✨ Vui lòng kiểm tra bảng nhanvien có dữ liệu chưa");
+            System.out.println(" Vui lòng kiểm tra bảng nhanvien có dữ liệu chưa");
         } else {
             for (UsersModel user : users) {
                 String role = user.isAdmin() ? "👑 Quản trị" : "👤 Nhân viên";
