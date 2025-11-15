@@ -73,7 +73,7 @@ public class TransacionView extends JPanel {
 
 
         // (Tên nút của bạn)
-        jButton_add = new JButton("Thêm");
+        jButton_add = new JButton("Thêm giao dịch");
         jButton_edit = new JButton("Sửa");
         jButton_delete = new JButton("Xóa");
         jButton_details = new JButton("Xem chi tiết");
@@ -83,8 +83,8 @@ public class TransacionView extends JPanel {
         Font buttonFont = new Font("Arial", Font.PLAIN, 18);
         for (JButton btn : new JButton[]{jButton_add, jButton_edit, jButton_delete, jButton_details, jButton_search}) {
             btn.setFont(buttonFont);
-            btn.setBackground(buttonColor);
-            btn.setForeground(Color.WHITE);
+            btn.setBackground(new Color(230, 234, 240));
+            btn.setForeground(Color.BLACK);
         }
         jPanel_action.add(jButton_add);
         jPanel_action.add(jButton_edit);
@@ -199,8 +199,8 @@ public class TransacionView extends JPanel {
 
         JButton btnThemKH = new JButton("Mới...");
         btnThemKH.setFont(formButtonFont);
-        btnThemKH.setBackground(buttonColor);
-        btnThemKH.setForeground(Color.WHITE);
+        btnThemKH.setBackground(new Color(230, 234, 240));
+        btnThemKH.setForeground(Color.BLACK);
         btnThemKH.setBounds(310, 60, 100, 30);
         formPanel.add(btnThemKH);
 
@@ -225,8 +225,8 @@ public class TransacionView extends JPanel {
 
         JButton btnChonOto = new JButton("Chọn...");
         btnChonOto.setFont(formButtonFont);
-        btnChonOto.setBackground(buttonColor);
-        btnChonOto.setForeground(Color.WHITE);
+        btnChonOto.setBackground(new Color(230, 234, 240));
+        btnChonOto.setForeground(Color.BLACK);
         btnChonOto.setBounds(310, 140, 100, 30);
         formPanel.add(btnChonOto);
 
@@ -270,10 +270,11 @@ public class TransacionView extends JPanel {
 
         JButton btnSave = new JButton("Lưu");
         btnSave.setFont(formButtonFont);
-        btnSave.setBackground(buttonColor);
-        btnSave.setForeground(Color.WHITE);
+        btnSave.setBackground(new Color(230, 234, 240));
+        btnSave.setForeground(Color.BLACK);
         JButton btnCancel = new JButton("Hủy");
         btnCancel.setFont(formButtonFont);
+        btnCancel.setBackground(new Color(230, 234, 240));
 
         buttonPanel.add(btnSave);
         buttonPanel.add(btnCancel);

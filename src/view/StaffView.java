@@ -64,8 +64,8 @@ public class StaffView extends JPanel {
         Font buttonFont = new Font("Arial", Font.PLAIN, 18);
         for (JButton btn : new JButton[]{jButton_add, jButton_edit, jButton_delete, jButton_search}) {
             btn.setFont(buttonFont);
-            btn.setBackground(new Color(65, 105, 225));
-            btn.setForeground(Color.WHITE);
+            btn.setBackground(new Color(230, 234, 240));
+            btn.setForeground(Color.BLACK);
         }
 
         jPanel_action.add(jButton_add);
@@ -373,8 +373,12 @@ public class StaffView extends JPanel {
 
         // Button panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        JButton btnSave = new JButton("💾 Lưu");
-        JButton btnCancel = new JButton("❌ Hủy");
+        JButton btnSave = new JButton("Lưu");
+        JButton btnCancel = new JButton("Hủy");
+        btnSave.setBackground(new Color(230, 234, 240));
+        btnCancel.setForeground(Color.BLACK);
+        btnCancel.setBackground(new Color(230, 234, 240));
+        btnSave.setForeground(Color.BLACK);
 
         btnSave.setFont(new Font("Segoe UI", Font.BOLD, 12));
         btnCancel.setFont(new Font("Segoe UI", Font.PLAIN, 12));

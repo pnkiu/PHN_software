@@ -70,8 +70,8 @@ public class ProductView extends JPanel {
         Font buttonFont = new Font("Arial", Font.PLAIN, 18);
         for (JButton btn : new JButton[]{jButton_add, jButton_edit, jButton_delete, jButton_search, jButton_reset}) {
             btn.setFont(buttonFont);
-            btn.setBackground(new Color(65, 105, 225));
-            btn.setForeground(Color.WHITE);
+            btn.setBackground(new Color(230, 234, 240));
+            btn.setForeground(Color.BLACK);
         }
 
         jPanel_action.add(jButton_add);

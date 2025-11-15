@@ -54,7 +54,7 @@ public class CarManageView extends JFrame {
         headerPanel.setBackground(Color.WHITE);
         headerPanel.setPreferredSize(new Dimension(0, 64));
 
-        JLabel appTitle = new JLabel("PHẦN MỀM QUẢN LÝ ÔTÔ");
+        JLabel appTitle = new JLabel("PHẦN MỀM QUẢN LÝ CỬA HÀNG ÔTÔ");
         appTitle.setBorder(new EmptyBorder(0, 16, 0, 0));
         appTitle.setFont(new Font("Segoe UI", Font.BOLD, 18));
         headerPanel.add(appTitle, BorderLayout.WEST);
@@ -189,7 +189,7 @@ public class CarManageView extends JFrame {
         jPanel_right.setBackground(Color.WHITE);
         jPanel_right.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); //tạo viền trống
 
-        JLabel jLabel_header = new JLabel("HỆ THỐNG QUẢN LÝ CỬA HÀNG BÁN XE", SwingConstants.CENTER);
+        JLabel jLabel_header = new JLabel("HỆ THỐNG QUẢN LÝ CỬA HÀNG Ô TÔ", SwingConstants.CENTER);
         jLabel_header.setForeground(Color.BLACK);
         jLabel_header.setFont(new Font("Arial", Font.BOLD, 32));
         jPanel_right.add(jLabel_header, BorderLayout.NORTH);
@@ -228,8 +228,8 @@ public class CarManageView extends JFrame {
         jSpinner_start.setValue(homQua);
 
         JButton buttonLoc = new JButton("Lọc");
-        buttonLoc.setBackground(new Color(15, 110, 180));
-        buttonLoc.setForeground(Color.WHITE);
+        buttonLoc.setBackground(new Color(230, 234, 240));
+        buttonLoc.setForeground(Color.black);
         panel_filter.add(buttonLoc);
 
         panel_center_wrapper.add(panel_filter, BorderLayout.NORTH);
