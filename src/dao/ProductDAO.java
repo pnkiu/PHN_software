@@ -18,7 +18,7 @@ public class ProductDAO {
     }
     public String newMaOTO() throws SQLException {
         String newMaOTO = "OTO001";
-        String sql = "SELECT MAX(CAST(SUBSTRING(maOTO, 4) AS UNSIGNED)) FROM oto";
+        String sql = "SELECT MAX(CAST(SUBSTRING(maOTO, 4) AS SIGNED)) FROM oto";
         try (Connection conn = DatabaseConnect.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery()) {
@@ -89,7 +89,6 @@ public class ProductDAO {
         String getCurrentQuantitySQL = "SELECT soLuong FROM oto WHERE maOTO = ?";
         String sql = "UPDATE oto SET tenOTO = ?, gia = ?, loaiOTO = ?, soLuong = ?, moTa = ?, maHang = ? "
                 + " WHERE maOTO = ?";
-
         try (Connection connection = DatabaseConnect.getConnection()) {
             try (PreparedStatement psGet = connection.prepareStatement(getCurrentQuantitySQL)) {
                 psGet.setString(1, car.getMaOto());

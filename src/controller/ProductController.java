@@ -56,7 +56,8 @@ public class ProductController {
 
     public void them(String tenOto, String loaiOto, String giaStr, String soLuongStr, String maHang, String moTa) {
         try {
-            BigDecimal gia = BigDecimal.valueOf(Long.parseLong(giaStr));
+            String cleanGiaStr = giaStr.replaceAll("\\.", "");
+            BigDecimal gia = new BigDecimal(cleanGiaStr);
             int soLuong = Integer.parseInt(soLuongStr);
             if (tenOto.isEmpty() || maHang.isEmpty()) {
                 view.showErrorMessage("Tên và Mã Hãng không được để trống!");
@@ -82,8 +83,8 @@ public class ProductController {
 
     public void sua(String maOto, String tenOto, String loaiOto, String giaStr, String soLuongStr, String maHang, String moTa) {
         try {
-            // BigDecimal gia = BigDecimal.valueOf(Long.parseLong(giaStr));
-            BigDecimal gia = new BigDecimal(giaStr);
+            String cleanGiaStr = giaStr.replaceAll("\\.", "");
+            BigDecimal gia = new BigDecimal(cleanGiaStr);
             int soLuong = Integer.parseInt(soLuongStr);
             if (maOto.isEmpty() || tenOto.isEmpty() || maHang.isEmpty()) {
                 view.showErrorMessage("Mã, Tên và Mã Hãng không được để trống!");

@@ -1,0 +1,3 @@
+String cleanGiaStr = giaStr.replaceAll("\\.", "");
+            // BigDecimal gia = BigDecimal.valueOf(Long.parseLong(giaStr));
+            BigDecimal gia = new BigDecimal(cleanGiaStr);

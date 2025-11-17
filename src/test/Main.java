@@ -3,7 +3,7 @@ package test;
 import view.LoginFrame;
 import javax.swing.SwingUtilities;
 
-public class test {
+public class Main {
     public static void main(String[] args) {
         {
         SwingUtilities.invokeLater(new Runnable() {
